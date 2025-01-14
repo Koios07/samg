@@ -1,13 +1,15 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Asegúrate de importar Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 import './App.css';
+import NavigationBar from './components/Navbar'; // Asegúrate de que la ruta sea correcta
 
 function App() {
   return (
     <div className="App">
+      <NavigationBar /> {/* Agregar el componente Navbar */}
       <header className="App-header">
         <h1 className="text-center my-4">Bienvenido a SAMG</h1>
-      </header>
+      </header> 
       <div className="container">
         <div className="row">
           <div className="col-md-6 text-center">
