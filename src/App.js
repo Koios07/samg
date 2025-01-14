@@ -1,7 +1,9 @@
+// src/App.js
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
 import './App.css';
-import NavigationBar from './components/Navbar'; // Asegúrate de que la ruta sea correcta
+import NavigationBar from './Components/Navbar';
+
 
 function App() {
   return (
