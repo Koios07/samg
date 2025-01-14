@@ -1,32 +1,29 @@
 // src/App.js
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Importar Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import NavigationBar from './Components/Navbar';
-
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import NavigationBar from './components/Navbar';
 
 function App() {
   return (
-    <div className="App">
-      <NavigationBar /> {/* Agregar el componente Navbar */}
-      <header className="App-header">
-        <h1 className="text-center my-4">Bienvenido a SAMG</h1>
-      </header> 
-      <div className="container">
-        <div className="row">
-          <div className="col-md-6 text-center">
-            <h2>Columna 1</h2>
-            <p>Este es un ejemplo de contenido en la columna 1.</p>
-            <button className="btn btn-primary">Botón en Columna 1</button>
-          </div>
-          <div className="col-md-6 text-center">
-            <h2>Columna 2</h2>
-            <p>Este es un ejemplo de contenido en la columna 2.</p>
-            <button className="btn btn-secondary">Botón en Columna 2</button>
-          </div>
+    <Router>
+      <div className="App">
+        <NavigationBar />
+        <header className="App-header">
+          <h1 className="text-center my-4">Bienvenido a SAMG</h1>
+        </header> 
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<h2>Home</h2>} />
+            <Route path="/nosotros" element={<h2>Nosotros</h2>} />
+            <Route path="/contactanos" element={<h2>Contáctanos</h2>} />
+            <Route path="/buscar" element={<h2>Buscar</h2>} />
+            <Route path="/login" element={<h2>Login</h2>} />
+          </Routes>
         </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
