@@ -11,7 +11,7 @@ function App() {
       <div className="App">
         <NavigationBar />
         <header className="App-header">
-          <h1 className="text-center my-4">Bienvenido a SAMG</h1>
+          <h1 className="text-center my-4 mt-5 mb-5">Bienvenido a SAMG</h1> {/* Añadido mb-5 para margen inferior */}
         </header> 
         <div className="container">
           <Routes>
@@ -19,7 +19,7 @@ function App() {
             <Route path="/nosotros" element={<h2>Nosotros</h2>} />
             <Route path="/contactanos" element={<h2>Contáctanos</h2>} />
             <Route path="/buscar" element={<h2>Buscar</h2>} />
-            <Route path="/login" element={<h2>Login</h2>} />
+            <Route path="/login" element={<h2 className="mt-5 mb-5">Login</h2>} /> {/* Añadido mb-5 para margen inferior */}
           </Routes>
         </div>
       </div>

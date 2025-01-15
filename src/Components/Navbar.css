@@ -1,0 +1,13 @@
+/* src/components/Navbar.css */
+.navbar-brand {
+    margin-top: 10px; /* Espacio superior para el título SAMG */
+    margin-bottom: 10px; /* Espacio inferior para el título SAMG */
+    margin-left: 20px;
+}
+  
+  .login-button {
+    margin-left: 10px; /* Espacio a la izquierda del botón Login */
+    margin-top: auto; /* Espacio superior para el botón Login */
+    margin-right: 20px;;
+  }
+  
