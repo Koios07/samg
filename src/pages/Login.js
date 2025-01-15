@@ -1,44 +1,64 @@
 // src/pages/Login.js
 import React, { useState } from 'react';
-import './Login.css'; // Importa el archivo CSS
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import './Login.css';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate(); // Inicializar useNavigate
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Aquí puedes manejar la lógica de inicio de sesión
-    console.log('Usuario:', username);
-    console.log('Contraseña:', password);
-    
-    // Implementa la lógica para autenticar al usuario
+
+    try {
+      const response = await fetch('http://localhost:3001/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message);
+        onLogin(); // Llamar a la función onLogin para manejar el estado de autenticación
+        navigate('/'); // Redirigir a la página de inicio
+      } else {
+        setMessage(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('Error en la conexión al servidor');
+    }
   };
 
   return (
-      <div className="box">
-          <h1>Login</h1>
-          <form onSubmit={handleSubmit}>
-              <input 
-                  type="text" 
-                  placeholder="Nombre de usuario" 
-                  value={username} 
-                  onChange={(e) => setUsername(e.target.value)} 
-                  required 
-              />
-              <input 
-                  type="password" 
-                  placeholder="Contraseña" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
-                  required 
-              />
-              <input type="submit" value="Iniciar Sesión" />
-          </form>
-      </div>
+    <div className="box">
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit}>
+        <input 
+          type="text" 
+          placeholder="Nombre de usuario" 
+          value={username} 
+          onChange={(e) => setUsername(e.target.value)} 
+          required 
+        />
+        <input 
+          type="password" 
+          placeholder="Contraseña" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
+        />
+        <input type="submit" value="Iniciar Sesión" />
+      </form>
+      {message && <p>{message}</p>}
+    </div>
   );
 };
 
 export default Login;
-

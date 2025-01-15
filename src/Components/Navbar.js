@@ -2,9 +2,9 @@
 import React from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import './Navbar.css'; // Asegúrate de que esta línea esté presente
+import './Navbar.css';
 
-const NavigationBar = () => {
+const NavigationBar = ({ isLoggedIn, onLogout }) => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand as={Link} to="/">SAMG</Navbar.Brand>
@@ -15,7 +15,13 @@ const NavigationBar = () => {
           <Nav.Link as={Link} to="/nosotros">Nosotros</Nav.Link>
           <Nav.Link as={Link} to="/contactanos">Contáctanos</Nav.Link>
           <Nav.Link as={Link} to="/buscar">Buscar</Nav.Link>
-          <Button variant="outline-primary" as={Link} to="/login" className="login-button">Login</Button>
+          {isLoggedIn ? (
+            <>
+              <Button variant="outline-primary" onClick={onLogout}>Logout</Button>
+            </>
+          ) : (
+            <Button variant="outline-primary" as={Link} to="/login">Login</Button>
+          )}
         </Nav>
       </Navbar.Collapse>
     </Navbar>
