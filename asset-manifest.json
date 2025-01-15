@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/samg/static/css/main.7c68942f.css",
+    "main.js": "/samg/static/js/main.e4f621ec.js",
+    "index.html": "/samg/index.html",
+    "main.7c68942f.css.map": "/samg/static/css/main.7c68942f.css.map",
+    "main.e4f621ec.js.map": "/samg/static/js/main.e4f621ec.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7c68942f.css",
+    "static/js/main.e4f621ec.js"
+  ]
+}
