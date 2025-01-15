@@ -1,13 +1,15 @@
 /* src/components/Navbar.css */
 .navbar-brand {
-    margin-top: 10px; /* Espacio superior para el título SAMG */
-    margin-bottom: 10px; /* Espacio inferior para el título SAMG */
-    margin-left: 20px;
+  margin-top: 10px; /* Espacio superior para el título SAMG */
+  margin-bottom: 10px; /* Espacio inferior para el título SAMG */
+  margin-left: 20px;
 }
-  
-  .login-button {
-    margin-left: 10px; /* Espacio a la izquierda del botón Login */
-    margin-top: auto; /* Espacio superior para el botón Login */
-    margin-right: 20px;;
-  }
-  
+
+.login-button {
+  margin-left: 10px; /* Espacio a la izquierda del botón Login */
+  margin-top: auto; /* Espacio superior para el botón Login */
+  margin-right: 20px;
+  height: auto; /* Cambia a auto para evitar estiramiento vertical */
+  padding: 10px 20px; /* Ajusta el padding según sea necesario */
+  font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
+}

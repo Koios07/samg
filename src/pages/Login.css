@@ -1,0 +1,74 @@
+/* src/pages/Login.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #ffffff; /* Fondo blanco para la página */
+}
+
+.card {
+    margin-bottom: 20px;
+    border: none;
+}
+
+.box {
+    width: 500px;
+    padding: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centra la caja */
+    background-color: #f0f0f0; /* Fondo gris claro para el contenedor */
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+}
+
+.box input[type="text"],
+.box input[type="password"] {
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid #3498db; /* Borde azul */
+    padding: 10px 10px;
+    width: 250px;
+    outline: none;
+    color: #333; /* Color del texto */
+    border-radius: 24px;
+    transition: 0.25s;
+}
+
+.box h1 {
+    color: #333; /* Color del título */
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.box input[type="text"]:focus,
+.box input[type="password"]:focus {
+    width: 300px;
+    border-color: #2ecc71; /* Cambia el borde al enfocar */
+}
+
+.box input[type="submit"] {
+    border: 0;
+    background-color: #2ecc71; /* Color de fondo verde para el botón */
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border-radius: 24px;
+    padding: 14px 40px;
+    outline: none;
+    color: white; /* Color del texto en el botón */
+    transition: 0.25s;
+    cursor: pointer;
+}
+
+.box input[type="submit"]:hover {
+    background-color: #27ae60; /* Color más oscuro al pasar el mouse */
+}
+
+.forgot {
+    text-decoration: underline; /* Estilo para enlaces olvidados */
+}
