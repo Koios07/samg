@@ -4,8 +4,8 @@ import React from 'react';
 const Home = () => {
   return (
     <div>
-      <h2>Home</h2>
-      <p>Bienvenido a la página principal.</p>
+      <h2>Bienvenido a SAMG</h2>
+      <p>Esta es la página principal.</p>
     </div>
   );
 };

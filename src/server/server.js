@@ -1,21 +1,22 @@
-// server.js
+// src/server/server.js
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const port = 3001; // Puedes cambiar el puerto si es necesario
+const port = 3001; // Puerto en el que se ejecutará el servidor
 
-app.use(cors());
-app.use(bodyParser.json());
+// Middleware
+app.use(cors()); // Permitir solicitudes CORS
+app.use(bodyParser.json()); // Analizar solicitudes JSON
 
-// Configura la conexión a la base de datos
+// Configuración de la conexión a la base de datos
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root', 
-    password: '', 
-    database: 'samg_db' 
+    host: 'localhost', // Cambia esto si tu base de datos está en otra dirección
+    user: 'root', // Cambia esto si tu usuario es diferente
+    password: '', // Cambia esto si tienes una contraseña
+    database: 'samg_db' // Cambia esto al nombre real de tu base de datos
 });
 
 // Conectar a la base de datos
@@ -31,6 +32,7 @@ db.connect((err) => {
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
 
+    // Consulta para verificar las credenciales del usuario
     const query = 'SELECT * FROM usuario WHERE username = ? AND password = ?';
     db.query(query, [username, password], (err, results) => {
         if (err) {

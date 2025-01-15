@@ -21,6 +21,7 @@ body {
     background-color: #f0f0f0; /* Fondo gris claro para el contenedor */
     text-align: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
+    margin-right: 10px;
 }
 
 .box input[type="text"],

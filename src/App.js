@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
@@ -12,12 +12,20 @@ import PrivateRoute from './components/PrivateRoute'; // Importa PrivateRoute
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para controlar si el usuario está logueado
 
+  // Efecto para cargar el estado de autenticación desde localStorage
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Verifica el estado en localStorage
+    setIsLoggedIn(loggedIn);
+  }, []);
+
   const handleLogin = () => {
     setIsLoggedIn(true); // Cambiar estado a logueado
+    localStorage.setItem('isLoggedIn', 'true'); // Guardar en localStorage
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false); // Cambiar estado a no logueado
+    localStorage.setItem('isLoggedIn', 'false'); // Actualizar en localStorage
   };
 
   return (
@@ -30,9 +38,15 @@ function App() {
             <Route path="/nosotros" element={<Nosotros />} />
             <Route path="/contactanos" element={<Contactanos />} />
             <Route path="/buscar" element={<Buscar />} />
-            {/* Ruta privada para Login */}
-            <PrivateRoute path="/login" element={<Login onLogin={handleLogin} />} isLoggedIn={isLoggedIn} /> 
-            {/* Puedes agregar más rutas privadas aquí usando PrivateRoute */}
+            {/* Usar PrivateRoute para proteger la ruta de Login */}
+            <Route 
+              path="/login" 
+              element={
+                <PrivateRoute isLoggedIn={isLoggedIn}>
+                  <Login onLogin={handleLogin} />
+                </PrivateRoute>
+              } 
+            />
           </Routes>
         </div>
       </div>
