@@ -1,0 +1,62 @@
+/* src/pages/Buscar.css */
+
+/* Estilos generales para la tabla */
+.articulos-table {
+    width: 100%; /* Ancho completo de la tabla */
+    border-collapse: collapse; /* Colapsar bordes */
+    margin-top: 20px; /* Espacio superior */
+    background-color: #ffffff; /* Fondo blanco para la tabla */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilo para las celdas de la tabla */
+.articulos-table th,
+.articulos-table td {
+    padding: 12px; /* Espaciado interno */
+    text-align: left; /* Alineación a la izquierda */
+    border-bottom: 1px solid #dddddd; /* Línea divisoria entre filas */
+}
+
+/* Estilo para las cabeceras de la tabla */
+.articulos-table th {
+    background-color: #007BFF; /* Color de fondo azul para las cabeceras (azul fino) */
+    color: white; /* Color del texto en blanco */
+}
+
+/* Rayas de cebra para las filas */
+.articulos-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Color claro para filas impares */
+}
+
+.articulos-table tbody tr:nth-child(even) {
+    background-color: #ffffff; /* Color blanco para filas pares */
+}
+
+/* Efecto al pasar el mouse sobre las filas */
+.articulos-table tbody tr:hover {
+    background-color: #e3f2fd; /* Color suave al pasar el mouse (azul claro) */
+}
+
+/* Estilo para enlaces dentro de la tabla */
+.articulos-table td a {
+    color: #007BFF; /* Color del enlace azul (azul fino) */
+    text-decoration: none; /* Sin subrayado en el enlace */
+}
+
+.articulos-table td a:hover {
+    text-decoration: underline; /* Subrayar el enlace al pasar el mouse */
+}
+
+/* Estilos para botones "Agregar" y otros botones si es necesario */
+.add-button {
+    background-color: #007BFF; /* Color de fondo azul (azul fino) */
+    color: white; /* Color del texto en blanco */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    border-radius: 5px; /* Bordes redondeados del botón */
+}
+
+.add-button:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el mouse sobre el botón (azul más oscuro) */
+}

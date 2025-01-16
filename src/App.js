@@ -6,7 +6,7 @@ import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Contactanos from './pages/Contactanos';
-import Buscar from './pages/Buscar';
+import Buscar from './pages/Buscar'; // Asegúrate de importar Buscar
 import Login from './pages/Login';
 import PrivateRoute from './components/PrivateRoute'; // Importa PrivateRoute
 import QRCodePage from './pages/QRCode'; // Importa el nuevo componente
@@ -56,8 +56,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/nosotros" element={<Nosotros />} />
             <Route path="/contactanos" element={<Contactanos />} />
-            {/* Modifica la ruta de Buscar para pasar los artículos como props */}
-            <Route path="/buscar" element={<Buscar articulos={articulos} />} />
+            {/* Modifica la ruta de Buscar para pasar los artículos y el estado de autenticación como props */}
+            <Route path="/buscar" element={<Buscar articulos={articulos} isLoggedIn={isLoggedIn} />} />
             <Route 
               path="/login" 
               element={
@@ -66,7 +66,7 @@ function App() {
                 </PrivateRoute>
               } 
             />
-            {/* Nueva ruta para mostrar el código QR, pasando articulos como prop */}
+            {/* Nueva ruta para mostrar el código QR */}
             <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
             {/* Nueva ruta para mostrar detalles del artículo */}
             <Route path="/articulo/:id_articulo" element={<ArticuloDetalle articulos={articulos} />} />
