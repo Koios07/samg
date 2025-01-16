@@ -1,75 +1,86 @@
 /* src/pages/Login.css */
+
 body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    background-color: #ffffff; /* Fondo blanco para la página */
+    background: #ffffff; /* Fondo blanco para toda la página */
 }
 
 .card {
     margin-bottom: 20px;
-    border: none;
+    border: none; /* Sin borde en la tarjeta */
 }
 
 .box {
-    width: 500px;
-    padding: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Centra la caja */
-    background-color: #f0f0f0; /* Fondo gris claro para el contenedor */
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra para resaltar */
-    margin-right: 10px;
+    width: 500px; /* Ancho del contenedor */
+    padding: 40px; /* Espaciado interno */
+    position: absolute; /* Posicionamiento absoluto */
+    top: 50%; /* Centrado vertical */
+    left: 50%; /* Centrado horizontal */
+    transform: translate(-50%, -50%); /* Ajuste para centrar correctamente */
+    background: #f0f0f0; /* Fondo gris claro para el contenedor */
+    text-align: center; /* Centra el texto dentro del contenedor */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave alrededor del contenedor */
 }
 
+/* Estilos para los campos de entrada */
 .box input[type="text"],
 .box input[type="password"] {
-    border: 0;
-    background: none;
-    display: block;
-    margin: 20px auto;
-    text-align: center;
-    border: 2px solid #3498db; /* Borde azul */
-    padding: 10px 10px;
-    width: 250px;
-    outline: none;
-    color: #333; /* Color del texto */
-    border-radius: 24px;
-    transition: 0.25s;
+    border: 2px solid #3498db; /* Borde azul claro */
+    padding: 10px; /* Espaciado interno en los campos */
+    width: 250px; /* Ancho de los campos */
+    outline: none; /* Sin contorno al enfocar */
+    color: black; /* Color del texto negro para mejor legibilidad */
+    border-radius: 24px; /* Bordes redondeados en los campos */
+    transition: 0.25s; /* Transición suave al enfocar */
 }
 
-.box h1 {
-    color: #333; /* Color del título */
-    text-transform: uppercase;
-    font-weight: 500;
+/* Espacio entre los campos de entrada */
+.box input[type="text"],
+.box input[type="password"] {
+    margin-bottom: 20px; /* Espacio entre los campos de entrada */
 }
 
+/* Estilos al enfocar los campos de entrada */
 .box input[type="text"]:focus,
 .box input[type="password"]:focus {
-    width: 300px;
-    border-color: #2ecc71; /* Cambia el borde al enfocar */
+    width: 300px; /* Ampliar el campo al enfocar */
+    border-color: #2ecc71; /* Cambiar color del borde al enfocar (verde) */
 }
 
+/* Estilo para el título */
+.box h1 {
+    color: black; /* Color del título (negro) */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    font-weight: 500; /* Peso de fuente mediano */
+}
+
+/* Estilo para el botón de envío del formulario */
 .box input[type="submit"] {
-    border: 0;
-    background-color: #2ecc71; /* Color de fondo verde para el botón */
-    display: block;
-    margin: 20px auto;
-    text-align: center;
-    border-radius: 24px;
-    padding: 14px 40px;
-    outline: none;
-    color: white; /* Color del texto en el botón */
-    transition: 0.25s;
-    cursor: pointer;
+    border: none; /* Sin borde por defecto */
+    background-color: #2ecc71; /* Color de fondo verde por defecto */
+    display: block; /* Mostrar como bloque */
+    margin: 20px auto; /* Margen automático para centrar */
+    text-align: center; /* Centra el texto dentro del botón */
+    padding: 14px 40px; /* Espaciado interno en el botón */
+    outline: none; /* Sin contorno al enfocar */
+    color: white; /* Color del texto en blanco para el botón */
+    border-radius: 24px; /* Bordes redondeados en el botón */
+    transition: background-color 0.25s ease, transform 0.25s ease; /* Transiciones suaves al pasar el mouse sobre el botón y al hacer clic*/
 }
 
+/* Efecto al pasar el mouse sobre el botón y al hacer clic*/
 .box input[type="submit"]:hover {
-    background-color: #27ae60; /* Color más oscuro al pasar el mouse */
+    background-color: #27ae60; /* Color más oscuro al pasar el mouse sobre el botón (verde más oscuro) */
 }
 
-.forgot {
-    text-decoration: underline; /* Estilo para enlaces olvidados */
+.box input[type="submit"]:active {
+    transform: scale(0.95); /* Efecto de pulsación al hacer clic en el botón */
+}
+
+/* Estilo para mensajes de error o éxito (opcional) */
+p {
+    text-align: center; /* Centra el mensaje */
+    color: black; /* Cambiar color del mensaje a negro */ 
 }

@@ -1,6 +1,7 @@
 // src/App.js
+
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
@@ -8,14 +9,32 @@ import Contactanos from './pages/Contactanos';
 import Buscar from './pages/Buscar';
 import Login from './pages/Login';
 import PrivateRoute from './components/PrivateRoute'; // Importa PrivateRoute
+import QRCodePage from './pages/QRCode'; // Importa el nuevo componente
+import ArticuloDetalle from './pages/ArticuloDetalle'; // Importa el nuevo componente para detalles del artículo
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para controlar si el usuario está logueado
+  const [articulos, setArticulos] = useState([]); // Estado para almacenar los artículos
 
   // Efecto para cargar el estado de autenticación desde localStorage
   useEffect(() => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Verifica el estado en localStorage
     setIsLoggedIn(loggedIn);
+  }, []);
+
+  // Efecto para obtener artículos desde el backend
+  useEffect(() => {
+    const fetchArticulos = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/articulos'); // Cambia esto a tu endpoint real
+        if (!response.ok) throw new Error('Error en la respuesta de la red');
+        const data = await response.json();
+        setArticulos(data); // Almacena los artículos en el estado
+      } catch (error) {
+        console.error('Error fetching articulos:', error);
+      }
+    };
+    fetchArticulos();
   }, []);
 
   const handleLogin = () => {
@@ -37,8 +56,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/nosotros" element={<Nosotros />} />
             <Route path="/contactanos" element={<Contactanos />} />
-            <Route path="/buscar" element={<Buscar />} />
-            {/* Usar PrivateRoute para proteger la ruta de Login */}
+            {/* Modifica la ruta de Buscar para pasar los artículos como props */}
+            <Route path="/buscar" element={<Buscar articulos={articulos} />} />
             <Route 
               path="/login" 
               element={
@@ -47,6 +66,10 @@ function App() {
                 </PrivateRoute>
               } 
             />
+            {/* Nueva ruta para mostrar el código QR, pasando articulos como prop */}
+            <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
+            {/* Nueva ruta para mostrar detalles del artículo */}
+            <Route path="/articulo/:id_articulo" element={<ArticuloDetalle articulos={articulos} />} />
           </Routes>
         </div>
       </div>

@@ -1,4 +1,5 @@
 // src/server/server.js
+
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
@@ -50,4 +51,15 @@ app.post('/login', (req, res) => {
 // Iniciar el servidor
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
+});
+    
+
+// Ruta para obtener todos los artículos
+app.get('/articulos', (req, res) => {
+    db.query('SELECT * FROM articulos', (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error en la consulta a la base de datos' });
+        }
+        res.json(results);
+    });
 });
