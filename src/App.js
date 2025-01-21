@@ -6,79 +6,81 @@ import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Contactanos from './pages/Contactanos';
-import Buscar from './pages/Buscar'; // Asegúrate de importar Buscar
+import Buscar from './pages/Buscar'; 
 import Login from './pages/Login';
-import Agregar from './pages/Agregar'; // Importa el nuevo componente Agregar
-import PrivateRoute from './components/PrivateRoute'; // Importa PrivateRoute
-import QRCodePage from './pages/QRCode'; // Importa el nuevo componente
-import ArticuloDetalle from './pages/ArticuloDetalle'; // Importa el nuevo componente para detalles del artículo
-import './pages/Agregar.css';
+import Agregar from './pages/Agregar'; 
+import PrivateRoute from './components/PrivateRoute'; 
+import QRCodePage from './pages/QRCode'; 
+import ArticuloDetalle from './pages/ArticuloDetalle'; 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para controlar si el usuario está logueado
-  const [articulos, setArticulos] = useState([]); // Estado para almacenar los artículos
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [articulos, setArticulos] = useState([]);
 
-  // Efecto para cargar el estado de autenticación desde localStorage
-  useEffect(() => {
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Verifica el estado en localStorage
-    setIsLoggedIn(loggedIn);
-  }, []);
+    // Efecto para cargar el estado de autenticación desde localStorage
+    useEffect(() => {
+        const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        setIsLoggedIn(loggedIn);
+    }, []);
 
-  // Efecto para obtener artículos desde el backend
-  useEffect(() => {
+    // Efecto para obtener artículos desde el backend
     const fetchArticulos = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/articulos'); // Cambia esto a tu endpoint real
-        if (!response.ok) throw new Error('Error en la respuesta de la red');
-        const data = await response.json();
-        setArticulos(data); // Almacena los artículos en el estado
-      } catch (error) {
-        console.error('Error fetching articulos:', error);
-      }
+        try {
+            const response = await fetch('http://localhost:3001/articulos');
+            if (!response.ok) throw new Error('Error en la respuesta de la red');
+            const data = await response.json();
+            setArticulos(data); // Actualiza el estado con los artículos obtenidos
+        } catch (error) {
+            console.error('Error fetching articulos:', error);
+        }
     };
-    fetchArticulos();
-  }, []);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true); // Cambiar estado a logueado
-    localStorage.setItem('isLoggedIn', 'true'); // Guardar en localStorage
-  };
+    useEffect(() => {
+        fetchArticulos(); // Llama a la función al cargar el componente
+    }, []);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false); // Cambiar estado a no logueado
-    localStorage.setItem('isLoggedIn', 'false'); // Actualizar en localStorage
-  };
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+        localStorage.setItem('isLoggedIn', 'true');
+    };
 
-  return (
-    <Router>
-      <div className="App">
-        <NavigationBar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <div className="container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/nosotros" element={<Nosotros />} />
-            <Route path="/contactanos" element={<Contactanos />} />
-            {/* Modifica la ruta de Buscar para pasar los artículos y el estado de autenticación como props */}
-            <Route path="/buscar" element={<Buscar articulos={articulos} isLoggedIn={isLoggedIn} />} />
-            <Route 
-              path="/login" 
-              element={
-                <PrivateRoute isLoggedIn={isLoggedIn}>
-                  <Login onLogin={handleLogin} />
-                </PrivateRoute>
-              } 
-            />
-            {/* Nueva ruta para agregar un artículo */}
-            <Route path="/agregar" element={<Agregar />} /> {/* Ruta para agregar artículos */}
-            {/* Nueva ruta para mostrar el código QR */}
-            <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
-            {/* Nueva ruta para mostrar detalles del artículo */}
-            <Route path="/articulo/:id_articulo" element={<ArticuloDetalle articulos={articulos} />} />
-          </Routes>
-        </div>
-      </div>
-    </Router>
-  );
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        localStorage.setItem('isLoggedIn', 'false');
+    };
+
+    // Función para agregar un artículo y actualizar la lista
+    const addArticulo = (nuevoArticulo) => {
+        setArticulos((prevArticulos) => [...prevArticulos, nuevoArticulo]); // Agrega el nuevo artículo a la lista
+    };
+
+    return (
+        <Router>
+            <div className="App">
+                <NavigationBar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+                <div className="container">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/nosotros" element={<Nosotros />} />
+                        <Route path="/contactanos" element={<Contactanos />} />
+                        <Route path="/buscar" element={<Buscar articulos={articulos} isLoggedIn={isLoggedIn} />} />
+                        <Route 
+                            path="/login" 
+                            element={
+                                <PrivateRoute isLoggedIn={isLoggedIn}>
+                                    <Login onLogin={handleLogin} />
+                                </PrivateRoute>
+                            } 
+                        />
+                        {/* Pasar la función addArticulo al componente Agregar */}
+                        <Route path="/agregar" element={<Agregar onAddArticulo={addArticulo} />} /> 
+                        <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
+                        <Route path="/articulo/:id_articulo" element={<ArticuloDetalle articulos={articulos} />} />
+                    </Routes>
+                </div>
+            </div>
+        </Router>
+    );
 }
 
 export default App;

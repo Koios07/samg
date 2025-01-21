@@ -38,39 +38,37 @@ const Buscar = ({ articulos, isLoggedIn }) => {
             )}
 
             <table className="articulos-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Descripción</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Propietario</th>
-                        <th>Último Mantenimiento</th>
-                        <th>Técnico</th>
-                        <th>Ver QR</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredArticulos.length > 0 ? (
-                        filteredArticulos.map((articulo) => (
-                            <tr key={articulo.id_articulo}>
-                                <td><Link to={`/articulo/${articulo.id_articulo}`}>{articulo.id_articulo}</Link></td>
-                                <td>{articulo.articulo}</td>
-                                <td>{articulo.marca}</td>
-                                <td>{articulo.modelo}</td>
-                                <td>{articulo.propietario}</td>
-                                <td>{new Date(articulo.ultimo_mantenimiento).toLocaleDateString()}</td>
-                                <td>{articulo.nombre_trabajador}</td>
-                                <td><Link to={`/qr/${articulo.id_articulo}`}>Ver QR</Link></td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="8">No se encontraron artículos.</td> {/* Mensaje cuando no hay resultados */}
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+              <thead>
+                  <tr>
+                      <th>ID</th>
+                      <th>Descripción</th>
+                      <th>Marca</th>
+                      <th>Modelo</th>
+                      <th>Propietario</th>
+                      <th>Último Mantenimiento</th>
+                      <th>Técnico</th>
+                      <th>Ver QR</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {filteredArticulos.length > 0 ? (
+                      filteredArticulos.map((articulo) => (
+                          <tr key={articulo.id_articulo}>
+                              <td data-label="ID"><Link to={`/articulo/${articulo.id_articulo}`}>{articulo.id_articulo}</Link></td>
+                              <td data-label="Descripción">{articulo.articulo}</td>
+                              <td data-label="Marca">{articulo.marca}</td>
+                              <td data-label="Modelo">{articulo.modelo}</td>
+                              <td data-label="Propietario">{articulo.propietario}</td>
+                              <td data-label="Último Mantenimiento">{new Date(articulo.ultimo_mantenimiento).toLocaleDateString()}</td>
+                              <td data-label="Técnico">{articulo.nombre_trabajador}</td>
+                              <td data-label="Ver QR"><Link to={`/qr/${articulo.id_articulo}`}>Ver QR</Link></td>
+                          </tr>
+                      ))
+                  ) : (
+                      <tr><td colSpan="8">No se encontraron artículos.</td></tr>
+                  )}
+              </tbody>
+          </table>
         </div>
     );
 };
