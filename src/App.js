@@ -8,9 +8,11 @@ import Nosotros from './pages/Nosotros';
 import Contactanos from './pages/Contactanos';
 import Buscar from './pages/Buscar'; // Asegúrate de importar Buscar
 import Login from './pages/Login';
+import Agregar from './pages/Agregar'; // Importa el nuevo componente Agregar
 import PrivateRoute from './components/PrivateRoute'; // Importa PrivateRoute
 import QRCodePage from './pages/QRCode'; // Importa el nuevo componente
 import ArticuloDetalle from './pages/ArticuloDetalle'; // Importa el nuevo componente para detalles del artículo
+import './pages/Agregar.css';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para controlar si el usuario está logueado
@@ -66,6 +68,8 @@ function App() {
                 </PrivateRoute>
               } 
             />
+            {/* Nueva ruta para agregar un artículo */}
+            <Route path="/agregar" element={<Agregar />} /> {/* Ruta para agregar artículos */}
             {/* Nueva ruta para mostrar el código QR */}
             <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
             {/* Nueva ruta para mostrar detalles del artículo */}
