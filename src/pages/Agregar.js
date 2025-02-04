@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Agregar.css'; // Importa el CSS correctamente
+import './Agregar.css';
 
-const Agregar = ({ onAddArticulo }) => { // Recibir la función como prop
+const Agregar = ({ onAddArticulo }) => {
     const [nombreArticulo, setNombreArticulo] = useState('');
     const [marca, setMarca] = useState('');
     const [modelo, setModelo] = useState('');
@@ -37,9 +37,9 @@ const Agregar = ({ onAddArticulo }) => { // Recibir la función como prop
 
             if (response.ok) {
                 const data = await response.json(); // Obtener los datos del nuevo artículo
-                onAddArticulo({ ...nuevoArticulo, id_articulo: data.id }); // Llamar a la función para agregar el artículo
-                window.alert('Artículo agregado exitosamente.'); // Mostrar alerta emergente
-                
+                onAddArticulo({ ...nuevoArticulo, id_articulo: data.id_articulo }); // Agregar artículo con ID
+                window.alert('Artículo agregado exitosamente.');
+
                 // Limpiar campos después de agregar
                 setNombreArticulo('');
                 setMarca('');
@@ -48,10 +48,8 @@ const Agregar = ({ onAddArticulo }) => { // Recibir la función como prop
                 setUltimoMantenimiento('');
                 setNombreTecnico('');
 
-                // Redirigir a la página de búsqueda después de un breve retraso
-                setTimeout(() => {
-                    navigate('/buscar');
-                }, 200); // Cambia a 200 ms para que la alerta se muestre primero
+                // Redirigir a la página de búsqueda
+                navigate('/buscar');
             } else {
                 const data = await response.json();
                 setMessage(data.message || 'Error al agregar el artículo.');
@@ -64,11 +62,11 @@ const Agregar = ({ onAddArticulo }) => { // Recibir la función como prop
 
     return (
         <div className="box">
-            <h1>Agregar Artículo</h1>
+            <h1>Agregar Herramienta</h1>
             <form onSubmit={handleSubmit}>
                 <input 
                     type="text" 
-                    placeholder="Nombre del Artículo" 
+                    placeholder="Herramienta" 
                     value={nombreArticulo} 
                     onChange={(e) => setNombreArticulo(e.target.value)} 
                     required 
@@ -119,7 +117,7 @@ const Agregar = ({ onAddArticulo }) => { // Recibir la función como prop
 
                 <input type="submit" value="Agregar Artículo" />
             </form>
-            {message && <p className="message">{message}</p>} {/* Mensaje visible */}
+            {message && <p className="message">{message}</p>}
         </div>
     );
 };

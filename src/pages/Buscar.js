@@ -10,8 +10,9 @@ const Buscar = ({ articulos, isLoggedIn }) => {
     const itemsPerPage = 10; // Número de artículos por página
 
     // Filtrar artículos según el término de búsqueda
-    const filteredArticulos = articulos.filter((articulo) =>
-        articulo.id_articulo && articulo.id_articulo.toString().includes(searchTerm.trim())
+    const filteredArticulos = articulos.filter((articulo) => 
+        articulo.articulo.toLowerCase().includes(searchTerm.toLowerCase()) || // Filtrar por nombre del artículo
+        (articulo.id_articulo && articulo.id_articulo.toString().includes(searchTerm.trim())) // Filtrar por ID
     );
 
     // Calcular los índices de los artículos a mostrar
@@ -28,7 +29,7 @@ const Buscar = ({ articulos, isLoggedIn }) => {
             <div className="button-container">
                 <input
                     type="text"
-                    placeholder="Buscar por ID..."
+                    placeholder="Buscar por ID o nombre..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="search-input"

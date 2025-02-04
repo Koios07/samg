@@ -46,6 +46,7 @@ function App() {
         localStorage.setItem('isLoggedIn', 'false');
     };
 
+    // Función para agregar un artículo
     const addArticulo = (nuevoArticulo) => {
         setArticulos((prevArticulos) => [...prevArticulos, nuevoArticulo]);
     };
@@ -79,7 +80,6 @@ function App() {
                         />
                         <Route path="/agregar" element={<Agregar onAddArticulo={addArticulo} />} /> 
                         <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
-                        {/* Pasar la función updateArticulo al componente ArticuloDetalle */}
                         <Route path="/articulo/:id_articulo" element={<ArticuloDetalle onUpdateArticulo={updateArticulo} isLoggedIn={isLoggedIn} />} />
                     </Routes>
                 </div>
