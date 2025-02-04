@@ -1,5 +1,4 @@
 // src/App.js
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import NavigationBar from './components/Navbar';
@@ -17,26 +16,24 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [articulos, setArticulos] = useState([]);
 
-    // Efecto para cargar el estado de autenticación desde localStorage
     useEffect(() => {
         const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
         setIsLoggedIn(loggedIn);
     }, []);
 
-    // Efecto para obtener artículos desde el backend
     const fetchArticulos = async () => {
         try {
             const response = await fetch('http://localhost:3001/articulos');
             if (!response.ok) throw new Error('Error en la respuesta de la red');
             const data = await response.json();
-            setArticulos(data); // Actualiza el estado con los artículos obtenidos
+            setArticulos(data);
         } catch (error) {
             console.error('Error fetching articulos:', error);
         }
     };
 
     useEffect(() => {
-        fetchArticulos(); // Llama a la función al cargar el componente
+        fetchArticulos();
     }, []);
 
     const handleLogin = () => {
@@ -49,9 +46,17 @@ function App() {
         localStorage.setItem('isLoggedIn', 'false');
     };
 
-    // Función para agregar un artículo y actualizar la lista
     const addArticulo = (nuevoArticulo) => {
-        setArticulos((prevArticulos) => [...prevArticulos, nuevoArticulo]); // Agrega el nuevo artículo a la lista
+        setArticulos((prevArticulos) => [...prevArticulos, nuevoArticulo]);
+    };
+
+    // Función para actualizar un artículo
+    const updateArticulo = (updatedArticulo) => {
+        setArticulos((prevArticulos) =>
+            prevArticulos.map((articulo) =>
+                articulo.id_articulo === updatedArticulo.id_articulo ? updatedArticulo : articulo
+            )
+        );
     };
 
     return (
@@ -72,10 +77,10 @@ function App() {
                                 </PrivateRoute>
                             } 
                         />
-                        {/* Pasar la función addArticulo al componente Agregar */}
                         <Route path="/agregar" element={<Agregar onAddArticulo={addArticulo} />} /> 
                         <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
-                        <Route path="/articulo/:id_articulo" element={<ArticuloDetalle articulos={articulos} />} />
+                        {/* Pasar la función updateArticulo al componente ArticuloDetalle */}
+                        <Route path="/articulo/:id_articulo" element={<ArticuloDetalle onUpdateArticulo={updateArticulo} isLoggedIn={isLoggedIn} />} />
                     </Routes>
                 </div>
             </div>

@@ -5,10 +5,40 @@
     padding: 20px; /* Espaciado alrededor del contenido */
 }
 
-.search-input {
-    margin-bottom: 20px; /* Espacio debajo del campo de búsqueda */
+.button-container {
+    display: flex; /* Usar flexbox para alinear los botones */
+    justify-content: center; /* Centrar los botones */
+    margin-bottom: 20px; /* Espacio debajo del contenedor de botones */
+    gap: 10px; /* Espacio uniforme entre los botones */
 }
 
+/* Ajustes para el campo de búsqueda */
+.search-input {
+    flex: 1; /* Permitir que el campo de búsqueda ocupe el espacio disponible */
+    margin-right: 10px; /* Espacio a la derecha del campo de búsqueda */
+}
+
+/* Estilos para los botones */
+.search-button,
+.add-button {
+    background-color: #007BFF; /* Color de fondo azul (azul fino) */
+    color: white; /* Color del texto en blanco */
+    border: none; /* Sin borde */
+    padding: 10px; /* Espaciado interno del botón */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    border-radius: 5px; /* Bordes redondeados del botón */
+    width: 120px; /* Ancho fijo para ambos botones */
+    text-align: center; /* Centrar el texto dentro del botón */
+    min-width: 120px; /* Asegurar un ancho mínimo consistente */
+}
+
+/* Hover para los botones */
+.search-button:hover,
+.add-button:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el mouse sobre el botón (azul más oscuro) */
+}
+
+/* Estilos para la tabla */
 .articulos-table {
     width: 100%; /* Ancho completo de la tabla */
     border-collapse: collapse; /* Colapsar bordes */
@@ -54,99 +84,67 @@
     text-decoration: underline; /* Subrayar el enlace al pasar el mouse */
 }
 
-/* Estilos para botones "Agregar" y otros botones si es necesario */
-.add-button {
-    background-color: #007BFF; /* Color de fondo azul (azul fino) */
-    color: white; /* Color del texto en blanco */
-    border: none; /* Sin borde */
-    padding: 10px 20px; /* Espaciado interno del botón */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    border-radius: 5px; /* Bordes redondeados del botón */
+/* Estilos para la paginación */
+
+.pagination-container {
+    margin-top: 20px; /* Espacio superior para separar la tabla de la paginación */
 }
 
-.add-button:hover {
-    background-color: #0056b3; /* Color más oscuro al pasar el mouse sobre el botón (azul más oscuro) */
+.pagination {
+    display: flex;
+    justify-content: center; /* Centrar los botones de paginación */
+}
+
+.page-item {
+    margin: 0 5px; /* Espacio entre los botones de paginación */
+}
+
+.page-link {
+    padding: 8px 16px; /* Espaciado interno para los enlaces de paginación */
 }
 
 /* Media Queries para Responsividad */
 
 /* Móviles pequeños (S) y medianos (M)*/
 @media (max-width: 600px) {
-    .articulos-table {
-        display: block;
-        border: none;
-        margin-top: 0;
-        box-shadow: none;
-    }
+   .button-container {
+       flex-direction: column;
+       align-items: center;
+   }
 
-    .articulos-table thead {
-        display: none; /* Ocultamos los encabezados en móviles pequeños*/
-    }
+   .search-input {
+       width: 100%; 
+       margin-bottom: 10px;
+   }
 
-    .articulos-table tbody tr {
-        display: block;
-        margin-bottom: 15px;
-        border-bottom: 2px solid #ddd;
-        padding-bottom: 10px;
-        background-color: #f9f9f9;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-    }
-
-    .articulos-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px;
-        text-align: left;
-        font-size: 14px;
-        border-bottom: none;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .articulos-table td::before { 
-        content: attr(data-label); /* Muestra el nombre del encabezado como etiqueta en móviles*/
-        font-weight: bold;
-        color: #007BFF;
-        flex-shrink: 0;
-        margin-right: 10px;
-    }
+   .search-button,
+   .add-button {
+       width: auto;
+       min-width: 120px;
+       max-width: 120px;
+       margin-left: 0;
+       margin-bottom: 10px;
+   }
 }
 
 /* Móviles grandes (L) y tabletas (768px a 1024px)*/
 @media (min-width: 601px) and (max-width: 1024px) {
-    .articulos-table th,
-    .articulos-table td {
-        padding: 10px; /* Reducir espaciado interno para aprovechar mejor el espacio*/
-        font-size: 16px; /* Tamaño de fuente más grande pero legible*/
-        text-align:center;
-        
+   .button-container {
+       flex-wrap:auto;
+       justify-content:center;
+   }
+
+   .search-input {
+       width:auto;
+       margin-right:auto;
+   }
+
+   .search-button,
+   .add-button {
+       width:auto;
+       min-width:120px;
+       max-width:auto;
+       margin-left:auto;
+   }
 }
     
-   .articulos-table th:nth-child(1),
-   .articulos-table td:nth-child(1) { 
-       width: 10%; 
-   }
-   
-   .articulos-table th:nth-child(2),
-   .articulos-table td:nth-child(2) { 
-       width: 25%; 
-   }
-   
-   .articulos-table th:nth-child(3),
-   .articulos-table td:nth-child(3),
-   .articulos-table th:nth-child(4),
-   .articulos-table td:nth-child(4),
-   .articulos-table th:nth-child(5),
-   .articulos-table td:nth-child(5),
-   .articulos-table th:nth-child(6),
-   .articulos-table td:nth-child(6),
-   .articulos-table th:nth-child(7),
-   .articulos-table td:nth-child(7),
-   .articulos-table th:nth-child(8),
-   .articulos-table td:nth-child(8) { 
-       width:auto; 
-       max-width:none;
-   }
-}
