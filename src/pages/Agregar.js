@@ -9,6 +9,7 @@ const Agregar = ({ onAddArticulo }) => {
     const [marca, setMarca] = useState('');
     const [modelo, setModelo] = useState('');
     const [propietario, setPropietario] = useState('');
+    const [nit, setNit] = useState('');
     const [ultimoMantenimiento, setUltimoMantenimiento] = useState('');
     const [nombreTecnico, setNombreTecnico] = useState('');
     const [message, setMessage] = useState('');
@@ -22,6 +23,7 @@ const Agregar = ({ onAddArticulo }) => {
             marca,
             modelo,
             propietario,
+            nit,
             ultimo_mantenimiento: ultimoMantenimiento,
             nombre_trabajador: nombreTecnico
         };
@@ -45,6 +47,7 @@ const Agregar = ({ onAddArticulo }) => {
                 setMarca('');
                 setModelo('');
                 setPropietario('');
+                setNit('');
                 setUltimoMantenimiento('');
                 setNombreTecnico('');
 
@@ -90,6 +93,13 @@ const Agregar = ({ onAddArticulo }) => {
                     placeholder="Propietario" 
                     value={propietario} 
                     onChange={(e) => setPropietario(e.target.value)} 
+                    required 
+                />
+                <input 
+                    type="text" 
+                    placeholder="Nit" 
+                    value={nit} 
+                    onChange={(e) => setNit(e.target.value)} 
                     required 
                 />
                 

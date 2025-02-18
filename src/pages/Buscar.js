@@ -1,5 +1,3 @@
-// src/pages/Buscar.js
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Buscar.css';
@@ -11,14 +9,19 @@ const Buscar = ({ articulos, isLoggedIn }) => {
 
     // Filtrar artículos según el término de búsqueda
     const filteredArticulos = articulos.filter((articulo) => 
-        articulo.articulo.toLowerCase().includes(searchTerm.toLowerCase()) || // Filtrar por nombre del artículo
-        (articulo.id_articulo && articulo.id_articulo.toString().includes(searchTerm.trim())) // Filtrar por ID
+        articulo.articulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (articulo.id_articulo && articulo.id_articulo.toString().includes(searchTerm.trim())) ||
+        (articulo.propietario && articulo.propietario.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (articulo.nit && articulo.nit.toString().includes(searchTerm.trim()))
     );
+
+    // Invertir el array para mostrar del último al primero
+    const reversedArticulos = [...filteredArticulos].reverse();
 
     // Calcular los índices de los artículos a mostrar
     const indexOfLastArticle = currentPage * itemsPerPage;
     const indexOfFirstArticle = indexOfLastArticle - itemsPerPage;
-    const currentArticles = filteredArticulos.slice(indexOfFirstArticle, indexOfLastArticle);
+    const currentArticles = reversedArticulos.slice(indexOfFirstArticle, indexOfLastArticle);
 
     // Cambiar de página
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -29,7 +32,7 @@ const Buscar = ({ articulos, isLoggedIn }) => {
             <div className="button-container">
                 <input
                     type="text"
-                    placeholder="Buscar por ID o nombre..."
+                    placeholder="Buscar por ID, nombre, propietario o NIT..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="search-input"
@@ -51,6 +54,7 @@ const Buscar = ({ articulos, isLoggedIn }) => {
                         <th>Marca</th>
                         <th>Modelo</th>
                         <th>Propietario</th>
+                        <th>Nit</th>
                         <th>Último Mantenimiento</th>
                         <th>Técnico</th>
                         <th>Ver QR</th>
@@ -69,6 +73,7 @@ const Buscar = ({ articulos, isLoggedIn }) => {
                                 <td data-label="Marca">{articulo.marca}</td>
                                 <td data-label="Modelo">{articulo.modelo}</td>
                                 <td data-label="Propietario">{articulo.propietario}</td>
+                                <td data-label="NIT">{articulo.nit}</td>
                                 <td data-label="Último Mantenimiento">
                                     {new Date(articulo.ultimo_mantenimiento).toLocaleDateString()}
                                 </td>

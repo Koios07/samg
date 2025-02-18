@@ -12,6 +12,7 @@ const ArticuloDetalle = ({ onUpdateArticulo, isLoggedIn }) => {
         marca: '',
         modelo: '',
         propietario: '',
+        nit:'',
         ultimo_mantenimiento: '',
         nombre_trabajador: ''
     });
@@ -29,6 +30,7 @@ const ArticuloDetalle = ({ onUpdateArticulo, isLoggedIn }) => {
                     marca: data.marca,
                     modelo: data.modelo,
                     propietario: data.propietario,
+                    nit: data.nit,
                     ultimo_mantenimiento: data.ultimo_mantenimiento,
                     nombre_trabajador: data.nombre_trabajador,
                 });
@@ -83,6 +85,7 @@ const ArticuloDetalle = ({ onUpdateArticulo, isLoggedIn }) => {
                     <input type="text" name="marca" value={formData.marca} onChange={handleChange} placeholder="Marca" required />
                     <input type="text" name="modelo" value={formData.modelo} onChange={handleChange} placeholder="Modelo" required />
                     <input type="text" name="propietario" value={formData.propietario} onChange={handleChange} placeholder="Propietario" required />
+                    <input type="text" name="nit" value={formData.nit} onChange={handleChange} placeholder="Nit" required />
                     <input type="date" name="ultimo_mantenimiento" value={formData.ultimo_mantenimiento} onChange={handleChange} required />
                     <input type="text" name="nombre_trabajador" value={formData.nombre_trabajador} onChange={handleChange} placeholder="Nombre del Técnico" required />
                     
@@ -111,6 +114,10 @@ const ArticuloDetalle = ({ onUpdateArticulo, isLoggedIn }) => {
                             <tr>
                                 <td><strong>Propietario</strong></td>
                                 <td>{articulo.propietario}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Propietario</strong></td>
+                                <td>{articulo.nit}</td>
                             </tr>
                             <tr>
                                 <td><strong>Último Mantenimiento</strong></td>

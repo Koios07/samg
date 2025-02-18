@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
@@ -11,6 +11,7 @@ import Agregar from './pages/Agregar';
 import PrivateRoute from './components/PrivateRoute'; 
 import QRCodePage from './pages/QRCode'; 
 import ArticuloDetalle from './pages/ArticuloDetalle'; 
+import Configuracion from './pages/Configuracion'; 
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,20 +47,6 @@ function App() {
         localStorage.setItem('isLoggedIn', 'false');
     };
 
-    // Función para agregar un artículo
-    const addArticulo = (nuevoArticulo) => {
-        setArticulos((prevArticulos) => [...prevArticulos, nuevoArticulo]);
-    };
-
-    // Función para actualizar un artículo
-    const updateArticulo = (updatedArticulo) => {
-        setArticulos((prevArticulos) =>
-            prevArticulos.map((articulo) =>
-                articulo.id_articulo === updatedArticulo.id_articulo ? updatedArticulo : articulo
-            )
-        );
-    };
-
     return (
         <Router>
             <div className="App">
@@ -70,17 +57,45 @@ function App() {
                         <Route path="/nosotros" element={<Nosotros />} />
                         <Route path="/contactanos" element={<Contactanos />} />
                         <Route path="/buscar" element={<Buscar articulos={articulos} isLoggedIn={isLoggedIn} />} />
-                        <Route 
-                            path="/login" 
-                            element={
-                                <PrivateRoute isLoggedIn={isLoggedIn}>
-                                    <Login onLogin={handleLogin} />
-                                </PrivateRoute>
-                            } 
-                        />
-                        <Route path="/agregar" element={<Agregar onAddArticulo={addArticulo} />} /> 
+
+                        {/* Ruta para login */}
+                        <Route path="/login" element={
+                            isLoggedIn ? (
+                                <Navigate to="/" replace /> // Redirigir a Home si está logueado
+                            ) : (
+                                <Login onLogin={handleLogin} />
+                            )
+                        } />
+
+                        {/* Ruta privada para configuración */}
+                        <Route path="/configuracion" element={
+                            <PrivateRoute isLoggedIn={isLoggedIn}>
+                                <Configuracion />
+                            </PrivateRoute>
+                        } />
+
+                        {/* Ruta privada para agregar artículos */}
+                        <Route path="/agregar" element={
+                            <PrivateRoute isLoggedIn={isLoggedIn}>
+                                <Agregar />
+                            </PrivateRoute>
+                        } /> 
+
+                        {/* Otras rutas */}
                         <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
-                        <Route path="/articulo/:id_articulo" element={<ArticuloDetalle onUpdateArticulo={updateArticulo} isLoggedIn={isLoggedIn} />} />
+                        <Route path="/articulo/:id_articulo" element={
+                            isLoggedIn ? (
+                                <ArticuloDetalle onUpdateArticulo={(updatedArticulo) => {
+                                    setArticulos((prevArticulos) =>
+                                        prevArticulos.map((articulo) =>
+                                            articulo.id_articulo === updatedArticulo.id_articulo ? updatedArticulo : articulo
+                                        )
+                                    );
+                                }} isLoggedIn={isLoggedIn} />
+                            ) : (
+                                <Navigate to="/login" replace />
+                            )
+                        } />
                     </Routes>
                 </div>
             </div>
