@@ -5,21 +5,28 @@ import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Contactanos from './pages/Contactanos';
-import Buscar from './pages/Buscar'; 
+import Buscar from './pages/Buscar';
 import Login from './pages/Login';
-import Agregar from './pages/Agregar'; 
-import PrivateRoute from './components/PrivateRoute'; 
-import QRCodePage from './pages/QRCode'; 
-import ArticuloDetalle from './pages/ArticuloDetalle'; 
-import Configuracion from './pages/Configuracion'; 
+import Agregar from './pages/Agregar';
+import PrivateRoute from './components/PrivateRoute';
+import QRCodePage from './pages/QRCode';
+import ArticuloDetalle from './pages/ArticuloDetalle';
+import Configuracion from './pages/Configuracion';
+import CambiarContrasena from './components/CambiarContraseña';
+
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [articulos, setArticulos] = useState([]);
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
         setIsLoggedIn(loggedIn);
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+            setUserId(parseInt(storedUserId, 10));
+        }
     }, []);
 
     const fetchArticulos = async () => {
@@ -37,14 +44,18 @@ function App() {
         fetchArticulos();
     }, []);
 
-    const handleLogin = () => {
+    const handleLogin = (userId) => {
         setIsLoggedIn(true);
+        setUserId(userId);
         localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userId', userId);
     };
 
     const handleLogout = () => {
         setIsLoggedIn(false);
+        setUserId(null);
         localStorage.setItem('isLoggedIn', 'false');
+        localStorage.removeItem('userId');
     };
 
     return (
@@ -70,7 +81,12 @@ function App() {
                         {/* Ruta privada para configuración */}
                         <Route path="/configuracion" element={
                             <PrivateRoute isLoggedIn={isLoggedIn}>
-                                <Configuracion />
+                                <Configuracion userId={userId} />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/configuracion/cambiarcontrasena" element={
+                            <PrivateRoute isLoggedIn={isLoggedIn}>
+                                <CambiarContrasena userId={userId} />
                             </PrivateRoute>
                         } />
 
@@ -79,7 +95,7 @@ function App() {
                             <PrivateRoute isLoggedIn={isLoggedIn}>
                                 <Agregar />
                             </PrivateRoute>
-                        } /> 
+                        } />
 
                         {/* Otras rutas */}
                         <Route path="/qr/:id_articulo" element={<QRCodePage articulos={articulos} />} />
