@@ -170,19 +170,12 @@ app.post("/usuarios", (req, res) => {
 
         // Insertar nuevo usuario
         const query =
-            `INSERT INTO usuario (nombre,
-       username,
-       password,
-       tipo_usuario)
-       VALUES (?, ?, ?, ?)`;
+            `INSERT INTO usuario (nombre, username, password, tipo_usuario)
+            VALUES (?, ?, ?, ?)`;
 
         db.query(query,
-            [nombre,
-                username,
-                password,
-                tipo_usuario],
-            (err,
-                result) => {
+            [nombre, username, password, tipo_usuario],
+            (err, result) => {
 
                 if (err) {
                     console.error('Error al insertar:', err)
@@ -193,46 +186,37 @@ app.post("/usuarios", (req, res) => {
                 return res.json({ "ok": true })
             })
     })
-})
+});
 
-// Ruta POST para cambiar la contraseña del usuario
-app.post('/cambiar-contrasena', (req, res) => {
-    const { id, oldPassword, newPassword } = req.body; // Usa "id" en lugar de "id_usuario"
-
-    console.log("Received data:", { id, oldPassword, newPassword });
-
-    if (!id || !oldPassword || !newPassword) {
-        return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
-    }
-
-    // Verificar si la contraseña actual es correcta
-    const query = 'SELECT * FROM usuario WHERE id = ? AND password = ?';
-
-    db.query(query, [id, oldPassword], (err, results) => {
+// Ruta GET para obtener todos los usuarios
+app.get("/usuarios", (req, res) => {
+    db.query("SELECT * FROM usuario", (err, results) => {
         if (err) {
-            console.error('Error al verificar la contraseña:', err);
-            return res.status(500).json({ message: 'Error al verificar la contraseña.' });
+            console.error("Error en la consulta a la base de datos:", err);
+            return res.status(500).json({ error: "Error en la consulta a la base de datos" });
+        }
+        res.json(results); // Retorna todos los usuarios
+    });
+});
+
+// Ruta PUT para activar/desactivar un usuario
+app.put('/usuarios/:id/activar-desactivar', (req, res) => {
+    const { id } = req.params;
+    const { activo } = req.body; // Invertir el estado de "activo"
+
+    const query = 'UPDATE usuario SET activo = ? WHERE id = ?';
+
+    db.query(query, [activo, id], (err, results) => {
+        if (err) {
+            console.error('Error al actualizar el estado del usuario:', err);
+            return res.status(500).json({ message: 'Error al actualizar el estado del usuario.' });
         }
 
-        if (results.length === 0) {
-            return res.status(401).json({ message: 'La contraseña actual es incorrecta.' });
+        if (results.affectedRows > 0) {
+            return res.status(200).json({ message: 'Estado del usuario actualizado' });
+        } else {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-
-        // Actualizar la nueva contraseña
-        const updateQuery = 'UPDATE usuario SET password = ? WHERE id = ?';
-
-        db.query(updateQuery, [newPassword, id], (err2, result2) => {
-            if (err2) {
-                console.error('Error al actualizar la contraseña:', err2);
-                return res.status(500).json({ message: 'Error al cambiar la contraseña.' });
-            }
-
-            if (result2.affectedRows > 0) {
-                return res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
-            } else {
-                return res.status(404).json({ message: 'Usuario no encontrado.' });
-            }
-        });
     });
 });
 
@@ -240,9 +224,9 @@ app.post('/cambiar-contrasena', (req, res) => {
 app.use((req, res) => {
     console.log('Ruta no encontrada:', req.method, '-', req.url)
     return res.status(404).send({ "msg": "ruta inválida" })
-})
+});
 
 // Iniciar servidor:
 app.listen(port, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
-})
+});

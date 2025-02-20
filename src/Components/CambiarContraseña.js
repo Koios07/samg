@@ -1,78 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-function CambiarContrasena({ userId: initialUserId }) {
+function CambiarContrasena({ userId: initialUserId, onClose }) {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
-    const navigate = useNavigate();
-    const [userId, setUserId] = useState(initialUserId); // Use useState to manage userId
+    const [userId, setUserId] = useState(initialUserId);
+    const [success, setSuccess] = useState(false); // New state for success message
 
+    // Obtener el userId del localStorage si no se pasa como prop
     useEffect(() => {
-        // If initialUserId prop is not available, try to get it from localStorage
         if (!initialUserId) {
             const storedUserId = localStorage.getItem('userId');
             if (storedUserId) {
                 setUserId(parseInt(storedUserId, 10));
             } else {
                 console.error("Error: No se encontró el ID del usuario en localStorage.");
-                // Consider redirecting to login if userId is essential
             }
         } else {
-            setUserId(initialUserId); // set userId to the initialUserId prop
+            setUserId(initialUserId);
         }
-    }, [initialUserId, setUserId]);
+    }, [initialUserId]);
 
+    // Manejar el envío del formulario para cambiar la contraseña
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSuccess(false); // Reset success state on new submission
+        setMessage(''); // Clear any existing messages
 
-        // Check if any field is empty
+
+        // Validar que todos los campos estén llenos
         if (!oldPassword || !newPassword || !confirmPassword) {
             setMessage('Todos los campos son obligatorios.');
             return;
         }
 
+        // Validar que las contraseñas nuevas coincidan
         if (newPassword !== confirmPassword) {
             setMessage('Las nuevas contraseñas no coinciden.');
             return;
         }
 
+        // Show confirmation dialog
+        const confirmChange = window.confirm("¿Estás seguro de que quieres cambiar la contraseña?");
+        if (!confirmChange) {
+            return; // Do nothing if the user cancels
+        }
+
+        // Validar que el userId esté disponible
         if (!userId) {
             setMessage('Error: No se encontró el ID del usuario.');
             return;
         }
 
-        console.log("Enviando petición a /cambiar-contrasena con userId:", userId);
-
         try {
+            // Enviar la solicitud al servidor para cambiar la contraseña
             const response = await fetch('http://localhost:3001/cambiar-contrasena', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: userId, // Use "id" instead of "id_usuario"
+                    id: userId,
                     oldPassword: oldPassword,
-                    newPassword: newPassword
+                    newPassword: newPassword,
                 }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                setMessage(data.message);
-                navigate('/configuracion');
+                // Mostrar mensaje de éxito, limpiar los campos y mantener visible el componente
+                setMessage(''); // Clear the error message
+                setSuccess(true); // Set success to true
+                setOldPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
             } else {
+                // Mostrar mensaje de error si ocurre un problema
                 setMessage(data.message || 'Error al cambiar la contraseña.');
+                setSuccess(false); // Ensure success is false on error
             }
         } catch (error) {
+            console.error('Error al cambiar la contraseña:', error);
             setMessage('Error al cambiar la contraseña.');
+            setSuccess(false); // Ensure success is false on error
         }
     };
 
-    const handleCancel = () => {
-        navigate('/configuracion');
+    // Manejar el clic en el botón "Atrás" para regresar a configuración
+    const handleGoBack = () => {
+        onClose(); // Call the onClose function to hide the component
     };
 
     return (
@@ -107,8 +125,11 @@ function CambiarContrasena({ userId: initialUserId }) {
                     />
                 </div>
                 <button type="submit">Cambiar Contraseña</button>
-                <button type="button" onClick={handleCancel}>Cancelar</button>
+                {/* Botón "Atrás" */}
+                <button type="button" onClick={handleGoBack}>Atrás</button>
+                {/* Mensaje de error o éxito */}
                 {message && <p>{message}</p>}
+                {success && <p style={{ color: 'green' }}>Contraseña cambiada exitosamente!</p>}
             </form>
         </div>
     );
