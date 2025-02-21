@@ -12,6 +12,7 @@ import QRCodePage from './pages/QRCode';
 import ArticuloDetalle from './pages/ArticuloDetalle';
 import Configuracion from './pages/Configuracion';
 import CambiarContrasena from './components/CambiarContraseña';
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
