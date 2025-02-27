@@ -1,11 +1,9 @@
-// src/pages/Agregar.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Agregar.css';
 
 const Agregar = ({ onAddArticulo }) => {
-    const [nombreArticulo, setNombreArticulo] = useState('');
+    const [nombreHerramienta, setNombreHerramienta] = useState('');
     const [marca, setMarca] = useState('');
     const [modelo, setModelo] = useState('');
     const [propietario, setPropietario] = useState('');
@@ -18,8 +16,14 @@ const Agregar = ({ onAddArticulo }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const nuevoArticulo = {
-            articulo: nombreArticulo,
+        // Validación básica de campos
+        if (!nombreHerramienta || !marca || !modelo || !propietario || !nit || !ultimoMantenimiento || !nombreTecnico) {
+            setMessage('Por favor, complete todos los campos.');
+            return;
+        }
+
+        const nuevaHerramienta = {
+            herramienta: nombreHerramienta,
             marca,
             modelo,
             propietario,
@@ -29,21 +33,31 @@ const Agregar = ({ onAddArticulo }) => {
         };
 
         try {
-            const response = await fetch('http://localhost:3001/articulos', {
+            // Obtener el user-id del almacenamiento local
+            const userId = localStorage.getItem('userId');
+
+            if (!userId) {
+                setMessage('No se encontró el ID del usuario. Por favor inicie sesión nuevamente.');
+                navigate('/login'); // Redirigir al usuario a la página de inicio de sesión
+                return;
+            }
+
+            const response = await fetch('http://localhost:3001/herramientas', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'user-id': userId // Enviar el ID del usuario en los headers
                 },
-                body: JSON.stringify(nuevoArticulo)
+                body: JSON.stringify(nuevaHerramienta)
             });
 
             if (response.ok) {
-                const data = await response.json(); // Obtener los datos del nuevo artículo
-                onAddArticulo({ ...nuevoArticulo, id_articulo: data.id_articulo }); // Agregar artículo con ID
-                window.alert('Artículo agregado exitosamente.');
+                const data = await response.json(); // Obtener los datos de la nueva herramienta
+                onAddArticulo({ ...nuevaHerramienta, id_articulo: data.id_articulo }); // Agregar herramienta con ID
+                window.alert('Herramienta agregada exitosamente.');
 
                 // Limpiar campos después de agregar
-                setNombreArticulo('');
+                setNombreHerramienta('');
                 setMarca('');
                 setModelo('');
                 setPropietario('');
@@ -55,11 +69,11 @@ const Agregar = ({ onAddArticulo }) => {
                 navigate('/buscar');
             } else {
                 const data = await response.json();
-                setMessage(data.message || 'Error al agregar el artículo.');
+                setMessage(data.message || 'Error al agregar la herramienta.');
             }
         } catch (error) {
             console.error('Error:', error);
-            setMessage('No se pudo conectar con el servidor. Por favor, verifica tu conexión.');
+            setMessage('No se pudo conectar con el servidor. Por favor verifica tu conexión.');
         }
     };
 
@@ -67,65 +81,62 @@ const Agregar = ({ onAddArticulo }) => {
         <div className="box">
             <h1>Agregar Herramienta</h1>
             <form onSubmit={handleSubmit}>
-                <input 
-                    type="text" 
-                    placeholder="Herramienta" 
-                    value={nombreArticulo} 
-                    onChange={(e) => setNombreArticulo(e.target.value)} 
-                    required 
+                <input
+                    type="text"
+                    placeholder="Herramienta"
+                    value={nombreHerramienta}
+                    onChange={(e) => setNombreHerramienta(e.target.value)}
+                    required
                 />
-                <input 
-                    type="text" 
-                    placeholder="Marca" 
-                    value={marca} 
-                    onChange={(e) => setMarca(e.target.value)} 
-                    required 
+                <input
+                    type="text"
+                    placeholder="Marca"
+                    value={marca}
+                    onChange={(e) => setMarca(e.target.value)}
+                    required
                 />
-                <input 
-                    type="text" 
-                    placeholder="Modelo" 
-                    value={modelo} 
-                    onChange={(e) => setModelo(e.target.value)} 
-                    required 
+                <input
+                    type="text"
+                    placeholder="Modelo"
+                    value={modelo}
+                    onChange={(e) => setModelo(e.target.value)}
+                    required
                 />
-                <input 
-                    type="text" 
-                    placeholder="Propietario" 
-                    value={propietario} 
-                    onChange={(e) => setPropietario(e.target.value)} 
-                    required 
+                <input
+                    type="text"
+                    placeholder="Propietario"
+                    value={propietario}
+                    onChange={(e) => setPropietario(e.target.value)}
+                    required
                 />
-                <input 
-                    type="text" 
-                    placeholder="Nit" 
-                    value={nit} 
-                    onChange={(e) => setNit(e.target.value)} 
-                    required 
+                <input
+                    type="text"
+                    placeholder="Nit"
+                    value={nit}
+                    onChange={(e) => setNit(e.target.value)}
+                    required
                 />
-                
                 <div className="form-group">
-                    <input 
-                        type="text" 
-                        placeholder="Nombre del Técnico" 
-                        value={nombreTecnico} 
-                        onChange={(e) => setNombreTecnico(e.target.value)} 
-                        required 
+                    <input
+                        type="text"
+                        placeholder="Nombre del Técnico"
+                        value={nombreTecnico}
+                        onChange={(e) => setNombreTecnico(e.target.value)}
+                        required
                     />
                 </div>
-
                 <div className="form-group">
                     <label htmlFor="ultimoMantenimiento">Último Mantenimiento:</label>
-                    <input 
-                        type="date" 
+                    <input
+                        type="date"
                         id="ultimoMantenimiento"
-                        value={ultimoMantenimiento} 
-                        onChange={(e) => setUltimoMantenimiento(e.target.value)} 
+                        value={ultimoMantenimiento}
+                        onChange={(e) => setUltimoMantenimiento(e.target.value)}
                         className="custom-date-input"
-                        required 
+                        required
                     />
                 </div>
-
-                <input type="submit" value="Agregar Artículo" />
+                <input type="submit" value="Agregar Herramienta" />
             </form>
             {message && <p className="message">{message}</p>}
         </div>

@@ -6,10 +6,25 @@ const GestionarUsuario = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [error, setError] = useState('');
     const [cargando, setCargando] = useState(true);
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        // Obtener el userId del localStorage
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+            setUserId(storedUserId);
+        }
+    }, []);
 
     const fetchUsuarios = async () => {
         try {
-            const response = await fetch('http://localhost:3001/usuarios');
+            const response = await fetch('http://localhost:3001/usuarios', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': localStorage.getItem('userId')
+                },
+            });
             if (!response.ok) {
                 throw new Error('Error al obtener los usuarios');
             }
@@ -20,11 +35,14 @@ const GestionarUsuario = () => {
 
             // Asegurarse de que los datos son un array
             if (Array.isArray(data)) {
-                // Convierte tipo_usuario a número
-                const usuariosConTipoNumerico = data.map(usuario => ({
-                    ...usuario,
-                    tipo_usuario: parseInt(usuario.tipo_usuario, 10)
-                }));
+                // Convierte tipo_usuario a número y filtra usuarios tipo 1
+                const usuariosConTipoNumerico = data
+                    .map(usuario => ({
+                        ...usuario,
+                        tipo_usuario: parseInt(usuario.tipo_usuario, 10)
+                    }))
+                    .filter(usuario => usuario.tipo_usuario !== 1); // Filtra usuarios tipo 1
+
                 setUsuarios(usuariosConTipoNumerico);
             } else {
                 setError('Error: Los datos recibidos no son un array.');
@@ -41,23 +59,30 @@ const GestionarUsuario = () => {
     }, []);
 
     const handleCambiarContraseña = async (idUsuario) => {
+       
         const nuevaContraseña = prompt('Ingrese la nueva contraseña:');
         if (!nuevaContraseña) return;
-
+       const confirmChange = window.confirm("¿Estás seguro de que quieres cambiar la contraseña?");
+        if (!confirmChange) {
+            return;
+        }
         try {
             const response = await fetch('http://localhost:3001/cambiar-contrasena', {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'user-id': localStorage.getItem('userId')
                 },
                 body: JSON.stringify({ id: idUsuario, newPassword: nuevaContraseña }),
             });
 
-            if (!response.ok) {
-                throw new Error('Error al cambiar la contraseña');
+            if (response.ok) {
+                alert("Contraseña cambiada exitosamente!");
+                fetchUsuarios();
+            } else {
+                const data = await response.json();
+                throw new Error(data.message || 'Error al cambiar la contraseña');
             }
-
-            fetchUsuarios();
         } catch (err) {
             setError(err.message);
         }
@@ -71,6 +96,7 @@ const GestionarUsuario = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'user-id': localStorage.getItem('userId')
                 },
                 body: JSON.stringify({ tipo_usuario: nuevoTipoUsuario }),
             });

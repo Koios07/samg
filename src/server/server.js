@@ -27,46 +27,87 @@ db.connect((err) => {
     console.log("Conectado a la base de datos MySQL");
 });
 
-// Ruta GET para obtener todos los artículos
-app.get("/articulos", (req, res) => {
-    db.query("SELECT * FROM articulos", (err, results) => {
+// Middleware para verificar el tipo de usuario
+const verificarTipoUsuario = (tiposPermitidos) => {
+    return (req, res, next) => {
+        const userId = req.headers['user-id']; // Obtén el ID del usuario del header
+        if (!userId) {
+            return res.status(401).json({ message: 'No autorizado' });
+        }
+
+        const query = 'SELECT tipo_usuario FROM usuario WHERE id = ?';
+        db.query(query, [userId], (err, results) => {
+            if (err) {
+                console.error("Error en la consulta:", err);
+                return res.status(500).json({ message: "Error en el servidor." });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+
+            const tipoUsuario = results[0].tipo_usuario;
+
+            // Depuración: Verificar los valores
+            console.log('Tipo de usuario desde la base de datos:', tipoUsuario);
+            console.log('Tipos permitidos:', tiposPermitidos);
+
+            // Asegurarnos de que tipo_usuario sea una cadena para la comparación
+            if (typeof tipoUsuario !== 'string') {
+                console.log(`Convirtiendo tipo_usuario (${tipoUsuario}) a cadena`);
+                tipoUsuario = tipoUsuario.toString();  // Convertir a cadena
+            }
+
+            // Verificar si el tipo de usuario está en los tipos permitidos
+            if (!tiposPermitidos.includes(tipoUsuario)) {
+                console.log(`El tipo de usuario ${tipoUsuario} no tiene permisos.`);
+                return res.status(403).json({ message: 'No tiene permisos para acceder a este recurso.' });
+            }
+
+            // Si todo está bien, continúa con la siguiente función
+            next();
+        });
+    };
+};
+
+// Rutas GET (obtener datos)
+// Ruta GET para obtener todas las herramientas
+app.get("/herramientas", (req, res) => {
+    db.query("SELECT * FROM herramientas", (err, results) => {
         if (err) {
             console.error("Error en la consulta a la base de datos:", err);
-            return res
-                .status(500)
-                .json({ error: "Error en la consulta a la base de datos" });
+            return res.status(500).json({ error: "Error en la consulta a la base de datos" });
         }
         res.json(results);
     });
 });
 
-// Ruta GET para obtener un artículo por ID
-app.get("/articulos/:id", (req, res) => {
+// Ruta GET para obtener una herramienta por ID
+app.get("/herramientas/:id", (req, res) => {
     const articuloId = req.params.id;
 
-    const query = "SELECT * FROM articulos WHERE id_articulo = ?";
+    const query = "SELECT * FROM herramientas WHERE id_articulo = ?";
     db.query(query, [articuloId], (err, results) => {
         if (err) {
-            console.error("Error al obtener el artículo:", err);
+            console.error("Error al obtener la herramienta:", err);
             return res.status(500).json({ error: "Error en la base de datos" });
         }
 
         if (results.length > 0) {
             res.json(results[0]);
         } else {
-            res.status(404).json({ message: "Artículo no encontrado" });
+            res.status(404).json({ message: "Herramienta no encontrada" });
         }
     });
 });
 
+// Rutas POST (crear datos)
 // Ruta POST para procesar el login
 app.post("/login", (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res
-            .status(400)
-            .json({ message: "El usuario y contraseña son obligatorios." });
+        return res.status(400).json({ message: "El usuario y contraseña son obligatorios." });
     }
 
     const query = "SELECT * FROM usuario WHERE username = ? AND password = ?";
@@ -77,11 +118,16 @@ app.post("/login", (req, res) => {
         }
 
         if (results.length > 0) {
-            // **AQUI ESTA LA CORRECCION: DEVOLVER tipo_usuario**
+            if (results[0].tipo_usuario === '3') {
+                return res.status(403).json({
+                    message: "Por favor, comunícate con administración.",
+                });
+            }
+
             res.status(200).json({
                 message: "Inicio de sesión exitoso.",
                 userId: results[0].id,
-                tipo_usuario: results[0].tipo_usuario  //  Devolvemos el tipo_usuario
+                tipo_usuario: results[0].tipo_usuario,  // Devolvemos el tipo_usuario
             });
         } else {
             res.status(401).json({ message: "Credenciales incorrectas." });
@@ -89,10 +135,10 @@ app.post("/login", (req, res) => {
     });
 });
 
-// Ruta POST para agregar un nuevo artículo
-app.post("/articulos", (req, res) => {
+// Ruta POST para agregar una herramienta (solo accesible para usuarios tipo 1 y 2)
+app.post("/herramientas", verificarTipoUsuario(['1', '2']), (req, res) => {
     const {
-        articulo,
+        herramienta,
         marca,
         modelo,
         propietario,
@@ -102,12 +148,12 @@ app.post("/articulos", (req, res) => {
     } = req.body;
 
     if (
-        !articulo ||
+        !herramienta ||
         !marca ||
         !modelo ||
         !propietario ||
         !nit ||
-        ultimo_mantenimiento ||
+        !ultimo_mantenimiento ||
         !nombre_trabajador
     ) {
         return res
@@ -116,14 +162,14 @@ app.post("/articulos", (req, res) => {
     }
 
     const query = `
-        INSERT INTO articulos (articulo, marca, modelo, propietario, nit, ultimo_mantenimiento, nombre_trabajador)
+        INSERT INTO herramientas (herramienta, marca, modelo, propietario, nit, ultimo_mantenimiento, nombre_trabajador)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         query,
         [
-            articulo,
+            herramienta,
             marca,
             modelo,
             propietario,
@@ -134,207 +180,133 @@ app.post("/articulos", (req, res) => {
         (err, result) => {
             if (err) {
                 console.error("Error al insertar en la base de datos:", err);
-                return res.status(500).json({ message: "Error al guardar el artículo." });
+                return res.status(500).json({ message: "Error al guardar la herramienta." });
             }
 
             res.status(201).json({
-                message: "Artículo agregado exitosamente.",
+                message: "Herramienta agregada exitosamente.",
                 id_articulo: result.insertId,
             });
         }
     );
 });
 
-// Ruta PUT para actualizar un artículo por ID
-app.put("/articulos/:id", (req, res) => {
-    const articuloId = req.params.id;
-    const {
-        articulo,
-        marca,
-        modelo,
-        propietario,
-        nit,
-        ultimo_mantenimiento,
-        nombre_trabajador,
-    } = req.body;
+// Ruta POST para crear un nuevo usuario (solo accesible para usuarios tipo 1)
+app.post("/usuarios", verificarTipoUsuario(['1']), (req, res) => {
+    const { nombre, username, password, tipo_usuario } = req.body;
+    const userId = req.headers['user-id'];
 
-    if (
-        !articulo ||
-        !marca ||
-        !modelo ||
-        !propietario ||
-        !nit ||
-        ultimo_mantenimiento ||
-        !nombre_trabajador
-    ) {
-        return res
-            .status(400)
-            .json({ message: "Todos los campos son obligatorios." });
+    console.log("Datos recibidos del frontend:", { nombre, username, password, tipo_usuario });
+    console.log('UserID recibidos en la creacion del usuario', userId);
+
+    if (!nombre || !username || !password || !tipo_usuario) {
+        return res.status(400).json({ message: "Todos los campos son obligatorios." });
     }
 
-    const query = `
-        UPDATE articulos 
-        SET articulo = ?, marca = ?, modelo = ?, propietario = ?, nit = ?, ultimo_mantenimiento = ?, nombre_trabajador = ? 
-        WHERE id_articulo = ?
-    `;
-    db.query(
-        query,
-        [
-            articulo,
-            marca,
-            modelo,
-            propietario,
-            nit,
-            ultimo_mantenimiento,
-            nombre_trabajador,
-            articuloId,
-        ],
-        (err, results) => {
-            if (err) {
-                console.error("Error al actualizar el artículo:", err);
-                return res.status(500).json({ error: "Error en la base de datos" });
-            }
-
-            if (results.affectedRows > 0) {
-                res.json({ message: "Artículo actualizado correctamente" });
-            } else {
-                res.status(404).json({ message: "Artículo no encontrado" });
-            }
-        }
-    );
-});
-
-// Ruta POST para crear un nuevo usuario
-app.post("/usuarios", (req, res) => {
-    const { nombre, username, password } = req.body;
-
-    const tipo_usuario = 2; // Tipo de usuario por defecto (activo)
-
-    if (!nombre || !username || !password) {
-        return res
-            .status(400)
-            .json({ message: "Todos los campos son obligatorios." });
-    }
-
-    const checkUserQuery = "SELECT * FROM usuario WHERE username = ?";
-
-    db.query(checkUserQuery, [username], (err, results) => {
-        if (err) {
-            console.error("Error al verificar el usuario:", err);
-            return res.status(500).json({ message: "Error en el servidor." });
+    // Primero, verifica si el nombre de usuario ya existe
+    const checkQuery = "SELECT COUNT(*) AS count FROM usuario WHERE username = ?";
+    db.query(checkQuery, [username], (checkErr, checkResults) => {
+        if (checkErr) {
+            console.error("Error al verificar el usuario:", checkErr);
+            return res.status(500).json({ message: "Error al verificar el usuario." });
         }
 
-        if (results.length > 0) {
-            return res
-                .status(409)
-                .json({ message: "El nombre de usuario ya está en uso." });
+        console.log("Resultados de la consulta de verificación:", checkResults);
+
+        const count = checkResults[0].count;
+        if (count > 0) {
+            // Si el nombre de usuario ya existe, devuelve un error
+            return res.status(400).json({ message: "El nombre de usuario ya existe. Por favor, elige otro." });
         }
 
-        const query = `
+        // Si el nombre de usuario no existe, procede a crear el nuevo usuario
+        const insertQuery = `
             INSERT INTO usuario (nombre, username, password, tipo_usuario)
             VALUES (?, ?, ?, ?)
         `;
 
         db.query(
-            query,
+            insertQuery,
             [nombre, username, password, tipo_usuario],
-            (err, result) => {
-                if (err) {
-                    console.error("Error al insertar:", err);
-                    return res.status(500).json({ message: "No se pudo guardar" });
+            (insertErr, insertResult) => {
+                if (insertErr) {
+                    console.error("Error al crear el usuario:", insertErr);
+                    return res.status(500).json({ message: "Error al crear el usuario: " + insertErr.message });
                 }
 
-                return res.json({ ok: true });
+                res.status(201).json({ message: "Usuario creado exitosamente." });
             }
         );
     });
 });
+// Ruta GET para obtener todos los usuarios (solo accesible para usuarios tipo 1)
+app.get("/usuarios", verificarTipoUsuario(['1']), (req, res) => {
+     const userId = req.headers['user-id'];
+    console.log('userId recibido en usuarios: ', userId);
+    const query = "SELECT * FROM usuario";
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener los usuarios:", err);
+            return res.status(500).json({ message: "Error al obtener los usuarios." });
+        }
+        res.json(results);
+    });
+});
+// Ruta PUT para activar/desactivar un usuario (solo accesible para usuarios tipo 1)
+app.put("/usuarios/:id/activar-desactivar", verificarTipoUsuario(['1']), (req, res) => {
+    const { id } = req.params;
+    const { tipo_usuario } = req.body;
 
-// Ruta GET para obtener todos los usuarios
-app.get("/usuarios", (req, res) => {
-    db.query(
-        "SELECT id, nombre, username, tipo_usuario FROM usuario WHERE tipo_usuario != 1",
-        (err, results) => {
+    const query = "UPDATE usuario SET tipo_usuario = ? WHERE id = ?";
+    db.query(query, [tipo_usuario, id], (err, result) => {
+        if (err) {
+            console.error("Error al activar/desactivar el usuario:", err);
+            return res.status(500).json({ message: "Error al activar/desactivar el usuario." });
+        }
+        res.json({ message: "Usuario actualizado exitosamente." });
+    });
+});
+
+// Ruta PUT para cambiar la contraseña de un usuario (solo accesible para el propio usuario)
+app.put("/cambiar-contrasena",verificarTipoUsuario(['1']), (req, res) => {
+    const { id, oldPassword, newPassword } = req.body;
+     const userId = req.headers['user-id'];
+     console.log('userId recibido en cambiar contraseña: ', userId);
+
+   if (!id || !newPassword) {
+        return res.status(400).json({ message: "Todos los campos son obligatorios." });
+    }
+
+    // Verificar si el usuario que realiza la solicitud es el mismo usuario que se va a modificar
+   
+
+    const query = "SELECT * FROM usuario WHERE id = ?";
+    db.query(query, [id], (err, results) => {
+        if (err) {
+            console.error("Error en la consulta:", err);
+            return res.status(500).json({ message: "Error en el servidor." });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "Usuario no encontrado." });
+        }
+
+       // Verificar si la contraseña antigua coincide
+        
+
+        const updateQuery = "UPDATE usuario SET password = ? WHERE id = ?";
+        db.query(updateQuery, [newPassword, id], (err, result) => {
             if (err) {
-                console.error("Error en la consulta a la base de datos:", err);
-                return res
-                    .status(500)
-                    .json({ error: "Error en la consulta a la base de datos" });
+                console.error("Error al actualizar la contraseña:", err);
+                return res.status(500).json({ message: "Error al actualizar la contraseña." });
             }
 
-            // Agregar logs para verificar los datos
-            console.log("Datos de usuarios obtenidos de la base de datos:", results);
-
-            results.forEach((usuario) => {
-                console.log(
-                    `Usuario ${usuario.nombre}: tipo_usuario = ${usuario.tipo_usuario}`
-                );
-            });
-
-            res.json(results); // Retorna todos los usuarios excluyendo tipo 1 (admin)
-        }
-    );
-});
-
-// Ruta PUT para activar/desactivar un usuario
-app.put('/usuarios/:id/activar-desactivar', (req, res) => {
-    const { id } = req.params;
-    const { tipo_usuario } = req.body; // tipo_usuario: 2 para activar, 3 para desactivar
-
-    console.log(`Se solicita cambiar el estado del usuario ${id} a tipo_usuario ${tipo_usuario}`);
-
-    // Verificar que tipo_usuario sea 2 o 3
-    if (![2, 3].includes(tipo_usuario)) {
-        return res.status(400).json({ message: 'El tipo de usuario debe ser 2 (activo) o 3 (desactivado).' });
-    }
-
-    const query = 'UPDATE usuario SET tipo_usuario = ? WHERE id = ?';
-
-    db.query(query, [tipo_usuario, id], (err, results) => {
-        if (err) {
-            console.error('Error al actualizar el estado del usuario:', err);
-            return res.status(500).json({ message: 'Error al actualizar el estado del usuario.' });
-        }
-
-        if (results.affectedRows > 0) {
-            return res.status(200).json({ message: 'Estado del usuario actualizado correctamente.' });
-        } else {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
+            res.status(200).json({ message: "Contraseña actualizada exitosamente." });
+        });
     });
 });
 
-// Ruta POST para cambiar la contraseña de un usuario (sin verificación)
-app.post('/cambiar-contrasena', (req, res) => {
-    const { id, newPassword } = req.body;
-
-    if (!id || !newPassword) {
-        return res.status(400).json({ message: 'El ID de usuario y la nueva contraseña son obligatorios.' });
-    }
-
-    const query = 'UPDATE usuario SET password = ? WHERE id = ?';
-
-    db.query(query, [newPassword, id], (err, results) => {
-        if (err) {
-            console.error('Error al cambiar la contraseña:', err);
-            return res.status(500).json({ message: 'Error al actualizar la contraseña.' });
-        }
-
-        if (results.affectedRows > 0) {
-            return res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
-        } else {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-    });
-});
-
-// Middleware para manejar rutas no encontradas
-app.use((req, res) => {
-    console.log('Ruta no encontrada:', req.method, '-', req.url);
-    return res.status(404).send({ "msg": "ruta inválida" });
-});
-
-// Iniciar servidor:
+// Iniciar el servidor
 app.listen(port, () => {
-    console.log(`Servidor corriendo en http://localhost:${port}`);
+    console.log(`Servidor escuchando en el puerto ${port}`);
 });

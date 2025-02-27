@@ -8,20 +8,20 @@ const Buscar = ({ articulos, isLoggedIn }) => {
     const itemsPerPage = 10; // Número de artículos por página
 
     // Filtrar artículos según el término de búsqueda
-    const filteredArticulos = articulos.filter((articulo) => 
-        articulo.articulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (articulo.id_articulo && articulo.id_articulo.toString().includes(searchTerm.trim())) ||
-        (articulo.propietario && articulo.propietario.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (articulo.nit && articulo.nit.toString().includes(searchTerm.trim()))
-    );
+    const filteredHerramientas = articulos?.filter((herramienta) => 
+        herramienta.herramienta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (herramienta.id_articulo && herramienta.id_articulo.toString().includes(searchTerm.trim())) ||
+        herramienta.propietario?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (herramienta.nit && herramienta.nit.toString().includes(searchTerm.trim()))
+    ) || [];
 
     // Invertir el array para mostrar del último al primero
-    const reversedArticulos = [...filteredArticulos].reverse();
+    const reversedHerramientas = [...filteredHerramientas].reverse();
 
     // Calcular los índices de los artículos a mostrar
     const indexOfLastArticle = currentPage * itemsPerPage;
     const indexOfFirstArticle = indexOfLastArticle - itemsPerPage;
-    const currentArticles = reversedArticulos.slice(indexOfFirstArticle, indexOfLastArticle);
+    const currentArticles = reversedHerramientas.slice(indexOfFirstArticle, indexOfLastArticle);
 
     // Cambiar de página
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -62,37 +62,37 @@ const Buscar = ({ articulos, isLoggedIn }) => {
                 </thead>
                 <tbody>
                     {currentArticles.length > 0 ? (
-                        currentArticles.map((articulo) => (
-                            <tr key={articulo.id_articulo}>
+                        currentArticles.map((herramienta) => (
+                            <tr key={herramienta.id_articulo}>
                                 <td data-label="ID">
-                                    <Link to={`/articulo/${articulo.id_articulo}`}>
-                                        {articulo.id_articulo}
+                                    <Link to={`/articulo/${herramienta.id_articulo}`}>
+                                        {herramienta.id_articulo}
                                     </Link>
                                 </td>
-                                <td data-label="Descripción">{articulo.articulo}</td>
-                                <td data-label="Marca">{articulo.marca}</td>
-                                <td data-label="Modelo">{articulo.modelo}</td>
-                                <td data-label="Propietario">{articulo.propietario}</td>
-                                <td data-label="NIT">{articulo.nit}</td>
+                                <td data-label="Descripción">{herramienta.herramienta}</td>
+                                <td data-label="Marca">{herramienta.marca}</td>
+                                <td data-label="Modelo">{herramienta.modelo}</td>
+                                <td data-label="Propietario">{herramienta.propietario}</td>
+                                <td data-label="NIT">{herramienta.nit}</td>
                                 <td data-label="Último Mantenimiento">
-                                    {new Date(articulo.ultimo_mantenimiento).toLocaleDateString()}
+                                    {herramienta.ultimo_mantenimiento ? new Date(herramienta.ultimo_mantenimiento).toLocaleDateString() : 'N/A'}
                                 </td>
-                                <td data-label="Técnico">{articulo.nombre_trabajador}</td>
+                                <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
                                 <td data-label="Ver QR">
-                                    <Link to={`/qr/${articulo.id_articulo}`}>Ver QR</Link>
+                                    <Link to={`/qr/${herramienta.id_articulo}`}>Ver QR</Link>
                                 </td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="8">No se encontraron artículos.</td>
+                            <td colSpan="9">No se encontraron artículos.</td>
                         </tr>
                     )}
                 </tbody>
             </table>
 
             {/* Controles de Paginación */}
-            {filteredArticulos.length > itemsPerPage && (
+            {filteredHerramientas.length > itemsPerPage && (
                 <nav aria-label="Page navigation example" className="pagination-container">
                     <ul className="pagination justify-content-center">
                         {/* Botón anterior */}
@@ -108,7 +108,7 @@ const Buscar = ({ articulos, isLoggedIn }) => {
                         </li>
 
                         {/* Botones de página */}
-                        {[...Array(Math.ceil(filteredArticulos.length / itemsPerPage)).keys()].map((number) => (
+                        {[...Array(Math.ceil(filteredHerramientas.length / itemsPerPage)).keys()].map((number) => (
                             <li key={number + 1} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
                                 {/* Evitar comportamiento predeterminado con preventDefault */}
                                 <button
@@ -121,12 +121,12 @@ const Buscar = ({ articulos, isLoggedIn }) => {
                         ))}
 
                         {/* Botón siguiente */}
-                        <li className={`page-item ${currentPage === Math.ceil(filteredArticulos.length / itemsPerPage) ? 'disabled' : ''}`}>
+                        <li className={`page-item ${currentPage === Math.ceil(filteredHerramientas.length / itemsPerPage) ? 'disabled' : ''}`}>
                             {/* Evitar comportamiento predeterminado con preventDefault */}
                             <button
                                 className="page-link"
                                 onClick={() => paginate(currentPage + 1)}
-                                disabled={currentPage === Math.ceil(filteredArticulos.length / itemsPerPage)}
+                                disabled={currentPage === Math.ceil(filteredHerramientas.length / itemsPerPage)}
                             >
                                 &raquo;
                             </button>

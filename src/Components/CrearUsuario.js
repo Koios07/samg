@@ -1,52 +1,64 @@
-// src/components/CrearUsuario.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const CrearUsuario = ({ onClose }) => {
     const [nombre, setNombre] = useState('');
     const [usuario, setUsuario] = useState('');
     const [contraseña, setContraseña] = useState('');
     const [verificarContraseña, setVerificarContraseña] = useState('');
+    const [tipo_usuario, setTipoUsuario] = useState('2');
     const [mensajeError, setMensajeError] = useState('');
     const [mensajeExito, setMensajeExito] = useState('');
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        // Obtener el userId del localStorage
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+            setUserId(storedUserId);
+        }
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validaciones
-        if (!nombre || !usuario || !contraseña || !verificarContraseña) {
+        const nombreLimpio = nombre.trim();
+        const usuarioLimpio = usuario.trim();
+        const contraseñaLimpia = contraseña.trim();
+        const verificarContraseñaLimpia = verificarContraseña.trim();
+
+        if (!nombreLimpio || !usuarioLimpio || !contraseñaLimpia || !verificarContraseñaLimpia) {
             setMensajeError('Todos los campos son obligatorios.');
             setMensajeExito('');
             return;
         }
 
-        if (contraseña !== verificarContraseña) {
+        if (contraseñaLimpia !== verificarContraseñaLimpia) {
             setMensajeError('Las contraseñas no coinciden.');
             setMensajeExito('');
             return;
         }
 
-        // Confirmation dialog
         const confirmCreation = window.confirm(
-            `¿Crear usuario con nombre: ${nombre}, usuario: ${usuario} y contraseña: ${contraseña}?`
+            `¿Crear usuario con nombre: ${nombreLimpio}, usuario: ${usuarioLimpio} y contraseña: ${contraseñaLimpia}?`
         );
         if (!confirmCreation) {
             return;
         }
 
-        // Crear objeto de usuario
         const nuevoUsuario = {
-            nombre: nombre,
-            username: usuario,
-            password: contraseña,
-            tipo_usuario: 2, // Tipo de usuario predeterminado
+            nombre: nombreLimpio,
+            username: usuarioLimpio,
+            password: contraseñaLimpia,
+            tipo_usuario: tipo_usuario,
         };
 
         try {
-            // Realizar la petición POST al backend
+            // Enviar el userId en el header
             const response = await fetch('http://localhost:3001/usuarios', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'user-id': userId, // Usar el userId del estado
                 },
                 body: JSON.stringify(nuevoUsuario),
             });
@@ -56,17 +68,14 @@ const CrearUsuario = ({ onClose }) => {
             if (response.ok) {
                 setMensajeExito('Usuario creado con éxito.');
                 setMensajeError('');
-                // Limpiar los campos después de crear el usuario
                 setNombre('');
                 setUsuario('');
                 setContraseña('');
                 setVerificarContraseña('');
+                 alert('Usuario creado con éxito');
+                onClose();
             } else {
-                if (data.message && data.message.includes('username_UNIQUE')) {
-                    setMensajeError('El nombre de usuario ya existe. Por favor, elige otro.');
-                } else {
-                    setMensajeError('El nombre de usuario ya existe. Por favor, elige otro.');
-                }
+                setMensajeError(data.message || 'Error al crear el usuario. Por favor, inténtalo de nuevo.');
                 setMensajeExito('');
             }
         } catch (error) {
@@ -77,7 +86,7 @@ const CrearUsuario = ({ onClose }) => {
     };
 
     const handleGoBack = () => {
-        onClose(); // Call the onClose function to hide the component
+        onClose();
     };
 
     return (

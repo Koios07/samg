@@ -1,10 +1,9 @@
-// src/pages/Configuracion.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CrearUsuario from '../components/CrearUsuario';
 import CambiarContrasena from '../components/CambiarContraseña';
 import GestionarUsuario from '../components/GestionarUsuario';
 
-const Configuracion = () => {
+const Configuracion = ({ userId, userType }) => {
     const [activeComponent, setActiveComponent] = useState(null);
     const [showCambiarContrasena, setShowCambiarContrasena] = useState(false);
     const [showCrearUsuario, setShowCrearUsuario] = useState(false);
@@ -40,12 +39,16 @@ const Configuracion = () => {
         <div>
             <h1>Configuración</h1>
             <div>
-                <button onClick={handleCrearUsuarioClick}>Crear usuario</button>
+                {userType === '1' && (
+                    <>
+                        <button onClick={handleCrearUsuarioClick}>Crear usuario</button>
+                        <button onClick={handleGestionarUsuarioClick}>Gestionar usuario</button>
+                    </>
+                )}
                 <button onClick={handleCambiarContrasenaClick}>Cambiar contraseña</button>
-                <button onClick={handleGestionarUsuarioClick}>Gestionar usuario</button>
             </div>
             <div>
-                {showCrearUsuario && <CrearUsuario onClose={() => setShowCrearUsuario(false)} />}
+                {userType === '1' && showCrearUsuario && <CrearUsuario onClose={() => setShowCrearUsuario(false)} />}
                 {renderComponent()}
                 {showCambiarContrasena && (
                     <CambiarContrasena onClose={() => setShowCambiarContrasena(false)} />
