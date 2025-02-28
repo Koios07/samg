@@ -101,7 +101,6 @@ app.get("/herramientas/:id", (req, res) => {
     });
 });
 
-// Rutas POST (crear datos)
 // Ruta POST para procesar el login
 app.post("/login", (req, res) => {
     const { username, password } = req.body;
@@ -127,14 +126,17 @@ app.post("/login", (req, res) => {
             res.status(200).json({
                 message: "Inicio de sesión exitoso.",
                 userId: results[0].id,
-                tipo_usuario: results[0].tipo_usuario,  // Devolvemos el tipo_usuario
+                tipo_usuario: results[0].tipo_usuario,
+                nombre: results[0].nombre,
             });
         } else {
             res.status(401).json({ message: "Credenciales incorrectas." });
         }
     });
 });
-
+app.use(cors({
+    origin: '*'
+}));
 // Ruta POST para agregar una herramienta (solo accesible para usuarios tipo 1 y 2)
 app.post("/herramientas", verificarTipoUsuario(['1', '2']), (req, res) => {
     const {
@@ -144,8 +146,8 @@ app.post("/herramientas", verificarTipoUsuario(['1', '2']), (req, res) => {
         propietario,
         nit,
         ultimo_mantenimiento,
-        nombre_trabajador,
     } = req.body;
+     const userId = req.headers['user-id'];
 
     if (
         !herramienta ||
@@ -153,15 +155,24 @@ app.post("/herramientas", verificarTipoUsuario(['1', '2']), (req, res) => {
         !modelo ||
         !propietario ||
         !nit ||
-        !ultimo_mantenimiento ||
-        !nombre_trabajador
+        !ultimo_mantenimiento
     ) {
         return res
             .status(400)
             .json({ message: "Todos los campos son obligatorios." });
     }
-
-    const query = `
+     // Obtener el nombre del usuario desde la base de datos
+     const queryUsuario = 'SELECT nombre FROM usuario WHERE id = ?';
+        db.query(queryUsuario, [userId], (err, results) => {
+            if (err) {
+                console.error("Error al obtener el nombre del usuario:", err);
+                return res.status(500).json({ message: "Error al obtener el nombre del usuario." });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+             const nombreTrabajador = results[0].nombre;
+            const query = `
         INSERT INTO herramientas (herramienta, marca, modelo, propietario, nit, ultimo_mantenimiento, nombre_trabajador)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
@@ -175,20 +186,21 @@ app.post("/herramientas", verificarTipoUsuario(['1', '2']), (req, res) => {
             propietario,
             nit,
             ultimo_mantenimiento,
-            nombre_trabajador,
+            nombreTrabajador,
         ],
         (err, result) => {
             if (err) {
                 console.error("Error al insertar en la base de datos:", err);
                 return res.status(500).json({ message: "Error al guardar la herramienta." });
             }
-
+             const id_articulo = result.insertId;
             res.status(201).json({
                 message: "Herramienta agregada exitosamente.",
-                id_articulo: result.insertId,
+                id_articulo: id_articulo
             });
         }
     );
+    });
 });
 
 // Ruta POST para crear un nuevo usuario (solo accesible para usuarios tipo 1)

@@ -9,7 +9,6 @@ const Agregar = ({ onAddArticulo }) => {
     const [propietario, setPropietario] = useState('');
     const [nit, setNit] = useState('');
     const [ultimoMantenimiento, setUltimoMantenimiento] = useState('');
-    const [nombreTecnico, setNombreTecnico] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
@@ -17,7 +16,7 @@ const Agregar = ({ onAddArticulo }) => {
         e.preventDefault();
 
         // Validación básica de campos
-        if (!nombreHerramienta || !marca || !modelo || !propietario || !nit || !ultimoMantenimiento || !nombreTecnico) {
+        if (!nombreHerramienta || !marca || !modelo || !propietario || !nit || !ultimoMantenimiento) {
             setMessage('Por favor, complete todos los campos.');
             return;
         }
@@ -28,8 +27,7 @@ const Agregar = ({ onAddArticulo }) => {
             modelo,
             propietario,
             nit,
-            ultimo_mantenimiento: ultimoMantenimiento,
-            nombre_trabajador: nombreTecnico
+            ultimo_mantenimiento: ultimoMantenimiento
         };
 
         try {
@@ -51,29 +49,32 @@ const Agregar = ({ onAddArticulo }) => {
                 body: JSON.stringify(nuevaHerramienta)
             });
 
-            if (response.ok) {
-                const data = await response.json(); // Obtener los datos de la nueva herramienta
-                onAddArticulo({ ...nuevaHerramienta, id_articulo: data.id_articulo }); // Agregar herramienta con ID
-                window.alert('Herramienta agregada exitosamente.');
-
-                // Limpiar campos después de agregar
-                setNombreHerramienta('');
-                setMarca('');
-                setModelo('');
-                setPropietario('');
-                setNit('');
-                setUltimoMantenimiento('');
-                setNombreTecnico('');
-
-                // Redirigir a la página de búsqueda
-                navigate('/buscar');
-            } else {
-                const data = await response.json();
-                setMessage(data.message || 'Error al agregar la herramienta.');
+          if (!response.ok) {
+                // Si la respuesta no es exitosa, lanzar un error
+                const errorData = await response.json();
+                 throw new Error(`${errorData.message}`);
             }
+
+            const data = await response.json();
+            onAddArticulo({ ...nuevaHerramienta, id_articulo: data.id_articulo });
+
+            // Mostrar un modal de éxito
+            setMessage('Herramienta agregada exitosamente.');
+            window.alert('Herramienta agregada exitosamente.');
+
+            // Limpiar los campos del formulario
+            setNombreHerramienta('');
+            setMarca('');
+            setModelo('');
+            setPropietario('');
+            setNit('');
+            setUltimoMantenimiento('');
+
+            // Redirigir al usuario a la página de búsqueda
+            navigate('/buscar');
         } catch (error) {
-            console.error('Error:', error);
-            setMessage('No se pudo conectar con el servidor. Por favor verifica tu conexión.');
+             console.error('Hubo un error al agregar la herramienta:', error);
+            setMessage(error.message);
         }
     };
 
@@ -116,15 +117,6 @@ const Agregar = ({ onAddArticulo }) => {
                     onChange={(e) => setNit(e.target.value)}
                     required
                 />
-                <div className="form-group">
-                    <input
-                        type="text"
-                        placeholder="Nombre del Técnico"
-                        value={nombreTecnico}
-                        onChange={(e) => setNombreTecnico(e.target.value)}
-                        required
-                    />
-                </div>
                 <div className="form-group">
                     <label htmlFor="ultimoMantenimiento">Último Mantenimiento:</label>
                     <input

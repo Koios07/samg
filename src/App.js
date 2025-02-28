@@ -12,7 +12,6 @@ import QRCodePage from './pages/QRCode';
 import HerramientaDetalle from './pages/HerramientaDetalle';
 import Configuracion from './pages/Configuracion';
 import CambiarContrasena from './components/CambiarContraseña';
-import GestionarUsuario from './components/GestionarUsuario'; // Importa el componente GestionarUsuario
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -92,6 +91,11 @@ function App() {
         setModalMessage('');
     };
 
+    // Función para agregar un nuevo artículo
+    const handleAddArticulo = (newArticulo) => {
+        setHerramientas((prevHerramientas) => [...prevHerramientas, newArticulo]);
+    };
+
     return (
         <Router>
             <div className="App">
@@ -138,18 +142,10 @@ function App() {
                             path="/agregar"
                             element={
                                 <PrivateRoute isLoggedIn={isLoggedIn}>
-                                    <Agregar />
+                                    <Agregar onAddArticulo={handleAddArticulo} />
                                 </PrivateRoute>
                             }
-                        />
-                         <Route
-                            path="/gestionar-usuarios"
-                            element={
-                                <PrivateRoute isLoggedIn={isLoggedIn} userType={userType}>
-                                    <GestionarUsuario />
-                                </PrivateRoute>
-                            }
-                        />
+                        />... {/* Otras rutas */}
                         <Route path="/qr/:id_articulo" element={<QRCodePage herramientas={herramientas} />} />
                         <Route
                             path="/herramienta/:id_articulo"
