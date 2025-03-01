@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Modal, Button } from 'react-bootstrap';
 
 function CambiarContrasena({ userId: initialUserId, onClose }) {
     const [oldPassword, setOldPassword] = useState('');
@@ -7,6 +8,9 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
     const [message, setMessage] = useState('');
     const [userId, setUserId] = useState(initialUserId);
     const [success, setSuccess] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     useEffect(() => {
         if (!initialUserId) {
@@ -20,6 +24,14 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
             setUserId(initialUserId);
         }
     }, [initialUserId]);
+
+    useEffect(() => {
+        // Obtener el ID del usuario actual desde localStorage al montar el componente
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+            setCurrentUserId(parseInt(storedUserId, 10));
+        }
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,40 +48,46 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
             return;
         }
 
-        const confirmChange = window.confirm("¿Estás seguro de que quieres cambiar la contraseña?");
-        if (!confirmChange) {
-            return;
-        }
-
         if (!userId) {
             setMessage('Error: No se encontró el ID del usuario.');
             return;
         }
+        // Verificar si el usuario actual es el mismo que está intentando cambiar la contraseña
+        if (currentUserId !== userId) {
+            setMessage('No tienes permiso para cambiar la contraseña de este usuario.');
+            return;
+        }
+
+        setShowConfirmModal(true);  // Mostrar el modal de confirmación
+    };
+
+    const handleChangePassword = async () => {
+        setShowConfirmModal(false);
 
         try {
             const response = await fetch('http://localhost:3001/cambiar-contrasena', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': localStorage.getItem('userId')  // Enviar userId desde localStorage
+                    'user-id': userId // Enviar userId desde localStorage
                 },
                 body: JSON.stringify({
-                    id: userId,
                     oldPassword: oldPassword,
                     newPassword: newPassword,
                 }),
             });
 
             const data = await response.json();
+            console.log('Cambiando contraseña - Response:', data); // Agregar console.log
 
             if (response.ok) {
-                alert("Contraseña cambiada exitosamente!");
-                setMessage('');
+                 setMessage('Contraseña cambiada exitosamente.');
                 setSuccess(true);
+                setShowSuccessModal(true); // Mostrar el modal de éxito
                 setOldPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
-                onClose();
+
             } else {
                 setMessage(data.message || 'Error al cambiar la contraseña.');
                 setSuccess(false);
@@ -79,6 +97,10 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
             setMessage('Error al cambiar la contraseña.');
             setSuccess(false);
         }
+    };
+     const handleCloseSuccessModal = () => {
+        setShowSuccessModal(false);
+         onClose();
     };
 
     const handleGoBack = () => {
@@ -121,6 +143,33 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
                 {message && <p>{message}</p>}
                 {success && <p style={{ color: 'green' }}></p>}
             </form>
+
+            <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar Cambio de Contraseña</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¿Estás seguro de que quieres cambiar la contraseña?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={handleChangePassword}>
+                        Cambiar Contraseña
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Contraseña Cambiada</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>¡Contraseña cambiada exitosamente!</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleCloseSuccessModal}>
+                        Cerrar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

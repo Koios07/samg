@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = ({ onLogin }) => {
@@ -33,18 +33,14 @@ const Login = ({ onLogin }) => {
                 // Si es tipo_usuario 1 o 2, permitir acceso
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userId', data.userId);
-                localStorage.setItem('userType', data.tipo_usuario);
-                onLogin(data.userId, data.tipo_usuario);
+                localStorage.setItem('userType', data.userType);
+                localStorage.setItem('nombre', data.nombre);
+                onLogin(data.userId, data.userType, data.nombre);
                 navigate('/'); // Redirigir al home
             } else {
                 // Mostrar mensaje en el modal según el tipo de error
-                if (response.status === 403) {
-                    setMessage('¡Sapo perro asquero! Por favor, comuníquese con administración.');
-                    setShowModal(true); // Mostrar el modal
-                } else {
-                    setMessage(data.message || 'Error al iniciar sesión.');
-                    setShowModal(true); // Mostrar el modal
-                }
+                setMessage(data.message || 'Error al iniciar sesión.');
+                setShowModal(true); // Mostrar el modal
             }
         } catch (error) {
             console.error('Error en la conexión:', error);

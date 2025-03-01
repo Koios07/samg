@@ -12,7 +12,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
         modelo: '',
         propietario: '',
         nit: '',
-        ultimo_mantenimiento: '',
+        fecha_entrada: '',
         nombre_trabajador: ''
     });
     const [mantenimientos, setMantenimientos] = useState([]);
@@ -35,7 +35,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                     modelo: data.modelo,
                     propietario: data.propietario,
                     nit: data.nit,
-                    ultimo_mantenimiento: data.ultimo_mantenimiento,
+                    fecha_entrada: data.fecha_entrada,
                     nombre_trabajador: data.nombre_trabajador,
                 });
             } catch (error) {
@@ -139,7 +139,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 <p>Modelo: {herramienta.modelo}</p>
                 <p>Propietario: {herramienta.propietario}</p>
                 <p>NIT: {herramienta.nit}</p>
-                <p>Último Mantenimiento: {herramienta.ultimo_mantenimiento}</p>
+                <p>Fecha de Entrada: {herramienta.fecha_entrada}</p>
                 <p>Técnico: {herramienta.nombre_trabajador}</p>
                 {isLoggedIn && (userType === '1' || userType === '2') && (
                     <button onClick={() => setIsEditing(true)}>Editar</button>

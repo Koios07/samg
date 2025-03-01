@@ -15,6 +15,9 @@ const CrearUsuario = ({ onClose }) => {
         const storedUserId = localStorage.getItem('userId');
         if (storedUserId) {
             setUserId(storedUserId);
+            console.log('CrearUsuario - UserId obtenido del localStorage:', storedUserId);
+        } else {
+            console.log('CrearUsuario - No se encontró UserId en el localStorage.');
         }
     }, []);
 
@@ -54,32 +57,52 @@ const CrearUsuario = ({ onClose }) => {
 
         try {
             // Enviar el userId en el header
-            const response = await fetch('http://localhost:3001/usuarios', {
+            console.log('CrearUsuario - Enviando solicitud a http://localhost:3001/registro');
+
+            const response = await fetch('http://localhost:3001/registro', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'user-id': userId, // Usar el userId del estado
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(nuevoUsuario),
             });
 
-            const data = await response.json();
+            console.log('CrearUsuario - Response status:', response.status);
+            console.log('CrearUsuario - Response headers:', response.headers);
 
             if (response.ok) {
-                setMensajeExito('Usuario creado con éxito.');
-                setMensajeError('');
-                setNombre('');
-                setUsuario('');
-                setContraseña('');
-                setVerificarContraseña('');
-                 alert('Usuario creado con éxito');
-                onClose();
+                try {
+                    const data = await response.json();
+                    console.log('CrearUsuario - Usuario creado con éxito:', data.message);
+                    setMensajeExito('Usuario creado con éxito.');
+                    setMensajeError('');
+                    setNombre('');
+                    setUsuario('');
+                    setContraseña('');
+                    setVerificarContraseña('');
+                    alert('Usuario creado con éxito');
+                    onClose();
+                } catch (jsonError) {
+                    console.error('CrearUsuario - Error al procesar la respuesta JSON:', jsonError);
+                    setMensajeError('Error al procesar la respuesta del servidor.');
+                    setMensajeExito('');
+                }
             } else {
-                setMensajeError(data.message || 'Error al crear el usuario. Por favor, inténtalo de nuevo.');
+                let errorMessage = `Error al crear el usuario: ${response.status} ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                    console.error('CrearUsuario - Error al crear el usuario:', errorMessage);
+                    setMensajeError(errorMessage);
+                } catch (jsonError) {
+                    console.error('CrearUsuario - Error al crear el usuario (JSON Error):', errorMessage);
+                    setMensajeError(errorMessage);
+                }
                 setMensajeExito('');
+                return;
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('CrearUsuario - Error de conexión con el servidor:', error);
             setMensajeError('Error de conexión con el servidor.');
             setMensajeExito('');
         }
@@ -120,6 +143,7 @@ const CrearUsuario = ({ onClose }) => {
                         id="contraseña"
                         value={contraseña}
                         onChange={(e) => setContraseña(e.target.value)}
+                        required
                     />
                 </div>
                 <div>
@@ -129,6 +153,7 @@ const CrearUsuario = ({ onClose }) => {
                         id="verificarContraseña"
                         value={verificarContraseña}
                         onChange={(e) => setVerificarContraseña(e.target.value)}
+                        required
                     />
                 </div>
                 <button type="submit">Crear usuario</button>

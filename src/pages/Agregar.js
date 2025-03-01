@@ -1,138 +1,198 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './Agregar.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Importa jwt-decode
 
-const Agregar = ({ onAddArticulo }) => {
-    const [nombreHerramienta, setNombreHerramienta] = useState('');
+const Agregar = () => {
+    const [herramienta, setHerramienta] = useState('');
     const [marca, setMarca] = useState('');
     const [modelo, setModelo] = useState('');
     const [propietario, setPropietario] = useState('');
+    const [fecha_entrada, setFechaEntrada] = useState('');
+    const [nombre_trabajador, setNombreTrabajador] = useState('');
     const [nit, setNit] = useState('');
-    const [ultimoMantenimiento, setUltimoMantenimiento] = useState('');
-    const [message, setMessage] = useState('');
+    const [descripcion_dano, setDescripcionDano] = useState('');
+    const [fecha_mantenimiento, setFechaMantenimiento] = useState('');
+    const [descripcion_mantenimiento, setDescripcionMantenimiento] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validación básica de campos
-        if (!nombreHerramienta || !marca || !modelo || !propietario || !nit || !ultimoMantenimiento) {
-            setMessage('Por favor, complete todos los campos.');
+        // Obtener el token JWT del localStorage
+        const token = localStorage.getItem('token');
+
+        // Verificar si el token existe
+        if (!token) {
+            console.error('No se encontró el token JWT.');
+            // Puedes redirigir al usuario a la página de inicio de sesión o mostrar un mensaje de error
             return;
         }
 
-        const nuevaHerramienta = {
-            herramienta: nombreHerramienta,
+        // Decodificar el token JWT
+        let decodedToken;
+        try {
+            decodedToken = jwtDecode(token);
+        } catch (error) {
+            console.error('Error al decodificar el token JWT:', error);
+            // Puedes redirigir al usuario a la página de inicio de sesión o mostrar un mensaje de error
+            return;
+        }
+
+        // Verificar si decodedToken es undefined o null antes de acceder a sus propiedades
+        if (!decodedToken) {
+            console.error('El token JWT no es válido.');
+            return;
+        }
+
+        // Obtener el userType del token decodificado
+        const userType = decodedToken.userType;
+
+        // Crear el objeto con los datos del formulario
+        const data = {
+            herramienta,
             marca,
             modelo,
             propietario,
+            fecha_entrada,
+            nombre_trabajador,
             nit,
-            ultimo_mantenimiento: ultimoMantenimiento
+            descripcion_dano,
+            fecha_mantenimiento,
+            descripcion_mantenimiento
         };
 
         try {
-            // Obtener el user-id del almacenamiento local
-            const userId = localStorage.getItem('userId');
-
-            if (!userId) {
-                setMessage('No se encontró el ID del usuario. Por favor inicie sesión nuevamente.');
-                navigate('/login'); // Redirigir al usuario a la página de inicio de sesión
-                return;
-            }
-
             const response = await fetch('http://localhost:3001/herramientas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId // Enviar el ID del usuario en los headers
+                    'Authorization': token // Incluir el token en el encabezado
                 },
-                body: JSON.stringify(nuevaHerramienta)
+                body: JSON.stringify(data)
             });
 
-          if (!response.ok) {
-                // Si la respuesta no es exitosa, lanzar un error
-                const errorData = await response.json();
-                 throw new Error(`${errorData.message}`);
+            if (response.ok) {
+                alert('Herramienta agregada exitosamente.');
+                navigate('/buscar');
+            } else {
+                // Si la respuesta no es exitosa, intentar leer el mensaje de error
+                let errorMessage = 'Error al agregar la herramienta.';
+                try {
+                    const errorBody = await response.json();
+                    errorMessage = errorBody.message || errorMessage;
+                } catch (e) {
+                    // Si hay un error al leer el cuerpo de la respuesta, usar el mensaje de error genérico
+                    console.error('Error al leer el cuerpo de la respuesta:', e);
+                }
+                alert(errorMessage);
             }
-
-            const data = await response.json();
-            onAddArticulo({ ...nuevaHerramienta, id_articulo: data.id_articulo });
-
-            // Mostrar un modal de éxito
-            setMessage('Herramienta agregada exitosamente.');
-            window.alert('Herramienta agregada exitosamente.');
-
-            // Limpiar los campos del formulario
-            setNombreHerramienta('');
-            setMarca('');
-            setModelo('');
-            setPropietario('');
-            setNit('');
-            setUltimoMantenimiento('');
-
-            // Redirigir al usuario a la página de búsqueda
-            navigate('/buscar');
         } catch (error) {
-             console.error('Hubo un error al agregar la herramienta:', error);
-            setMessage(error.message);
+            console.error('Error al enviar la solicitud:', error);
+            alert('Error al agregar la herramienta.');
         }
     };
 
     return (
-        <div className="box">
+        <div className="agregar">
             <h1>Agregar Herramienta</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Herramienta"
-                    value={nombreHerramienta}
-                    onChange={(e) => setNombreHerramienta(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Marca"
-                    value={marca}
-                    onChange={(e) => setMarca(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Modelo"
-                    value={modelo}
-                    onChange={(e) => setModelo(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Propietario"
-                    value={propietario}
-                    onChange={(e) => setPropietario(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Nit"
-                    value={nit}
-                    onChange={(e) => setNit(e.target.value)}
-                    required
-                />
+            <form onSubmit={handleSubmit} className="agregar-form">
                 <div className="form-group">
-                    <label htmlFor="ultimoMantenimiento">Último Mantenimiento:</label>
+                    <label htmlFor="herramienta">Herramienta:</label>
                     <input
-                        type="date"
-                        id="ultimoMantenimiento"
-                        value={ultimoMantenimiento}
-                        onChange={(e) => setUltimoMantenimiento(e.target.value)}
-                        className="custom-date-input"
+                        type="text"
+                        id="herramienta"
+                        value={herramienta}
+                        onChange={(e) => setHerramienta(e.target.value)}
                         required
                     />
                 </div>
-                <input type="submit" value="Agregar Herramienta" />
+                <div className="form-group">
+                    <label htmlFor="marca">Marca:</label>
+                    <input
+                        type="text"
+                        id="marca"
+                        value={marca}
+                        onChange={(e) => setMarca(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="modelo">Modelo:</label>
+                    <input
+                        type="text"
+                        id="modelo"
+                        value={modelo}
+                        onChange={(e) => setModelo(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="propietario">Propietario:</label>
+                    <input
+                        type="text"
+                        id="propietario"
+                        value={propietario}
+                        onChange={(e) => setPropietario(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="fecha_entrada">Fecha de Entrada:</label>
+                    <input
+                        type="date"
+                        id="fecha_entrada"
+                        value={fecha_entrada}
+                        onChange={(e) => setFechaEntrada(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="nombre_trabajador">Nombre del Trabajador:</label>
+                    <input
+                        type="text"
+                        id="nombre_trabajador"
+                        value={nombre_trabajador}
+                        onChange={(e) => setNombreTrabajador(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="nit">Nit:</label>
+                    <input
+                        type="text"
+                        id="nit"
+                        value={nit}
+                        onChange={(e) => setNit(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="descripcion_dano">Descripción del Daño:</label>
+                    <input
+                        type="text"
+                        id="descripcion_dano"
+                        value={descripcion_dano}
+                        onChange={(e) => setDescripcionDano(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="fecha_mantenimiento">Fecha de Mantenimiento:</label>
+                    <input
+                        type="date"
+                        id="fecha_mantenimiento"
+                        value={fecha_mantenimiento}
+                        onChange={(e) => setFechaMantenimiento(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="descripcion_mantenimiento">Descripción del Mantenimiento:</label>
+                    <input
+                        type="text"
+                        id="descripcion_mantenimiento"
+                        value={descripcion_mantenimiento}
+                        onChange={(e) => setDescripcionMantenimiento(e.target.value)}
+                    />
+                </div>
+                <button type="submit" className="agregar-button">Agregar</button>
             </form>
-            {message && <p className="message">{message}</p>}
         </div>
     );
-};
+}
 
 export default Agregar;

@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Buscar.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import * as XLSX from 'xlsx';
 
 const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
     const [herramientasFiltradas, setHerramientasFiltradas] = useState([]);
     const [mostrarTabla, setMostrarTabla] = useState(isLoggedIn);
-    const searchInput = useRef(null);  // Crear una referencia
+    const searchInput = useRef(null);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -19,6 +21,8 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
             setMostrarTabla(false);
         }
     }, [initialHerramientas, isLoggedIn]);
+
+    const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
     const handleSearch = () => {
         let filtered = initialHerramientas || [];
@@ -53,27 +57,90 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
         }
 
         setHerramientasFiltradas(filtered);
-        setCurrentPage(1);
     };
 
-    const reversedHerramientas = [...herramientasFiltradas].reverse();
-    const indexOfLastArticle = currentPage * itemsPerPage;
-    const indexOfFirstArticle = indexOfLastArticle - itemsPerPage;
-    const currentArticles = reversedHerramientas.slice(indexOfFirstArticle, indexOfLastArticle);
+    const generarExcel = () => {
+        const headers = [
+            "herramienta",
+            "marca",
+            "modelo",
+            "propietario",
+            "fecha_entrada",
+            "nombre_trabajador",
+            "nit"
+        ];
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet([headers]);
+        XLSX.utils.book_append_sheet(wb, ws, "Herramientas");
+
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([new Uint8Array(wbout)], { type: 'application/octet-stream' });
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'plantilla_herramientas.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleFileUpload = async (e) => {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                console.log('Datos del Excel:', jsonData);
+
+                try {
+                    const response = await fetch('http://localhost:3001/importar-herramientas', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(jsonData),
+                    });
+
+                    if (response.ok) {
+                        alert('Datos importados correctamente');
+                    } else {
+                        throw new Error('Error al importar datos');
+                    }
+                } catch (error) {
+                    console.error('Error al importar datos:', error);
+                    alert('Error al importar datos');
+                }
+            };
+
+            reader.readAsArrayBuffer(selectedFile);
+        } else {
+            alert('Por favor, seleccione un archivo');
+        }
+    };
+
+    const dropdownStyle = {
+        marginLeft: '10px',
+    };
 
     return (
         <div className="buscar">
             <h1>Buscar Artículos</h1>
             <div className="button-container">
                 <input
-                    ref={searchInput} // Asignar la referencia al input
+                    ref={searchInput}
                     type="text"
                     placeholder={isLoggedIn ? "Buscar por ID, nombre o propietario..." : "Ingrese el NIT y el término de búsqueda..."}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => { // Escuchar la tecla "Enter"
+                    onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             handleSearch();
                         }
@@ -87,6 +154,26 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                         <button className="add-button">Agregar</button>
                     </Link>
                 )}
+                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={dropdownStyle}>
+                    <DropdownToggle caret toggle={toggleDropdown}>
+                        Archivos XLS
+                    </DropdownToggle>
+                    <DropdownMenu right>
+                        <DropdownItem onClick={generarExcel}>Descargar Plantilla</DropdownItem>
+                        <DropdownItem>
+                            <label htmlFor="upload-input" className="upload-label">
+                                Cargar Archivo
+                            </label>
+                            <input
+                                id="upload-input"
+                                type="file"
+                                accept=".xlsx, .xls"
+                                style={{ display: 'none' }}
+                                onChange={handleFileUpload}
+                            />
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
             </div>
 
             {mostrarTabla && (
@@ -99,14 +186,14 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                             <th>Modelo</th>
                             <th>Propietario</th>
                             <th>Nit</th>
-                            <th>Último Mantenimiento</th>
+                            <th>Fecha Ingreso</th>
                             <th>Técnico</th>
                             <th>Ver QR</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentArticles.length > 0 ? (
-                            currentArticles.map((herramienta) => (
+                        {herramientasFiltradas.length > 0 ? (
+                            herramientasFiltradas.map((herramienta) => (
                                 <tr key={herramienta.id_articulo}>
                                     <td data-label="ID">
                                         <Link to={`/herramienta/${herramienta.id_articulo}`}>
@@ -117,66 +204,23 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                                     <td data-label="Marca">{herramienta.marca}</td>
                                     <td data-label="Modelo">{herramienta.modelo}</td>
                                     <td data-label="Propietario">{herramienta.propietario}</td>
-                                    <td data-label="NIT">{herramienta.nit}</td>
-                                    <td data-label="Último Mantenimiento">
-                                        {herramienta.ultimo_mantenimiento ? new Date(herramienta.ultimo_mantenimiento).toLocaleDateString() : 'N/A'}
-                                    </td>
+                                    <td data-label="Nit">{herramienta.nit}</td>
+                                    <td data-label="Fecha Ingreso">{herramienta.fecha_entrada}</td>
                                     <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
                                     <td data-label="Ver QR">
-                                        <Link to={`/qr/${herramienta.id_articulo}`}>Ver QR</Link>
+                                        <Link to={`/qr/${herramienta.id_articulo}`}>
+                                            Ver QR
+                                        </Link>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="9">No se encontraron artículos.</td>
+                                <td colSpan="9">No se encontraron herramientas.</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-            )}
-
-            {mostrarTabla && herramientasFiltradas.length > itemsPerPage && (
-                <nav aria-label="Page navigation example" className="pagination-container">
-                    <ul className="pagination justify-content-center">
-                        {/* Botón anterior */}
-                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                            {/* Evitar comportamiento predeterminado con preventDefault */}
-                            <button
-                                className="page-link"
-                                onClick={() => paginate(currentPage - 1)}
-                                disabled={currentPage === 1}
-                            >
-                                &laquo;
-                            </button>
-                        </li>
-
-                        {/* Botones de página */}
-                        {[...Array(Math.ceil(herramientasFiltradas.length / itemsPerPage)).keys()].map((number) => (
-                            <li key={number + 1} className={`page-item ${currentPage === number + 1 ? 'active' : ''}`}>
-                                {/* Evitar comportamiento predeterminado con preventDefault */}
-                                <button
-                                    className="page-link"
-                                    onClick={() => paginate(number + 1)}
-                                >
-                                    {number + 1}
-                                </button>
-                            </li>
-                        ))}
-
-                        {/* Botón siguiente */}
-                        <li className={`page-item ${currentPage === Math.ceil(herramientasFiltradas.length / itemsPerPage) ? 'disabled' : ''}`}>
-                            {/* Evitar comportamiento predeterminado con preventDefault */}
-                            <button
-                                className="page-link"
-                                onClick={() => paginate(currentPage + 1)}
-                                disabled={currentPage === Math.ceil(herramientasFiltradas.length / itemsPerPage)}
-                            >
-                                &raquo;
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
             )}
         </div>
     );
