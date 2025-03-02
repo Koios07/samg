@@ -28,7 +28,7 @@ db.connect((err) => {
 app.post('/registro', async (req, res) => {
     const { username, password, tipo_usuario, nombre } = req.body;
 
-    console.log('Intento de registro:', { username, tipo_usuario, nombre }); // Agregar console.log
+    console.log('Intento de registro:', { username, tipo_usuario, nombre });
 
     // Verificar si el nombre de usuario ya existe
     const checkUsernameQuery = 'SELECT * FROM usuario WHERE username = ?';
@@ -90,7 +90,7 @@ app.post('/login', (req, res) => {
 
 // Ruta para obtener todos los usuarios
 app.get('/usuarios', (req, res) => {
-    console.log('Obteniendo usuarios'); // Agregar console.log
+    console.log('Obteniendo usuarios');
     const query = 'SELECT id, username, tipo_usuario, nombre FROM usuario';
     db.query(query, (err, result) => {
         if (err) {
@@ -107,7 +107,7 @@ app.put('/usuarios/:id', async (req, res) => {
     const userId = req.params.id;
     const { tipo_usuario } = req.body;
 
-    console.log(`Actualizando tipo de usuario para ID ${userId} a tipo ${tipo_usuario}`); // Agregar console.log
+    console.log(`Actualizando tipo de usuario para ID ${userId} a tipo ${tipo_usuario}`);
 
     const query = 'UPDATE usuario SET tipo_usuario = ? WHERE id = ?';
     db.query(query, [tipo_usuario, userId], (err, result) => {
@@ -122,7 +122,7 @@ app.put('/usuarios/:id', async (req, res) => {
 
 // Ruta para obtener todos los artículos
 app.get('/herramientas', (req, res) => {
-    console.log('Obteniendo todos los articulos'); // Agregar console.log
+    console.log('Obteniendo todos los articulos');
     const query = 'SELECT * FROM herramientas';
     db.query(query, (err, result) => {
         if (err) {
@@ -136,7 +136,7 @@ app.get('/herramientas', (req, res) => {
 // Ruta para agregar un nuevo artículo y su historial de mantenimiento
 app.post('/herramientas', (req, res) => {
     const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento } = req.body;
-    console.log('Agregando un nuevo articulo y su historial de mantenimiento'); // Agregar console.log
+    console.log('Agregando un nuevo articulo y su historial de mantenimiento');
     // Verificar que se proporcionen los datos del historial de mantenimiento
     if (!descripcion_dano || !fecha_mantenimiento || !descripcion_mantenimiento) {
         return res.status(400).json({ message: 'Todos los campos del historial de mantenimiento son obligatorios.' });
@@ -168,7 +168,7 @@ app.post('/herramientas', (req, res) => {
 // Ruta para obtener un artículo por su ID
 app.get('/herramientas/:id', (req, res) => {
     const articuloId = req.params.id;
-     console.log(`Obteniendo articulo por ID: ${articuloId}`); // Agregar console.log
+    console.log(`Obteniendo articulo por ID: ${articuloId}`);
     const query = 'SELECT * FROM herramientas WHERE id_articulo = ?';
     db.query(query, [articuloId], (err, result) => {
         if (err) {
@@ -188,7 +188,7 @@ app.get('/herramientas/:id', (req, res) => {
 app.put('/herramientas/:id', (req, res) => {
     const articuloId = req.params.id;
     const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit } = req.body;
-    console.log(`Actualizando articulo con ID: ${articuloId}`); // Agregar console.log
+    console.log(`Actualizando articulo con ID: ${articuloId}`);
     const query = 'UPDATE herramientas SET herramienta = ?, marca = ?, modelo = ?, propietario = ?, fecha_entrada = ?, nombre_trabajador = ?, nit = ? WHERE id_articulo = ?';
     db.query(query, [herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, articuloId], (err, result) => {
         if (err) {
@@ -203,7 +203,7 @@ app.put('/herramientas/:id', (req, res) => {
 // Ruta para eliminar un artículo
 app.delete('/herramientas/:id', (req, res) => {
     const articuloId = req.params.id;
-     console.log(`Eliminando articulo con ID: ${articuloId}`); // Agregar console.log
+    console.log(`Eliminando articulo con ID: ${articuloId}`);
     const query = 'DELETE FROM herramientas WHERE id_articulo = ?';
     db.query(query, [articuloId], (err, result) => {
         if (err) {
@@ -217,43 +217,83 @@ app.delete('/herramientas/:id', (req, res) => {
 
 // Ruta para cambiar la contraseña
 app.put('/cambiar-contrasena', async (req, res) => {
-    const userId = req.header('user-id'); // Obtener el ID del usuario desde el encabezado
-    const { oldPassword, newPassword } = req.body;
+    const { userId, oldPassword, newPassword } = req.body;
 
-    console.log(`Cambiando la contraseña del usuario con ID: ${userId}`); // Agregar console.log
-    // Verificar si se proporcionó el ID del usuario
-    if (!userId) {
-        return res.status(400).json({ message: 'ID de usuario no proporcionado.' });
-    }
+    console.log(`Cambiando la contraseña del usuario con ID: ${userId}`);
 
-    // Obtener el usuario de la base de datos
-    const query = 'SELECT * FROM usuario WHERE id = ?';
-    db.query(query, [userId], async (err, result) => {
+    // Verificar si el usuario que realiza la acción es el mismo que está intentando cambiar la contraseña
+    const userQuery = 'SELECT id FROM usuario WHERE id = ?';
+    db.query(userQuery, [req.header('user-id')], (err, userResult) => {
         if (err) {
-            console.error('Error al buscar el usuario:', err);
+            console.error('Error al verificar la existencia del usuario:', err);
             return res.status(500).json({ message: 'Error al cambiar la contraseña.' });
         }
 
-        if (result.length === 0) {
+        if (userResult.length === 0) {
+            console.log('Usuario no encontrado.');
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        const user = result[0];
-
-        // Comparar la contraseña antigua ingresada con la contraseña en la base de datos
-        if (oldPassword === user.password) {
-            // Actualizar la contraseña en la base de datos
-            const updateQuery = 'UPDATE usuario SET password = ? WHERE id = ?';
-            db.query(updateQuery, [newPassword, userId], (err, result) => {
+        if (oldPassword) {
+            // Verificar la contraseña actual
+            const checkPasswordQuery = 'SELECT password FROM usuario WHERE id = ?';
+            db.query(checkPasswordQuery, [userId], (err, passwordResult) => {
                 if (err) {
-                    console.error('Error al actualizar la contraseña:', err);
+                    console.error('Error al verificar la contraseña:', err);
                     return res.status(500).json({ message: 'Error al cambiar la contraseña.' });
                 }
 
-                res.json({ message: 'Contraseña cambiada exitosamente.' });
+                const storedPassword = passwordResult[0].password;
+
+                // Comparar la contraseña ingresada con la contraseña de la base de datos
+                if (oldPassword !== storedPassword) {
+                    console.log('Contraseña incorrecta.');
+                    return res.status(401).json({ message: 'Contraseña incorrecta.' });
+                }
+
+                // Actualizar la contraseña en la base de datos
+                const updateQuery = 'UPDATE usuario SET password = ? WHERE id = ?';
+                db.query(updateQuery, [newPassword, userId], (err, result) => {
+                    if (err) {
+                        console.error('Error al actualizar la contraseña:', err);
+                        return res.status(500).json({ message: 'Error al cambiar la contraseña.' });
+                    }
+
+                    res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
+                });
             });
         } else {
-            res.status(401).json({ message: 'Contraseña antigua incorrecta.' });
+            // Si no se proporciona la contraseña actual, verificar permisos de administrador
+            const adminQuery = 'SELECT tipo_usuario FROM usuario WHERE id = ?';
+            db.query(adminQuery, [req.header('user-id')], (err, adminResult) => {
+                if (err) {
+                    console.error('Error al verificar el tipo de usuario:', err);
+                    return res.status(500).json({ message: 'Error al cambiar la contraseña.' });
+                }
+
+                if (adminResult.length === 0) {
+                    console.log('No se proporcionó el ID del usuario.');
+                    return res.status(404).json({ message: 'No se proporcionó el ID del usuario.' });
+                }
+
+                const admin = adminResult[0];
+
+                if (admin.tipo_usuario !== '1') {
+                    console.log('No es administrador.');
+                    return res.status(403).json({ message: 'No tienes permisos para realizar esta acción.' });
+                }
+
+                // Actualizar la contraseña en la base de datos
+                const updateQuery = 'UPDATE usuario SET password = ? WHERE id = ?';
+                db.query(updateQuery, [newPassword, userId], (err, result) => {
+                    if (err) {
+                        console.error('Error al actualizar la contraseña:', err);
+                        return res.status(500).json({ message: 'Error al cambiar la contraseña.' });
+                    }
+
+                    res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
+                });
+            });
         }
     });
 });
@@ -261,7 +301,7 @@ app.put('/cambiar-contrasena', async (req, res) => {
 // Ruta para importar herramientas desde un archivo Excel
 app.post('/importar-herramientas', (req, res) => {
     const herramientas = req.body;
-    console.log('Importando articulos desde excel'); // Agregar console.log
+    console.log('Importando articulos desde excel');
     if (!Array.isArray(herramientas)) {
         return res.status(400).json({ message: 'Se requiere un array de herramientas.' });
     }

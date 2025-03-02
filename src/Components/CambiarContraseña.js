@@ -69,9 +69,10 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId // Enviar userId desde localStorage
+                    'user-id': localStorage.getItem('userId') // Enviar userId desde localStorage
                 },
                 body: JSON.stringify({
+                    userId: userId,
                     oldPassword: oldPassword,
                     newPassword: newPassword,
                 }),
@@ -81,7 +82,7 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
             console.log('Cambiando contraseña - Response:', data); // Agregar console.log
 
             if (response.ok) {
-                 setMessage('Contraseña cambiada exitosamente.');
+                setMessage('Contraseña cambiada exitosamente.');
                 setSuccess(true);
                 setShowSuccessModal(true); // Mostrar el modal de éxito
                 setOldPassword('');
@@ -98,9 +99,10 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
             setSuccess(false);
         }
     };
-     const handleCloseSuccessModal = () => {
+
+    const handleCloseSuccessModal = () => {
         setShowSuccessModal(false);
-         onClose();
+        onClose();
     };
 
     const handleGoBack = () => {

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './Agregar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Importa jwt-decode
 
 const Agregar = () => {
     const [herramienta, setHerramienta] = useState('');
@@ -20,35 +19,6 @@ const Agregar = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Obtener el token JWT del localStorage
-        const token = localStorage.getItem('token');
-
-        // Verificar si el token existe
-        if (!token) {
-            console.error('No se encontró el token JWT.');
-            // Puedes redirigir al usuario a la página de inicio de sesión o mostrar un mensaje de error
-            return;
-        }
-
-        // Decodificar el token JWT
-        let decodedToken;
-        try {
-            decodedToken = jwtDecode(token);
-        } catch (error) {
-            console.error('Error al decodificar el token JWT:', error);
-            // Puedes redirigir al usuario a la página de inicio de sesión o mostrar un mensaje de error
-            return;
-        }
-
-        // Verificar si decodedToken es undefined o null antes de acceder a sus propiedades
-        if (!decodedToken) {
-            console.error('El token JWT no es válido.');
-            return;
-        }
-
-        // Obtener el userType del token decodificado
-        const userType = decodedToken.userType;
-
         // Crear el objeto con los datos del formulario
         const data = {
             herramienta,
@@ -63,15 +33,18 @@ const Agregar = () => {
             descripcion_mantenimiento
         };
 
+        console.log('Datos a enviar:', data); // Agregar console.log
+
         try {
             const response = await fetch('http://localhost:3001/herramientas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token // Incluir el token en el encabezado
                 },
                 body: JSON.stringify(data)
             });
+
+            console.log('Respuesta del servidor:', response); // Agregar console.log
 
             if (response.ok) {
                 alert('Herramienta agregada exitosamente.');
@@ -82,6 +55,7 @@ const Agregar = () => {
                 try {
                     const errorBody = await response.json();
                     errorMessage = errorBody.message || errorMessage;
+                    console.log('Error del servidor:', errorBody); // Agregar console.log
                 } catch (e) {
                     // Si hay un error al leer el cuerpo de la respuesta, usar el mensaje de error genérico
                     console.error('Error al leer el cuerpo de la respuesta:', e);

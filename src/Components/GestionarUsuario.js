@@ -7,12 +7,17 @@ const GestionarUsuario = () => {
     const [error, setError] = useState('');
     const [cargando, setCargando] = useState(true);
     const [userId, setUserId] = useState(null);
+    const [userType, setUserType] = useState(null);
 
     useEffect(() => {
-        // Obtener el userId del localStorage
+        // Obtener el userId y userType del localStorage
         const storedUserId = localStorage.getItem('userId');
+        const storedUserType = localStorage.getItem('userType');
         if (storedUserId) {
             setUserId(storedUserId);
+        }
+        if (storedUserType) {
+            setUserType(storedUserType);
         }
     }, []);
 
@@ -59,13 +64,14 @@ const GestionarUsuario = () => {
     }, []);
 
     const handleCambiarContraseña = async (idUsuario) => {
-       
         const nuevaContraseña = prompt('Ingrese la nueva contraseña:');
         if (!nuevaContraseña) return;
-       const confirmChange = window.confirm("¿Estás seguro de que quieres cambiar la contraseña?");
+
+        const confirmChange = window.confirm("¿Estás seguro de que quieres cambiar la contraseña?");
         if (!confirmChange) {
             return;
         }
+
         try {
             const response = await fetch('http://localhost:3001/cambiar-contrasena', {
                 method: 'PUT',
@@ -73,7 +79,10 @@ const GestionarUsuario = () => {
                     'Content-Type': 'application/json',
                     'user-id': localStorage.getItem('userId')
                 },
-                body: JSON.stringify({ id: idUsuario, newPassword: nuevaContraseña }),
+                body: JSON.stringify({
+                    userId: idUsuario,
+                    newPassword: nuevaContraseña
+                }),
             });
 
             if (response.ok) {
@@ -92,7 +101,7 @@ const GestionarUsuario = () => {
         const nuevoTipoUsuario = tipoUsuario === 2 ? 3 : 2;
 
         try {
-            const response = await fetch(`http://localhost:3001/usuarios/${idUsuario}/activar-desactivar`, {
+            const response = await fetch(`http://localhost:3001/usuarios/${idUsuario}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
