@@ -9,7 +9,6 @@ const Agregar = () => {
     const [modelo, setModelo] = useState('');
     const [propietario, setPropietario] = useState('');
     const [fecha_entrada, setFechaEntrada] = useState('');
-    const [nombre_trabajador, setNombreTrabajador] = useState('');
     const [nit, setNit] = useState('');
     const [descripcion_dano, setDescripcionDano] = useState('');
     const [fecha_mantenimiento, setFechaMantenimiento] = useState('');
@@ -26,7 +25,6 @@ const Agregar = () => {
             modelo,
             propietario,
             fecha_entrada,
-            nombre_trabajador,
             nit,
             descripcion_dano,
             fecha_mantenimiento,
@@ -40,6 +38,7 @@ const Agregar = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'user-id': localStorage.getItem('userId') // Enviar userId desde localStorage
                 },
                 body: JSON.stringify(data)
             });
@@ -116,15 +115,6 @@ const Agregar = () => {
                         id="fecha_entrada"
                         value={fecha_entrada}
                         onChange={(e) => setFechaEntrada(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="nombre_trabajador">Nombre del Trabajador:</label>
-                    <input
-                        type="text"
-                        id="nombre_trabajador"
-                        value={nombre_trabajador}
-                        onChange={(e) => setNombreTrabajador(e.target.value)}
                     />
                 </div>
                 <div className="form-group">

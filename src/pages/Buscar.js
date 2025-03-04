@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Buscar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import * as XLSX from 'xlsx';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+
 
 const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -130,6 +131,12 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
         marginLeft: '10px',
     };
 
+    const formatDate = (date) => {
+        if (!date) return '';
+        const newDate = new Date(date);
+        return newDate.toLocaleDateString('es-ES'); // Formato dd/mm/aaaa
+    };
+
     return (
         <div className="buscar">
             <h1>Buscar Artículos</h1>
@@ -186,7 +193,8 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                             <th>Modelo</th>
                             <th>Propietario</th>
                             <th>Nit</th>
-                            <th>Fecha Ingreso</th>
+                            <th>Fecha de Ingreso</th>
+                            <th>Fecha de Mantenimiento</th>
                             <th>Técnico</th>
                             <th>Ver QR</th>
                         </tr>
@@ -205,7 +213,8 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                                     <td data-label="Modelo">{herramienta.modelo}</td>
                                     <td data-label="Propietario">{herramienta.propietario}</td>
                                     <td data-label="Nit">{herramienta.nit}</td>
-                                    <td data-label="Fecha Ingreso">{herramienta.fecha_entrada}</td>
+                                    <td data-label="Fecha de Ingreso">{formatDate(herramienta.fecha_entrada)}</td>
+                                    <td data-label="Fecha de Mantenimiento">{formatDate(herramienta.fecha_mantenimiento)}</td>
                                     <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
                                     <td data-label="Ver QR">
                                         <Link to={`/qr/${herramienta.id_articulo}`}>
@@ -216,7 +225,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="9">No se encontraron herramientas.</td>
+                                <td colSpan="10">No se encontraron herramientas.</td>
                             </tr>
                         )}
                     </tbody>

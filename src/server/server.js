@@ -123,7 +123,12 @@ app.put('/usuarios/:id', async (req, res) => {
 // Ruta para obtener todos los artículos
 app.get('/herramientas', (req, res) => {
     console.log('Obteniendo todos los articulos');
-    const query = 'SELECT * FROM herramientas';
+    const query = `
+        SELECT h.*, 
+        (SELECT fecha_mantenimiento FROM historial_mantenimiento 
+         WHERE id_herramienta = h.id_articulo ORDER BY fecha_mantenimiento DESC LIMIT 1) AS fecha_mantenimiento
+        FROM herramientas h ORDER BY h.id_articulo DESC;
+    `;
     db.query(query, (err, result) => {
         if (err) {
             console.error('Error al obtener los artículos:', err);
@@ -133,34 +138,58 @@ app.get('/herramientas', (req, res) => {
     });
 });
 
+
+
 // Ruta para agregar un nuevo artículo y su historial de mantenimiento
 app.post('/herramientas', (req, res) => {
-    const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento } = req.body;
+    const { herramienta, marca, modelo, propietario, fecha_entrada, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento } = req.body;
     console.log('Agregando un nuevo articulo y su historial de mantenimiento');
     // Verificar que se proporcionen los datos del historial de mantenimiento
     if (!descripcion_dano || !fecha_mantenimiento || !descripcion_mantenimiento) {
         return res.status(400).json({ message: 'Todos los campos del historial de mantenimiento son obligatorios.' });
     }
 
-    // Insertar la herramienta en la tabla herramientas
-    const queryHerramienta = 'INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(queryHerramienta, [herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit], (err, resultHerramienta) => {
+    // Obtener el ID del usuario logueado desde el encabezado
+    const userId = req.header('user-id');
+    if (!userId) {
+        return res.status(400).json({ message: 'El ID del usuario es obligatorio en el encabezado.' });
+    }
+
+    // Obtener el nombre del usuario logueado desde la base de datos
+    const queryNombreUsuario = 'SELECT nombre FROM usuario WHERE id = ?';
+    db.query(queryNombreUsuario, [userId], (err, resultNombre) => {
         if (err) {
-            console.error('Error al agregar el artículo:', err);
-            return res.status(500).json({ message: 'Error al agregar el artículo.' });
+            console.error('Error al obtener el nombre del usuario:', err);
+            return res.status(500).json({ message: 'Error al agregar la herramienta.' });
         }
 
-        const id_articulo = resultHerramienta.insertId;
+        if (resultNombre.length === 0) {
+            console.log('Usuario no encontrado.');
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
 
-        // Insertar el historial de mantenimiento en la tabla historial_mantenimiento
-        const queryHistorial = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
-        db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_trabajador, nit], (err, resultHistorial) => {
+        const nombreUsuario = resultNombre[0].nombre;
+
+        // Insertar la herramienta en la tabla herramientas
+        const queryHerramienta = 'INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        db.query(queryHerramienta, [herramienta, marca, modelo, propietario, fecha_entrada, nombreUsuario, nit], (err, resultHerramienta) => {
             if (err) {
-                console.error('Error al agregar el historial de mantenimiento:', err);
-                return res.status(500).json({ message: 'Error al agregar el historial de mantenimiento.' });
+                console.error('Error al agregar el artículo:', err);
+                return res.status(500).json({ message: 'Error al agregar el artículo.' });
             }
 
-            res.status(201).json({ message: 'Artículo agregado exitosamente con su historial de mantenimiento.', id_articulo });
+            const id_articulo = resultHerramienta.insertId;
+
+            // Insertar el historial de mantenimiento en la tabla historial_mantenimiento
+            const queryHistorial = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
+            db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombreUsuario, nit], (err, resultHistorial) => {
+                if (err) {
+                    console.error('Error al agregar el historial de mantenimiento:', err);
+                    return res.status(500).json({ message: 'Error al agregar el historial de mantenimiento.' });
+                }
+
+                res.status(201).json({ message: 'Artículo agregado exitosamente con su historial de mantenimiento.', id_articulo });
+            });
         });
     });
 });
@@ -189,6 +218,8 @@ app.put('/herramientas/:id', (req, res) => {
     const articuloId = req.params.id;
     const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit } = req.body;
     console.log(`Actualizando articulo con ID: ${articuloId}`);
+
+    // Actualizar la tabla herramientas
     const query = 'UPDATE herramientas SET herramienta = ?, marca = ?, modelo = ?, propietario = ?, fecha_entrada = ?, nombre_trabajador = ?, nit = ? WHERE id_articulo = ?';
     db.query(query, [herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, articuloId], (err, result) => {
         if (err) {
@@ -196,9 +227,19 @@ app.put('/herramientas/:id', (req, res) => {
             return res.status(500).json({ message: 'Error al actualizar el artículo.' });
         }
 
-        res.json({ message: 'Artículo actualizado exitosamente.' });
+        // Actualizar el nit_propietario y nombre_tecnico en la tabla historial_mantenimiento
+        const updateHistorialQuery = 'UPDATE historial_mantenimiento SET nit_propietario = ?, nombre_tecnico = ? WHERE id_herramienta = ?';
+        db.query(updateHistorialQuery, [nit, nombre_trabajador, articuloId], (err, result) => {
+            if (err) {
+                console.error('Error al actualizar el nit_propietario y nombre_tecnico en historial_mantenimiento:', err);
+                return res.status(500).json({ message: 'Error al actualizar el nit_propietario y nombre_tecnico en historial_mantenimiento.' });
+            }
+
+            res.json({ message: 'Artículo actualizado exitosamente.' });
+        });
     });
 });
+
 
 // Ruta para eliminar un artículo
 app.delete('/herramientas/:id', (req, res) => {
@@ -329,4 +370,36 @@ app.post('/importar-herramientas', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
+});
+
+// Ruta para obtener los mantenimientos de una herramienta
+app.get('/mantenimientos/:id', (req, res) => {
+    const idHerramienta = req.params.id;
+    console.log(`Obteniendo mantenimientos para la herramienta con ID: ${idHerramienta}`);
+    const query = 'SELECT * FROM historial_mantenimiento WHERE id_herramienta = ?';
+    db.query(query, [idHerramienta], (err, result) => {
+        if (err) {
+            console.error('Error al obtener los mantenimientos:', err);
+            return res.status(500).json({ message: 'Error al obtener los mantenimientos.' });
+        }
+
+        res.json(result);
+    });
+});
+
+// Ruta para agregar un nuevo mantenimiento
+app.post('/mantenimientos', (req, res) => {
+    const { fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, id_herramienta, nit } = req.body;
+
+    console.log('Agregando mantenimiento:', req.body);
+
+    const query = 'INSERT INTO historial_mantenimiento (fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, id_herramienta, nit_propietario) VALUES (?, ?, ?, ?, ?)';
+    db.query(query, [fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, id_herramienta, nit], (err, result) => {
+        if (err) {
+            console.error('Error al agregar el mantenimiento:', err);
+            return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
+        }
+        console.log('Mantenimiento agregado con ID:', result.insertId);
+        res.json({ message: 'Mantenimiento agregado correctamente', id: result.insertId });
+    });
 });
