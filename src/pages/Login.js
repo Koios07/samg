@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Modal from 'react-modal';
+import './Login.css';
 
 const Login = ({ onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState(''); // Mensaje del modal
-    const [showModal, setShowModal] = useState(false); // Estado para mostrar/ocultar el modal
+    const [message, setMessage] = useState('');
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
-    // Función para cerrar el modal
     const handleCloseModal = () => {
         setShowModal(false);
         setMessage('');
     };
 
-    // Función para manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -33,24 +33,25 @@ const Login = ({ onLogin }) => {
                 // Si es tipo_usuario 1 o 2, permitir acceso
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userId', data.userId);
-                localStorage.setItem('userType', data.userType);
-                localStorage.setItem('nombre', data.nombre);
+                localStorage.setItem('userName', data.nombre);  // Clave correcta para guardar el nombre de usuario
+                localStorage.setItem('userType', data.tipo_usuario);
                 onLogin(data.userId, data.userType, data.nombre);
-                navigate('/'); // Redirigir al home
+                console.log("Nombre de usuario guardado en localStorage:", data.nombre);
+
+                navigate('/buscar');
             } else {
-                // Mostrar mensaje en el modal según el tipo de error
                 setMessage(data.message || 'Error al iniciar sesión.');
-                setShowModal(true); // Mostrar el modal
+                setShowModal(true);
             }
         } catch (error) {
             console.error('Error en la conexión:', error);
             setMessage('Error al iniciar sesión. Por favor, intente nuevamente más tarde.');
-            setShowModal(true); // Mostrar el modal en caso de error de conexión
+            setShowModal(true);
         }
     };
 
     return (
-        <div>
+        <div className="login-container">
             <h2>Iniciar Sesión</h2>
             <form onSubmit={handleSubmit}>
                 <div>
@@ -59,6 +60,7 @@ const Login = ({ onLogin }) => {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        name="username"
                         required
                     />
                 </div>
@@ -68,6 +70,7 @@ const Login = ({ onLogin }) => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        name = "password"
                         required
                     />
                 </div>

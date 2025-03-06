@@ -1,66 +1,59 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Buscar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as XLSX from 'xlsx';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
-
 const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [herramientasFiltradas, setHerramientasFiltradas] = useState([]);
-    const [mostrarTabla, setMostrarTabla] = useState(isLoggedIn);
-    const searchInput = useRef(null);
+    const [mostrarTabla, setMostrarTabla] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         if (isLoggedIn) {
-            setHerramientasFiltradas(initialHerramientas || []);
-            setMostrarTabla(true);
+            obtenerHerramientas();
+            setMostrarTabla(true); // Mostrar tabla al cargar la página para usuarios logueados
         } else {
-            setHerramientasFiltradas([]);
-            setMostrarTabla(false);
+            setMostrarTabla(false); // No mostrar tabla al inicio para usuarios no logueados
         }
-    }, [initialHerramientas, isLoggedIn]);
+    }, [isLoggedIn]);
+
+    const obtenerHerramientas = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/herramientas');
+            const data = await response.json();
+            setHerramientasFiltradas(data);
+        } catch (error) {
+            console.error('Error al obtener herramientas:', error);
+        }
+    };
 
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
         let filtered = initialHerramientas || [];
 
-        if (isLoggedIn) {
+        if (searchTerm) {
             filtered = initialHerramientas?.filter((herramienta) =>
+                herramienta.nit === searchTerm ||
                 herramienta.herramienta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (herramienta.id_articulo && herramienta.id_articulo.toString().includes(searchTerm.trim())) ||
-                herramienta.propietario?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (herramienta.nit && herramienta.nit.toString().includes(searchTerm.trim()))
+                herramienta.propietario?.toLowerCase().includes(searchTerm.toLowerCase())
             ) || [];
-        } else {
-            if (!searchTerm) {
-                alert("Por favor, ingrese el NIT y el término de búsqueda.");
-                return;
-            }
-
-            filtered = initialHerramientas?.filter((herramienta) =>
-                (herramienta.herramienta?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    (herramienta.id_articulo && herramienta.id_articulo.toString().includes(searchTerm.trim())) ||
-                    herramienta.propietario?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    (herramienta.nit && herramienta.nit.toString().includes(searchTerm.trim()))) &&
-                herramienta.nit === searchTerm
-            ) || [];
-
-            if (filtered.length === 0) {
-                alert("No se encontraron herramientas con ese NIT.");
-                return;
-            }
-
-            setMostrarTabla(true);
         }
 
         setHerramientasFiltradas(filtered);
+        setMostrarTabla(true); // Mostrar tabla después de buscar
     };
 
     const generarExcel = () => {
+        if (!isLoggedIn) {
+            alert('Por favor, inicie sesión para descargar la plantilla.');
+            return;
+        }
+
         const headers = [
             "herramienta",
             "marca",
@@ -89,6 +82,11 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
     };
 
     const handleFileUpload = async (e) => {
+        if (!isLoggedIn) {
+            alert('Por favor, inicie sesión para importar archivos.');
+            return;
+        }
+
         const selectedFile = e.target.files[0];
         if (selectedFile) {
             const reader = new FileReader();
@@ -112,6 +110,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
 
                     if (response.ok) {
                         alert('Datos importados correctamente');
+                        obtenerHerramientas(); // Refresca la lista
                     } else {
                         throw new Error('Error al importar datos');
                     }
@@ -142,16 +141,10 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
             <h1>Buscar Artículos</h1>
             <div className="button-container">
                 <input
-                    ref={searchInput}
                     type="text"
-                    placeholder={isLoggedIn ? "Buscar por ID, nombre o propietario..." : "Ingrese el NIT y el término de búsqueda..."}
+                    placeholder="Ingrese el NIT o el término de búsqueda..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSearch();
-                        }
-                    }}
                     className="search-input"
                 />
                 <button onClick={handleSearch} className="search-button">Buscar</button>
@@ -161,26 +154,28 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                         <button className="add-button">Agregar</button>
                     </Link>
                 )}
-                <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={dropdownStyle}>
-                    <DropdownToggle caret toggle={toggleDropdown}>
-                        Archivos XLS
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                        <DropdownItem onClick={generarExcel}>Descargar Plantilla</DropdownItem>
-                        <DropdownItem>
-                            <label htmlFor="upload-input" className="upload-label">
-                                Cargar Archivo
-                            </label>
-                            <input
-                                id="upload-input"
-                                type="file"
-                                accept=".xlsx, .xls"
-                                style={{ display: 'none' }}
-                                onChange={handleFileUpload}
-                            />
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
+                {isLoggedIn && userType === '1' && (
+                    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={dropdownStyle}>
+                        <DropdownToggle caret toggle={toggleDropdown}>
+                            Archivos XLS
+                        </DropdownToggle>
+                        <DropdownMenu right>
+                            <DropdownItem onClick={generarExcel}>Descargar Plantilla</DropdownItem>
+                            <DropdownItem>
+                                <label htmlFor="upload-input" className="upload-label">
+                                    Cargar Archivo
+                                </label>
+                                <input
+                                    id="upload-input"
+                                    type="file"
+                                    accept=".xlsx, .xls"
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileUpload}
+                                />
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                )}
             </div>
 
             {mostrarTabla && (
@@ -225,7 +220,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="10">No se encontraron herramientas.</td>
+                                <td colSpan="10">No se encontraron resultados.</td>
                             </tr>
                         )}
                     </tbody>

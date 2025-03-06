@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Agregar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import './Buscar.css';
 
 const Agregar = () => {
     const [herramienta, setHerramienta] = useState('');

@@ -23,6 +23,7 @@ function App() {
     const [nombre, setNombre] = useState(null);
     const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
     const [modalMessage, setModalMessage] = useState(''); // Mensaje del modal
+    const [cargando, setCargando] = useState(true); // Estado de carga
 
     useEffect(() => {
         const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -44,24 +45,24 @@ function App() {
         }
     }, []);
 
-    // Función para obtener artículos desde el servidor
     const fetchHerramientas = async () => {
         try {
             const response = await fetch('http://localhost:3001/herramientas');
             if (!response.ok) throw new Error('Error en la respuesta de la red');
             const data = await response.json();
             setHerramientas(data);
+            console.log('Herramientas cargadas:', data); // Verifica si se cargan los datos
+            setCargando(false); // Cambia el estado de carga a false
         } catch (error) {
             console.error('Error fetching herramientas:', error);
+            setCargando(false); // Cambia el estado de carga a false en caso de error
         }
     };
 
-    // Cargar artículos al montar el componente
     useEffect(() => {
         fetchHerramientas();
     }, []);
 
-    // Manejar inicio de sesión
     const handleLogin = (userId, userType, nombre) => {
         setIsLoggedIn(true);
         setUserId(userId);
@@ -74,7 +75,6 @@ function App() {
         localStorage.setItem('nombre', nombre);
     };
 
-    // Manejar cierre de sesión
     const handleLogout = () => {
         setIsLoggedIn(false);
         setUserId(null);
@@ -87,7 +87,6 @@ function App() {
         localStorage.removeItem('nombre');
     };
 
-    // Función para cerrar el modal
     const handleCloseModal = () => {
         setShowModal(false);
         setModalMessage('');
@@ -106,12 +105,13 @@ function App() {
                 modalMessage={modalMessage}
                 handleCloseModal={handleCloseModal}
                 handleLogin={handleLogin}
+                cargando={cargando}
             />
         </Router>
     );
 }
 
-function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, userId, showModal, modalMessage, handleCloseModal, handleLogin }) {
+function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, userId, showModal, modalMessage, handleCloseModal, handleLogin, cargando }) {
     const navigate = useNavigate(); // Hook para la navegación
 
     return (
@@ -119,80 +119,82 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
             {/* Barra de navegación */}
             <NavigationBar isLoggedIn={isLoggedIn} onLogout={onLogout} userType={userType} nombre={nombre} />
             <div className="container">
-                <Routes>
-                    {/* Rutas públicas */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/nosotros" element={<Nosotros />} />
-                    <Route path="/contactanos" element={<Contactanos />} />
-                    <Route path="/buscar" element={<Buscar herramientas={herramientas} isLoggedIn={isLoggedIn} />} />
+                {!cargando && herramientas.length > 0 && (
+                    <Routes>
+                        {/* Rutas públicas */}
+                        <Route path="/" element={<Home />} />
+                        <Route path="/nosotros" element={<Nosotros />} />
+                        <Route path="/contactanos" element={<Contactanos />} />
+                        <Route path="/buscar" element={<Buscar herramientas={herramientas} isLoggedIn={isLoggedIn} />} />
 
-                    {/* Ruta para login */}
-                    <Route
-                        path="/login"
-                        element={
-                            isLoggedIn ? (
-                                <Navigate to="/" replace />
-                            ) : (
-                                <Login onLogin={handleLogin} />
-                            )
-                        }
-                    />
+                        {/* Ruta para login */}
+                        <Route
+                            path="/login"
+                            element={
+                                isLoggedIn ? (
+                                    <Navigate to="/" replace />
+                                ) : (
+                                    <Login onLogin={handleLogin} />
+                                )
+                            }
+                        />
 
-                    {/* Rutas privadas */}
-                    <Route
-                        path="/configuracion"
-                        element={
-                            <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1', '2']}>
-                                <Configuracion userId={userId} userType={userType} />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/configuracion/cambiarcontrasena"
-                        element={
-                            <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1', '2', '3']}>
-                                <CambiarContrasena userId={userId} onClose={() => navigate('/configuracion')} />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/crearusuario"
-                        element={
-                            <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1']}>
-                                <CrearUsuario onClose={() => navigate('/configuracion')} />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/agregar"
-                        element={
-                            <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1', '2']}>
-                                <Agregar />
-                            </PrivateRoute>
-                        }
-                    />
-                    {/* Otras rutas */}
-                    <Route path="/qr/:id_articulo" element={<QRCodePage herramientas={herramientas} />} />
-                    <Route
-                        path="/herramienta/:id_articulo"
-                        element={
-                            isLoggedIn ? (
-                                <HerramientaDetalle
-                                    onUpdateHerramienta={(updatedHerramienta) =>
-                                        herramientas.map((herramienta) =>
-                                            herramienta.id_articulo === updatedHerramienta.id_articulo ? updatedHerramienta : herramienta
-                                        )
-                                    }
-                                    isLoggedIn={isLoggedIn}
-                                />
-                            ) : (
-                                <Navigate to="/login" replace />
-                            )
-                        }
-                    />
-                    {/* Ruta por defecto */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                        {/* Rutas privadas */}
+                        <Route
+                            path="/configuracion"
+                            element={
+                                <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1', '2']}>
+                                    <Configuracion userId={userId} userType={userType} />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/configuracion/cambiarcontrasena"
+                            element={
+                                <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1', '2', '3']}>
+                                    <CambiarContrasena userId={userId} onClose={() => navigate('/configuracion')} />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/crearusuario"
+                            element={
+                                <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1']}>
+                                    <CrearUsuario onClose={() => navigate('/configuracion')} />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/agregar"
+                            element={
+                                <PrivateRoute isLoggedIn={isLoggedIn} userType={userType} allowedTypes={['1', '2']}>
+                                    <Agregar />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        {/* Otras rutas */}
+                        <Route path="/qr/:id_articulo" element={<QRCodePage herramientas={herramientas} />} />
+                        <Route
+                            path="/herramienta/:id_articulo"
+                            element={<HerramientaDetalle
+                                onUpdateHerramienta={(updatedHerramienta) =>
+                                    herramientas.map((herramienta) =>
+                                        herramienta.id_articulo === updatedHerramienta.id_articulo ? updatedHerramienta : herramienta
+                                    )
+                                }
+                                isLoggedIn={isLoggedIn}
+                            />}
+                        />
+                        {/* Ruta por defecto */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                )}
+                {cargando && (
+                    <div style={{ textAlign: 'center', margin: '20px' }}>
+                        <h1>Cargando...</h1>
+                    </div>
+                )}
             </div>
 
             {/* Modal personalizado */}

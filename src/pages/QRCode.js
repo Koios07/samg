@@ -1,30 +1,40 @@
-// src/pages/QRCode.js
-
 import React from 'react';
-import { QRCodeSVG } from 'qrcode.react'; // Asegúrate de usar la importación correcta
-import { useParams, useNavigate } from 'react-router-dom'; // Importa useParams y useNavigate
+import { QRCodeSVG } from 'qrcode.react';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const QRCodePage = ({ articulos }) => {
-  const { id_articulo } = useParams(); // Obtiene el ID del artículo de los parámetros de la URL
-  const navigate = useNavigate(); // Hook para navegar
-  const articulo = articulos.find(item => item.id_articulo.toString() === id_articulo); // Busca el artículo correspondiente
+const QRCodePage = ({ herramientas }) => {
+    const { id_articulo } = useParams();
+    const navigate = useNavigate();
 
-  if (!articulo) {
-    return <div>No se encontró el artículo.</div>;
-  }
+    if (!herramientas) {
+        return <div>No se recibieron herramientas.</div>;
+    }
 
-  return (
-    <div style={{ textAlign: 'center', margin: '20px' }}>
-      <h1>Código QR para {articulo.articulo}</h1>
-      <QRCodeSVG value={`ID: ${articulo.id_articulo}`} size={256} /> {/* Muestra el ID en el QR */}
-      <p>ID Artículo: {articulo.id_articulo}</p>
-      
-      {/* Botón "Atrás" */}
-      <button onClick={() => navigate(-1)} style={{ marginTop: '20px' }}>
-        Atrás
-      </button>
-    </div>
-  );
+    const articulo = herramientas.find(item => item.id_articulo.toString() === id_articulo);
+
+    if (!articulo) {
+        return <div>No se encontró el artículo.</div>;
+    }
+
+    const url = `${window.location.origin}/herramienta/${articulo.id_articulo}`;
+
+    const imprimir = () => {
+        window.print();
+    };
+
+    return (
+        <div className="qr-container">
+            <QRCodeSVG className="qr-imprimir" value={url} size={256} />
+            <div className="botones no-imprimir" style={{ marginTop: '40px' }}>
+                <button onClick={() => navigate(-1)} style={{ marginRight: '10px' }}>
+                    Atrás
+                </button>
+                <button onClick={imprimir}>
+                    Imprimir
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default QRCodePage;
