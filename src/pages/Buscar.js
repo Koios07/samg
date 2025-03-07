@@ -4,12 +4,23 @@ import './Buscar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as XLSX from 'xlsx';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import Modal from 'react-modal';
+import { QRCodeSVG } from 'qrcode.react';
 
-const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => {
+// Asegúrate de enlazar la app con el elemento raíz para accesibilidad
+Modal.setAppElement('#root');
+
+const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [herramientasFiltradas, setHerramientasFiltradas] = useState([]);
     const [mostrarTabla, setMostrarTabla] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+    const [qrCodeUrl, setQrCodeUrl] = useState('');
+
+    // Estados para la paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const [herramientasPerPage] = useState(10);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -32,7 +43,11 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
 
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
-    const handleSearch = async () => {
+    const handleSearch = async (e) => {
+        if (e && e.key === 'Enter') {
+            e.preventDefault();
+        }
+
         let filtered = initialHerramientas || [];
 
         if (searchTerm) {
@@ -46,6 +61,13 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
 
         setHerramientasFiltradas(filtered);
         setMostrarTabla(true); // Mostrar tabla después de buscar
+    };
+
+    const handleSearchInput = (e) => {
+        setSearchTerm(e.target.value);
+        if (e.key === 'Enter') {
+            handleSearch(e);
+        }
     };
 
     const generarExcel = () => {
@@ -136,6 +158,26 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
         return newDate.toLocaleDateString('es-ES'); // Formato dd/mm/aaaa
     };
 
+    // Lógica para la paginación
+    const indexOfLastHerramienta = currentPage * herramientasPerPage;
+    const indexOfFirstHerramienta = indexOfLastHerramienta - herramientasPerPage;
+    const currentHerramientas = herramientasFiltradas.slice(indexOfFirstHerramienta, indexOfLastHerramienta);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const openQrModal = (id) => {
+        setQrCodeUrl(`${window.location.origin}/herramienta/${id}`);
+        setIsQrModalOpen(true);
+    };
+
+    const closeQrModal = () => {
+        setIsQrModalOpen(false);
+    };
+
+    const imprimirQrCode = () => {
+        window.print();
+    };
+
     return (
         <div className="buscar">
             <h1>Buscar Artículos</h1>
@@ -145,6 +187,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                     placeholder="Ingrese el NIT o el término de búsqueda..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={handleSearchInput} // Agregado para detectar la tecla Enter
                     className="search-input"
                 />
                 <button onClick={handleSearch} className="search-button">Buscar</button>
@@ -154,30 +197,33 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                         <button className="add-button">Agregar</button>
                     </Link>
                 )}
-                {isLoggedIn && userType === '1' && (
-                    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={dropdownStyle}>
-                        <DropdownToggle caret toggle={toggleDropdown}>
-                            Archivos XLS
-                        </DropdownToggle>
-                        <DropdownMenu right>
-                            <DropdownItem onClick={generarExcel}>Descargar Plantilla</DropdownItem>
-                            <DropdownItem>
-                                <label htmlFor="upload-input" className="upload-label">
-                                    Cargar Archivo
-                                </label>
-                                <input
-                                    id="upload-input"
-                                    type="file"
-                                    accept=".xlsx, .xls"
-                                    style={{ display: 'none' }}
-                                    onChange={handleFileUpload}
-                                />
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
+                {console.log('isLoggedIn:', isLoggedIn)}
+                {console.log('userType:', userType)}
+                {isLoggedIn && String(userType) === "1" && (
+                    <div>
+                        <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={dropdownStyle}>
+                            <DropdownToggle caret toggle={toggleDropdown}>
+                                Archivos XLS
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                                <DropdownItem onClick={generarExcel}>Descargar Plantilla</DropdownItem>
+                                <DropdownItem>
+                                    <label htmlFor="upload-input" className="upload-label">
+                                        Cargar Archivo
+                                    </label>
+                                    <input
+                                        id="upload-input"
+                                        type="file"
+                                        accept=".xlsx, .xls"
+                                        style={{ display: 'none' }}
+                                        onChange={handleFileUpload}
+                                    />
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                 )}
             </div>
-
             {mostrarTabla && (
                 <table className="articulos-table">
                     <thead>
@@ -195,8 +241,8 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                         </tr>
                     </thead>
                     <tbody>
-                        {herramientasFiltradas.length > 0 ? (
-                            herramientasFiltradas.map((herramienta) => (
+                        {currentHerramientas.length > 0 ? (
+                            currentHerramientas.map((herramienta) => (
                                 <tr key={herramienta.id_articulo}>
                                     <td data-label="ID">
                                         <Link to={`/herramienta/${herramienta.id_articulo}`}>
@@ -212,9 +258,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                                     <td data-label="Fecha de Mantenimiento">{formatDate(herramienta.fecha_mantenimiento)}</td>
                                     <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
                                     <td data-label="Ver QR">
-                                        <Link to={`/qr/${herramienta.id_articulo}`}>
-                                            Ver QR
-                                        </Link>
+                                        <button onClick={() => openQrModal(herramienta.id_articulo)}>Ver QR</button>
                                     </td>
                                 </tr>
                             ))
@@ -226,6 +270,56 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType }) => 
                     </tbody>
                 </table>
             )}
+            {/* Paginación */}
+            {mostrarTabla && herramientasFiltradas.length > herramientasPerPage && (
+                <div className="pagination-container">
+                    <div className="pagination">
+                        {Array.from({ length: Math.ceil(herramientasFiltradas.length / herramientasPerPage) }, (_, i) => (
+                            <button key={i} onClick={() => paginate(i + 1)} className={`page-link ${currentPage === i + 1 ? 'active' : ''}`}>
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+            <Modal
+                isOpen={isQrModalOpen}
+                onRequestClose={closeQrModal}
+                className="qr-modal"
+                overlayClassName="qr-modal-overlay"
+                style={{
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)'
+                    },
+                    content: {
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        border: '1px solid #ccc',
+                        background: '#fff',
+                        overflow: 'auto',
+                        WebkitOverflowScrolling: 'touch',
+                        borderRadius: '4px',
+                        outline: 'none',
+                        padding: '20px',
+                        maxWidth: '50%',
+                        maxHeight: '50%',
+                        width: 'auto',
+                        height: 'auto'
+                    }
+                }}
+                contentLabel="Código QR"
+            >
+                <div className="qr-content">
+                    <h2 className="qr-title">Código QR</h2>
+                    <QRCodeSVG value={qrCodeUrl} size={256} className="qr-code" />
+                    <div className="modal-buttons">
+                        <button onClick={imprimirQrCode} className="print-button">Imprimir</button>
+                        <button onClick={closeQrModal} className="close-button">Cerrar</button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

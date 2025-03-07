@@ -6,14 +6,17 @@ const Masivos = ({ onClose, herramientas, accion }) => {
 
     const generarExcel = () => {
         const headers = [
-            "id_articulo",
             "herramienta",
             "marca",
             "modelo",
             "propietario",
             "fecha_entrada",
             "nombre_trabajador",
-            "nit"
+            "nit",
+            "descripcion_daño",
+            "fecha mantenimiento",
+            "descripcion_manenimiento"
+
         ];
 
         const wb = XLSX.utils.book_new();

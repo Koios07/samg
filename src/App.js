@@ -125,8 +125,7 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
                         <Route path="/" element={<Home />} />
                         <Route path="/nosotros" element={<Nosotros />} />
                         <Route path="/contactanos" element={<Contactanos />} />
-                        <Route path="/buscar" element={<Buscar herramientas={herramientas} isLoggedIn={isLoggedIn} />} />
-
+                        <Route path="/buscar" element={<Buscar herramientas={herramientas} isLoggedIn={isLoggedIn} userType={userType} />} />
                         {/* Ruta para login */}
                         <Route
                             path="/login"

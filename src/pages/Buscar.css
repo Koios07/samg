@@ -147,4 +147,428 @@
        margin-left:auto;
    }
 }
-    
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.print-button,
+.close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.print-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.close-button {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.print-button,
+.close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.print-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.close-button {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.print-button,
+.close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.print-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.close-button {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    margin-bottom: 20px;
+    width: 100%; /* Asegura que el código QR ocupe todo el ancho disponible */
+    height: auto;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.print-button,
+.close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.print-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.close-button {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 50%; /* Tamaño reducido del modal */
+    max-height: 50%; /* Tamaño reducido del modal */
+    overflow: auto;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    margin-bottom: 20px;
+    width: 100%; /* Asegura que el código QR ocupe todo el ancho disponible */
+    height: auto;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.print-button,
+.close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.print-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.close-button {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px;
+    max-width: 50%; /* Tamaño reducido del modal */
+    max-height: 50%; /* Tamaño reducido del modal */
+    overflow: auto;
+}
+
+.qr-content {
+    text-align: center;
+}
+
+.qr-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    margin-bottom: 20px;
+    width: 100%; /* Asegura que el código QR ocupe todo el ancho disponible */
+    height: auto;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+}
+
+.print-button,
+.close-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.print-button {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.close-button {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Estilos para imprimir */
+@media print {
+    .qr-modal-overlay {
+        background-color: transparent !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        display: flex !important;
+        justify-content: center !important; /* Centra el contenido horizontalmente */
+        align-items: center !important; /* Centra el contenido verticalmente */
+    }
+
+    .qr-modal {
+        position: absolute !important;
+        top: 50% !important; /* Centra verticalmente */
+        left: 50% !important; /* Centra horizontalmente */
+        transform: translate(-50%, -50%) !important; /* Ajusta la posición para centrar */
+        width: auto !important; /* Ancho automático */
+        height: auto !important; /* Altura automática */
+        max-width: 100mm !important; /* Ancho máximo para el QR */
+        max-height: 100mm !important; /* Altura máxima para el QR */
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+
+    .qr-content {
+        text-align: center !important; /* Alinea el contenido a la izquierda */
+    }
+
+    .qr-title {
+        display: none !important;
+    }
+
+    .modal-buttons {
+        display: none !important;
+    }
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    .qr-modal,
+    .qr-modal * {
+        visibility: visible !important;
+    }
+
+    .qr-code {
+        width: auto !important; /* Ancho automático */
+        height: auto !important; /* Altura automática */
+        max-width: 100mm !important; /* Ancho máximo para el QR */
+        max-height: 100mm !important; /* Altura máxima para el QR */
+        margin: 0 !important; /* Elimina márgenes */
+    }
+}

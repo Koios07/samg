@@ -32,6 +32,10 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
     const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
     const [mensajeModal, setMensajeModal] = useState('');
 
+    // Estados para la paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const [mantenimientosPerPage] = useState(3);
+
     useEffect(() => {
         console.log('Se montó el componente HerramientaDetalle.js');
         obtenerDatos();
@@ -72,8 +76,12 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
             if (!response.ok) {
                 throw new Error('Error al obtener los mantenimientos');
             }
-            const data = await response.json();
+            let data = await response.json();
             console.log('Mantenimientos obtenidos:', data);
+
+            // Ordenar mantenimientos de forma descendente por fecha
+            data = data.sort((a, b) => new Date(b.fecha_mantenimiento) - new Date(a.fecha_mantenimiento));
+
             setMantenimientos(data);
         } catch (error) {
             console.error('Error fetching mantenimientos:', error);
@@ -270,13 +278,13 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
 
             if (responseMantenimiento.ok) {
                 //const mantenimientosActualizados = mantenimientos.map(mantenimiento =>
-                  //  mantenimiento.id_mantenimiento === mantenimientoAEditar.id_mantenimiento
-                    //    ? { ...mantenimientoAEditar, ...nuevoMantenimiento }
-                      //  : mantenimiento
-                   // );
-                    
+                //  mantenimiento.id_mantenimiento === mantenimientoAEditar.id_mantenimiento
+                //    ? { ...mantenimientoAEditar, ...nuevoMantenimiento }
+                //  : mantenimiento
+                // );
+
                 //setMantenimientos(mantenimientosActualizados);
-                 await fetchMantenimientos(); // Refresca los mantenimientos
+                await fetchMantenimientos(); // Refresca los mantenimientos
                 setMensajeModal('Mantenimiento actualizado correctamente.');
             } else {
                 console.error('Error al actualizar el mantenimiento:', responseMantenimiento.statusText);
@@ -326,6 +334,13 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
         setMantenimientoAEditar(null);
     };
 
+    // Lógica para la paginación
+    const indexOfLastMantenimiento = currentPage * mantenimientosPerPage;
+    const indexOfFirstMantenimiento = indexOfLastMantenimiento - mantenimientosPerPage;
+    const currentMantenimientos = mantenimientos.slice(indexOfFirstMantenimiento, indexOfLastMantenimiento);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <div className="box">
             <h2>Detalle de Herramienta</h2>
@@ -357,85 +372,109 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 ) : formData.fecha_entrada}</p>
                 {isLoggedIn && (
                     <div>
-                        {isEditing ? (
-                            <div>
-                                <button onClick={handleSave}>Guardar Cambios</button>
-                                <button onClick={() => setIsEditing(false)}>Cancelar</button>
-                            </div>
+                        {!isEditing ? (
+                            <button onClick={() => setIsEditing(true)}>Editar</button>
                         ) : (
-                            <button onClick={() => setIsEditing(true)}>Editar herramienta</button>
+                            <>
+                                <button onClick={handleSave}>Guardar</button>
+                                <button onClick={() => setIsEditing(false)}>Cancelar</button>
+                            </>
                         )}
                     </div>
                 )}
             </div>
 
+            {/* Lista de Mantenimientos Paginada */}
+            <h3>Mantenimientos:</h3>
+            {currentMantenimientos.length > 0 ? (
+                <ul className="mantenimientos-list">
+                    {currentMantenimientos.map(mantenimiento => (
+                        <li key={mantenimiento.id_mantenimiento}>
+                            <p>Fecha Mantenimiento: {formatDate(mantenimiento.fecha_mantenimiento)}</p>
+                            <p>Descripción Daño: {mantenimiento.descripcion_dano}</p>
+                            <p>Descripción Mantenimiento: {mantenimiento.descripcion_mantenimiento}</p>
+                            {isLoggedIn && (
+                                <button onClick={() => handleEditarMantenimiento(mantenimiento)}>Editar Mantenimiento</button>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No hay mantenimientos registrados para esta herramienta.</p>
+            )}
             {isLoggedIn && (
                 <div>
-                    <button onClick={handleMostrarFormulario}>Añadir Mantenimiento</button>
-                    {mostrarFormularioMantenimiento && (
-                        <div className="box">
-                            <h3>Agregar Mantenimiento</h3>
+                    {!mostrarFormularioMantenimiento ? (
+                        <button onClick={handleMostrarFormulario}>Agregar Mantenimiento</button>
+                    ) : (
+                        <div>
+                            <h4>Agregar/Editar Mantenimiento</h4>
+                            <label>Fecha Mantenimiento:</label>
                             <input
                                 type="date"
                                 name="fecha_mantenimiento"
-                                value={nuevoMantenimiento.fecha_mantenimiento}
-                                onChange={(e) => setNuevoMantenimiento({ ...nuevoMantenimiento, fecha_mantenimiento: e.target.value })}
-                                placeholder="Fecha de Mantenimiento"
+                                value={nuevoMantenimiento.fecha_mantenimiento || ''}
+                                onChange={handleNuevoMantenimientoChange}
                             />
+                            <label>Descripción Daño:</label>
                             <input
                                 type="text"
                                 name="descripcion_dano"
-                                value={nuevoMantenimiento.descripcion_dano}
-                                onChange={(e) => setNuevoMantenimiento({ ...nuevoMantenimiento, descripcion_dano: e.target.value })}
-                                placeholder="Descripción del Daño"
+                                value={nuevoMantenimiento.descripcion_dano || ''}
+                                onChange={handleNuevoMantenimientoChange}
                             />
+                            <label>Descripción Mantenimiento:</label>
                             <input
                                 type="text"
                                 name="descripcion_mantenimiento"
-                                value={nuevoMantenimiento.descripcion_mantenimiento}
-                                onChange={(e) => setNuevoMantenimiento({ ...nuevoMantenimiento, descripcion_mantenimiento: e.target.value })}
-                                placeholder="Descripción del Mantenimiento"
+                                value={nuevoMantenimiento.descripcion_mantenimiento || ''}
+                                onChange={handleNuevoMantenimientoChange}
                             />
                             {mantenimientoAEditar ? (
                                 <button onClick={handleActualizarMantenimiento}>Actualizar Mantenimiento</button>
                             ) : (
-                                <button onClick={handleAgregarMantenimiento}>Guardar Mantenimiento</button>
+                                <button onClick={handleAgregarMantenimiento}>Agregar Mantenimiento</button>
                             )}
                             <button onClick={handleOcultarFormulario}>Cancelar</button>
                         </div>
                     )}
                 </div>
             )}
-
-            <div className="box">
-                <h3>Mantenimientos</h3>
-                {mantenimientos.length > 0 ? (
-                    mantenimientos.sort((a, b) => new Date(b.fecha_mantenimiento) - new Date(a.fecha_mantenimiento)).map((mantenimiento) => (
-                        <div key={mantenimiento.id_mantenimiento} className="mantenimiento-box">
-                            <p>Fecha de Mantenimiento: {formatDate(mantenimiento.fecha_mantenimiento)}</p>
-                            <p>Descripción del Daño: {mantenimiento.descripcion_dano}</p>
-                            <p>Descripción del Mantenimiento: {mantenimiento.descripcion_mantenimiento}</p>
-                            {isLoggedIn && (
-                                <button onClick={() => handleEditarMantenimiento(mantenimiento)}>Editar Mantenimiento</button>
-                            )}
-                        </div>
-                    ))
-                ) : (
-                    <p>No hay mantenimientos registrados.</p>
-                )}
+            {/* Paginación */}
+            <div className="pagination-container">
+                <div className="pagination">
+                    {Array.from({ length: Math.ceil(mantenimientos.length / mantenimientosPerPage) }, (_, i) => (
+                        <button key={i} onClick={() => paginate(i + 1)} className={`page-link ${currentPage === i + 1 ? 'active' : ''}`}>
+                            {i + 1}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <Modal
                 isOpen={mostrarModalConfirmacion}
-                onRequestClose={() => setMostrarModalConfirmacion(false)}
-                className="modal"
-                overlayClassName="overlay"
-            >
-                <h2>Información</h2>
-                <p>{mensajeModal}</p>
-                <button className="close-button" onClick={() => setMostrarModalConfirmacion(false)}>Cerrar</button>
-            </Modal>
-        </div>
+                onRequestClose={handleCerrarModal}
+                style={{
+                    overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+                content: {
+                    top: '50%',
+                    left: '50%',
+                    right: 'auto',
+                    bottom: 'auto',
+                    marginRight: '-50%',
+                    transform: 'translate(-50%, -50%)',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
+                }
+            }}
+            contentLabel="Mensaje de confirmación"
+        >
+            <h2>Mensaje</h2>
+            <p>{mensajeModal}</p>
+            <button onClick={handleCerrarModal}>Cerrar</button>
+        </Modal>
+    </div>
     );
 };
 
