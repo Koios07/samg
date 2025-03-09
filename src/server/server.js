@@ -599,6 +599,50 @@ app.post('/herramientas/masivo', (req, res) => {
     });
 });
 
+// Ruta historial
+app.get('/historial', (req, res) => {
+    const nit = req.query.nit;
+
+    if (!nit) {
+        return res.status(400).json({ message: 'Se requiere el NIT para obtener el historial.' });
+    }
+
+    const query = `
+        SELECT 
+            h.id_articulo,
+            hm.id_mantenimiento,
+            h.nit,
+            h.herramienta, 
+            h.marca, 
+            h.modelo, 
+            h.propietario, 
+            h.fecha_entrada, 
+            hm.fecha_mantenimiento, 
+            hm.descripcion_dano, 
+            hm.descripcion_mantenimiento, 
+            hm.nombre_tecnico
+        FROM 
+            herramientas h
+        JOIN 
+            historial_mantenimiento hm ON h.id_articulo = hm.id_herramienta
+        WHERE 
+            h.nit = ?;
+    `;
+
+    db.query(query, [nit], (err, result) => {
+        if (err) {
+            console.error('Error al obtener el historial:', err);
+            return res.status(500).json({ message: 'Error al obtener el historial.' });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron registros para el NIT proporcionado.' });
+        }
+
+        res.json(result);
+    });
+});
+
 
 
 
