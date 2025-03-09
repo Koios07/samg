@@ -497,6 +497,107 @@ app.get('/mantenimientos/:id', (req, res) => {
     });
 });
 
+// Ruta para agregar un nuevo mantenimiento
+app.post('/mantenimientos', (req, res) => {
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico } = req.body;
+    console.log("Datos recibidos en POST /mantenimientos:", req.body);
+    console.log("Nombre del técnico recibido:", nombre_tecnico);  // Console log para verificar el valo
+
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario], (err, result) => {
+        if (err) {
+            console.error('Error al agregar el mantenimiento:', err);
+            return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
+        }
+
+        res.status(201).json({ message: 'Mantenimiento agregado exitosamente.' });
+    });
+});
+
+// Ruta para la carga masiva de herramientas
+app.post('/herramientas/masivo', (req, res) => {
+    const herramientas = req.body;
+
+    if (!Array.isArray(herramientas)) {
+        return res.status(400).json({ message: 'Se espera un array de herramientas.' });
+    }
+
+    const userId = req.header('user-id');
+    if (!userId) {
+        return res.status(400).json({ message: 'El ID del usuario es obligatorio en el encabezado.' });
+    }
+
+    const queryNombreUsuario = 'SELECT nombre FROM usuario WHERE id = ?';
+    db.query(queryNombreUsuario, [userId], (err, resultNombre) => {
+        if (err) {
+            console.error('Error al obtener el nombre del usuario:', err);
+            return res.status(500).json({ message: 'Error al agregar la herramienta.' });
+        }
+
+        if (resultNombre.length === 0) {
+            console.log('Usuario no encontrado.');
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        const nombreUsuario = resultNombre[0].nombre;
+
+        // Iniciar una transacción para asegurar la consistencia de los datos
+        db.beginTransaction((err) => {
+            if (err) {
+                console.error('Error al iniciar la transacción:', err);
+                return res.status(500).json({ message: 'Error al iniciar la transacción.' });
+            }
+
+            let herramientasProcesadas = 0;
+            let errores = [];
+
+            herramientas.forEach((herramienta) => {
+                const { herramienta: nombreHerramienta, marca, modelo, propietario, fecha_entrada, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento } = herramienta;
+
+                const queryHerramienta = 'INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit) VALUES (?, ?, ?, ?, ?, ?, ?)';
+                db.query(queryHerramienta, [nombreHerramienta, marca, modelo, propietario, fecha_entrada, nombreUsuario, nit], (err, resultHerramienta) => {
+                    if (err) {
+                        console.error('Error al agregar el artículo:', err);
+                        errores.push({ herramienta: nombreHerramienta, error: err.message });
+                        return;
+                    }
+
+                    const id_articulo = resultHerramienta.insertId;
+
+                    const queryHistorial = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
+                    db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombreUsuario, nit], (err, resultHistorial) => {
+                        if (err) {
+                            console.error('Error al agregar el historial de mantenimiento:', err);
+                            errores.push({ herramienta: nombreHerramienta, error: err.message });
+                            return;
+                        }
+
+                        herramientasProcesadas++;
+
+                        if (herramientasProcesadas === herramientas.length) {
+                            if (errores.length > 0) {
+                                // Revertir la transacción en caso de errores
+                                db.rollback(() => {
+                                    console.error('Errores durante la carga masiva:', errores);
+                                    return res.status(500).json({ message: 'Errores durante la carga masiva.', errores });
+                                });
+                            } else {
+                                // Confirmar la transacción si todo está bien
+                                db.commit((err) => {
+                                    if (err) {
+                                        console.error('Error al confirmar la transacción:', err);
+                                        return res.status(500).json({ message: 'Error al confirmar la transacción.' });
+                                    }
+                                    res.status(201).json({ message: 'Herramientas agregadas exitosamente en modo masivo.' });
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    });
+});
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { HashRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import NavigationBar from './components/Navbar';
 import Home from './pages/Home';
@@ -24,6 +24,7 @@ function App() {
     const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
     const [modalMessage, setModalMessage] = useState(''); // Mensaje del modal
     const [cargando, setCargando] = useState(true); // Estado de carga
+    const [fetchHerramientas, setFetchHerramientas] = useState(() => () => {});
 
     useEffect(() => {
         const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -45,7 +46,7 @@ function App() {
         }
     }, []);
 
-    const fetchHerramientas = async () => {
+    const obtenerHerramientas = useCallback(async () => {
         try {
             const response = await fetch('http://localhost:3001/herramientas');
             if (!response.ok) throw new Error('Error en la respuesta de la red');
@@ -57,11 +58,12 @@ function App() {
             console.error('Error fetching herramientas:', error);
             setCargando(false); // Cambia el estado de carga a false en caso de error
         }
-    };
+    }, []);
 
     useEffect(() => {
-        fetchHerramientas();
-    }, []);
+        obtenerHerramientas();
+        setFetchHerramientas(() => obtenerHerramientas);
+    }, [obtenerHerramientas]);
 
     const handleLogin = (userId, userType, nombre) => {
         setIsLoggedIn(true);
@@ -106,12 +108,13 @@ function App() {
                 handleCloseModal={handleCloseModal}
                 handleLogin={handleLogin}
                 cargando={cargando}
+                fetchHerramientas={fetchHerramientas}
             />
         </Router>
     );
 }
 
-function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, userId, showModal, modalMessage, handleCloseModal, handleLogin, cargando }) {
+function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, userId, showModal, modalMessage, handleCloseModal, handleLogin, cargando, fetchHerramientas }) {
     const navigate = useNavigate(); // Hook para la navegación
 
     return (
@@ -125,7 +128,7 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
                         <Route path="/" element={<Home />} />
                         <Route path="/nosotros" element={<Nosotros />} />
                         <Route path="/contactanos" element={<Contactanos />} />
-                        <Route path="/buscar" element={<Buscar herramientas={herramientas} isLoggedIn={isLoggedIn} userType={userType} />} />
+                        <Route path="/buscar" element={<Buscar herramientas={herramientas} isLoggedIn={isLoggedIn} userType={userType} fetchHerramientas={fetchHerramientas} />} />
                         {/* Ruta para login */}
                         <Route
                             path="/login"
@@ -137,7 +140,6 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
                                 )
                             }
                         />
-
                         {/* Rutas privadas */}
                         <Route
                             path="/configuracion"

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import CrearUsuario from '../components/CrearUsuario';
 import CambiarContrasena from '../components/CambiarContraseña';
 import GestionarUsuario from '../components/GestionarUsuario';
+import DescargarPlantilla from '../components/DescargarPlantilla';
+import CargarPlantilla from '../components/CargarPlantilla';
+
 
 const Configuracion = ({ userId, userType }) => {
     const [activeComponent, setActiveComponent] = useState(null);
@@ -36,16 +39,18 @@ const Configuracion = ({ userId, userType }) => {
     };
 
     return (
-        <div>
+        <div className="configuracion-container">
             <h1>Configuración</h1>
-            <div>
+            <div className="botones-container">
                 {userType === '1' && (
                     <>
-                        <button onClick={handleCrearUsuarioClick}>Crear usuario</button>
-                        <button onClick={handleGestionarUsuarioClick}>Gestionar usuario</button>
+                        <button onClick={handleCrearUsuarioClick} className="configuracion-button">Crear usuario</button>
+                        <button onClick={handleGestionarUsuarioClick} className="configuracion-button">Gestionar usuario</button>
+                        <DescargarPlantilla />
+                        <CargarPlantilla />
                     </>
                 )}
-                <button onClick={handleCambiarContrasenaClick}>Cambiar contraseña</button>
+                <button onClick={handleCambiarContrasenaClick} className="configuracion-button">Cambiar contraseña</button>
             </div>
             <div>
                 {userType === '1' && showCrearUsuario && <CrearUsuario onClose={() => setShowCrearUsuario(false)} />}

@@ -2,32 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Buscar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import * as XLSX from 'xlsx';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Modal from 'react-modal';
 import { QRCodeSVG } from 'qrcode.react';
 
-// Asegúrate de enlazar la app con el elemento raíz para accesibilidad
 Modal.setAppElement('#root');
 
 const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [herramientasFiltradas, setHerramientasFiltradas] = useState([]);
     const [mostrarTabla, setMostrarTabla] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isQrModalOpen, setIsQrModalOpen] = useState(false);
     const [qrCodeUrl, setQrCodeUrl] = useState('');
-
-    // Estados para la paginación
     const [currentPage, setCurrentPage] = useState(1);
     const [herramientasPerPage] = useState(10);
 
     useEffect(() => {
         if (isLoggedIn) {
             obtenerHerramientas();
-            setMostrarTabla(true); // Mostrar tabla al cargar la página para usuarios logueados
+            setMostrarTabla(true);
         } else {
-            setMostrarTabla(false); // No mostrar tabla al inicio para usuarios no logueados
+            setMostrarTabla(false);
         }
     }, [isLoggedIn]);
 
@@ -40,8 +34,6 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
             console.error('Error al obtener herramientas:', error);
         }
     };
-
-    const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
     const handleSearch = async (e) => {
         if (e && e.key === 'Enter') {
@@ -60,7 +52,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
         }
 
         setHerramientasFiltradas(filtered);
-        setMostrarTabla(true); // Mostrar tabla después de buscar
+        setMostrarTabla(true);
     };
 
     const handleSearchInput = (e) => {
@@ -70,95 +62,12 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
         }
     };
 
-    const generarExcel = () => {
-        if (!isLoggedIn) {
-            alert('Por favor, inicie sesión para descargar la plantilla.');
-            return;
-        }
-
-        const headers = [
-            "herramienta",
-            "marca",
-            "modelo",
-            "propietario",
-            "fecha_entrada",
-            "nombre_trabajador",
-            "nit"
-        ];
-
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet([headers]);
-        XLSX.utils.book_append_sheet(wb, ws, "Herramientas");
-
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const blob = new Blob([new Uint8Array(wbout)], { type: 'application/octet-stream' });
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'plantilla_herramientas.xlsx';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
-
-    const handleFileUpload = async (e) => {
-        if (!isLoggedIn) {
-            alert('Por favor, inicie sesión para importar archivos.');
-            return;
-        }
-
-        const selectedFile = e.target.files[0];
-        if (selectedFile) {
-            const reader = new FileReader();
-
-            reader.onload = async (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-                console.log('Datos del Excel:', jsonData);
-
-                try {
-                    const response = await fetch('http://localhost:3001/importar-herramientas', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(jsonData),
-                    });
-
-                    if (response.ok) {
-                        alert('Datos importados correctamente');
-                        obtenerHerramientas(); // Refresca la lista
-                    } else {
-                        throw new Error('Error al importar datos');
-                    }
-                } catch (error) {
-                    console.error('Error al importar datos:', error);
-                    alert('Error al importar datos');
-                }
-            };
-
-            reader.readAsArrayBuffer(selectedFile);
-        } else {
-            alert('Por favor, seleccione un archivo');
-        }
-    };
-
-    const dropdownStyle = {
-        marginLeft: '10px',
-    };
-
     const formatDate = (date) => {
         if (!date) return '';
         const newDate = new Date(date);
-        return newDate.toLocaleDateString('es-ES'); // Formato dd/mm/aaaa
+        return newDate.toLocaleDateString('es-ES');
     };
 
-    // Lógica para la paginación
     const indexOfLastHerramienta = currentPage * herramientasPerPage;
     const indexOfFirstHerramienta = indexOfLastHerramienta - herramientasPerPage;
     const currentHerramientas = herramientasFiltradas.slice(indexOfFirstHerramienta, indexOfLastHerramienta);
@@ -187,41 +96,14 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                     placeholder="Ingrese el NIT o el término de búsqueda..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={handleSearchInput} // Agregado para detectar la tecla Enter
+                    onKeyDown={handleSearchInput}
                     className="search-input"
                 />
                 <button onClick={handleSearch} className="search-button">Buscar</button>
-
                 {isLoggedIn && (
                     <Link to="/agregar">
                         <button className="add-button">Agregar</button>
                     </Link>
-                )}
-                {console.log('isLoggedIn:', isLoggedIn)}
-                {console.log('userType:', userType)}
-                {isLoggedIn && String(userType) === "1" && (
-                    <div>
-                        <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={dropdownStyle}>
-                            <DropdownToggle caret toggle={toggleDropdown}>
-                                Archivos XLS
-                            </DropdownToggle>
-                            <DropdownMenu right>
-                                <DropdownItem onClick={generarExcel}>Descargar Plantilla</DropdownItem>
-                                <DropdownItem>
-                                    <label htmlFor="upload-input" className="upload-label">
-                                        Cargar Archivo
-                                    </label>
-                                    <input
-                                        id="upload-input"
-                                        type="file"
-                                        accept=".xlsx, .xls"
-                                        style={{ display: 'none' }}
-                                        onChange={handleFileUpload}
-                                    />
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
                 )}
             </div>
             {mostrarTabla && (
@@ -270,7 +152,6 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                     </tbody>
                 </table>
             )}
-            {/* Paginación */}
             {mostrarTabla && herramientasFiltradas.length > herramientasPerPage && (
                 <div className="pagination-container">
                     <div className="pagination">
