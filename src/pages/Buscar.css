@@ -1,574 +1,190 @@
 /* src/pages/Buscar.css */
 
-/* Estilos generales */
 .buscar {
-    padding: 20px; /* Espaciado alrededor del contenido */
+    padding: 20px;
 }
 
-.button-container {
-    display: flex; /* Usar flexbox para alinear los botones */
-    justify-content: center; /* Centrar los botones */
-    margin-bottom: 20px; /* Espacio debajo del contenedor de botones */
-    gap: 10px; /* Espacio uniforme entre los botones */
-}
-
-/* Ajustes para el campo de búsqueda */
-.search-input {
-    flex: 1; /* Permitir que el campo de búsqueda ocupe el espacio disponible */
-    margin-right: 10px; /* Espacio a la derecha del campo de búsqueda */
-}
-
-/* Estilos para los botones */
-.search-button,
-.add-button {
-    background-color: #007BFF; /* Color de fondo azul (azul fino) */
-    color: white; /* Color del texto en blanco */
-    border: none; /* Sin borde */
-    padding: 10px; /* Espaciado interno del botón */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    border-radius: 5px; /* Bordes redondeados del botón */
-    width: 120px; /* Ancho fijo para ambos botones */
-    text-align: center; /* Centrar el texto dentro del botón */
-    min-width: 120px; /* Asegurar un ancho mínimo consistente */
-}
-
-/* Hover para los botones */
-.search-button:hover,
-.add-button:hover {
-    background-color: #0056b3; /* Color más oscuro al pasar el mouse sobre el botón (azul más oscuro) */
-}
-
-/* Estilos para la tabla */
-.articulos-table {
-    width: 100%; /* Ancho completo de la tabla */
-    border-collapse: collapse; /* Colapsar bordes */
-    margin-top: 20px; /* Espacio superior */
-    background-color: #ffffff; /* Fondo blanco para la tabla */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-}
-
-.articulos-table th,
-.articulos-table td {
-    padding: 12px; /* Espaciado interno */
-    text-align: left; /* Alineación a la izquierda */
-    border-bottom: 1px solid #dddddd; /* Línea divisoria entre filas */
-}
-
-/* Estilo para las cabeceras de la tabla */
-.articulos-table th {
-    background-color: #007BFF; /* Color de fondo azul para las cabeceras (azul fino) */
-    color: white; /* Color del texto en blanco */
-}
-
-/* Rayas de cebra para las filas */
-.articulos-table tbody tr:nth-child(odd) {
-    background-color: #f9f9f9; /* Color claro para filas impares */
-}
-
-.articulos-table tbody tr:nth-child(even) {
-    background-color: #ffffff; /* Color blanco para filas pares */
-}
-
-/* Efecto al pasar el mouse sobre las filas */
-.articulos-table tbody tr:hover {
-    background-color: #e3f2fd; /* Color suave al pasar el mouse (azul claro) */
-}
-
-/* Estilo para enlaces dentro de la tabla */
-.articulos-table td a {
-    color: #007BFF; /* Color del enlace azul (azul fino) */
-    text-decoration: none; /* Sin subrayado en el enlace */
-}
-
-.articulos-table td a:hover {
-    text-decoration: underline; /* Subrayar el enlace al pasar el mouse */
-}
-
-/* Estilos para la paginación */
-
-.pagination-container {
-    margin-top: 20px; /* Espacio superior para separar la tabla de la paginación */
-}
-
-.pagination {
+.buscar .button-container {
     display: flex;
-    justify-content: center; /* Centrar los botones de paginación */
+    justify-content: space-between; /* Distribuye los elementos en el contenedor */
+    align-items: center; /* Alinea verticalmente los elementos */
 }
 
-.page-item {
-    margin: 0 5px; /* Espacio entre los botones de paginación */
+.buscar .search-input {
+    width: 600px; /* Alarga el texto de búsqueda hasta la palabra "Técnico" */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px; /* Tamaño de la fuente */
 }
 
-.page-link {
-    padding: 8px 16px; /* Espaciado interno para los enlaces de paginación */
+.buscar .button-container div {
+    display: flex;
+    justify-content: space-between;
+    width: 200px; /* Ajusta el ancho según sea necesario */
+    margin-left: 10px; /* Espacio entre el input y los botones */
+}
+
+.buscar .button-container div button,
+.buscar .ver-qr-button {
+    padding: 10px 20px; /* Ajusta el padding para que los botones tengan el mismo tamaño */
+    font-size: 16px; /* Tamaño de la fuente */
+    min-width: 80px; /* Ajusta el ancho mínimo */
+    margin: 0 5px; /* Espacio entre los botones */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.buscar .button-container div button:hover,
+.buscar .ver-qr-button:hover {
+    background-color: #0056b3;
+}
+
+.buscar .ver-qr-button {
+    background-color: #007bff; /* Color azul */
+    color: white; /* Texto blanco */
+    padding: 8px 16px;
+    min-width: 80px;
+    font-size: 14px;
+}
+
+.buscar .ver-qr-button:hover {
+    background-color: #0056b3; /* Color azul oscuro en hover */
+}
+
+.buscar .table-container {
+    width: 100%; /* Asegúrate de que el contenedor tenga el ancho máximo */
+    overflow-x: auto; /* Permite desplazamiento horizontal */
+}
+
+.buscar .articulos-table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Asegúrate de que la tabla tenga el ancho máximo */
+}
+
+.buscar .articulos-table th,
+.buscar .articulos-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dddddd;
+}
+
+.buscar .articulos-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.buscar .articulos-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.buscar .articulos-table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.buscar .articulos-table tbody tr:hover {
+    background-color: #e3f2fd;
+}
+
+.buscar .articulos-table td a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.buscar .articulos-table td a:hover {
+    text-decoration: underline;
 }
 
 /* Media Queries para Responsividad */
-
-/* Móviles pequeños (S) y medianos (M)*/
 @media (max-width: 600px) {
-   .button-container {
-       flex-direction: column;
-       align-items: center;
-   }
+    .buscar .button-container {
+        flex-direction: column; /* Cambia a columna en dispositivos móviles */
+        align-items: center; /* Centra los elementos */
+    }
 
-   .search-input {
-       width: 100%; 
-       margin-bottom: 10px;
-   }
+    .buscar .search-input {
+        width: 100%; /* Ocupa todo el ancho en dispositivos móviles */
+        margin-bottom: 10px; /* Espacio entre el input y los botones */
+    }
 
-   .search-button,
-   .add-button {
-       width: auto;
-       min-width: 120px;
-       max-width: 120px;
-       margin-left: 0;
-       margin-bottom: 10px;
-   }
+    .buscar .button-container div {
+        width: 100%; /* Ajusta el ancho para dispositivos móviles */
+        justify-content: space-between;
+    }
+
+    .buscar .button-container div button {
+        padding: 6px 12px; /* Reduce el padding */
+        font-size: 12px; /* Reduce el tamaño de la fuente */
+        min-width: 60px; /* Reduce el ancho mínimo */
+        margin: 0 5px; /* Espacio entre los botones */
+    }
 }
 
-/* Móviles grandes (L) y tabletas (768px a 1024px)*/
 @media (min-width: 601px) and (max-width: 1024px) {
-   .button-container {
-       flex-wrap:auto;
-       justify-content:center;
-   }
+    .buscar .button-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
-   .search-input {
-       width:auto;
-       margin-right:auto;
-   }
-
-   .search-button,
-   .add-button {
-       width:auto;
-       min-width:120px;
-       max-width:auto;
-       margin-left:auto;
-   }
+    .buscar .button-container button {
+        width: auto;
+        min-width: 120px;
+        max-width: auto;
+        margin-left: auto;
+    }
 }
 
-/* Estilos para el modal */
-.qr-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+/* Ajustes para el título */
+.buscar h1 {
+    margin-top: 10px; /* Espacio mínimo superior */
+}
+
+/* Ajustes para el pie de página */
+.main-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    flex-direction: column;
+    min-height: 100vh; /* Asegúrate de que el contenedor tenga al menos la altura de la ventana */
 }
 
-.qr-modal {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
+.buscar {
+    flex-grow: 1; /* Ocupa el espacio disponible */
 }
 
-.qr-content {
+.footer {
+    margin-top: auto; /* Mueve el pie de página hacia abajo */
+    padding: 10px;
+    background-color: #f0f0f0;
     text-align: center;
 }
 
-.qr-title {
-    font-size: 24px;
-    margin-bottom: 10px;
+/* Centrar la paginación */
+.buscar .pagination-container {
+    margin-top: 20px;
+    margin-bottom: 50px; /* Espacio entre la paginación y el pie de página */
 }
 
-.qr-code {
-    margin-bottom: 20px;
-}
-
-.modal-buttons {
+.buscar .pagination {
     display: flex;
-    justify-content: space-around;
+    justify-content: center; /* Centra los botones de paginación */
+    gap: 5px; /* Espacio entre los botones */
 }
 
-.print-button,
-.close-button {
-    padding: 10px 20px;
+.buscar .page-link {
+    padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    background-color: #007bff; /* Color azul */
+    color: white; /* Texto blanco */
 }
 
-.print-button {
-    background-color: #5cb85c;
-    color: white;
-}
-
-.close-button {
-    background-color: #d9534f;
-    color: white;
-}
-
-/* Estilos para el modal */
-.qr-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.qr-modal {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-}
-
-.qr-content {
-    text-align: center;
-}
-
-.qr-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.qr-code {
-    margin-bottom: 20px;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: space-around;
-}
-
-.print-button,
-.close-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.print-button {
-    background-color: #5cb85c;
-    color: white;
-}
-
-.close-button {
-    background-color: #d9534f;
-    color: white;
-}
-
-/* Estilos para el modal */
-.qr-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.qr-modal {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-}
-
-.qr-content {
-    text-align: center;
-}
-
-.qr-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.qr-code {
-    margin-bottom: 20px;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: space-around;
-}
-
-.print-button,
-.close-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.print-button {
-    background-color: #5cb85c;
-    color: white;
-}
-
-.close-button {
-    background-color: #d9534f;
-    color: white;
-}
-
-/* Estilos para el modal */
-.qr-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.qr-modal {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-}
-
-.qr-content {
-    text-align: center;
-}
-
-.qr-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.qr-code {
-    margin-bottom: 20px;
-    width: 100%; /* Asegura que el código QR ocupe todo el ancho disponible */
-    height: auto;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: space-around;
-}
-
-.print-button,
-.close-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.print-button {
-    background-color: #5cb85c;
-    color: white;
-}
-
-.close-button {
-    background-color: #d9534f;
-    color: white;
-}
-
-/* Estilos para el modal */
-.qr-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.qr-modal {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    max-width: 50%; /* Tamaño reducido del modal */
-    max-height: 50%; /* Tamaño reducido del modal */
-    overflow: auto;
-}
-
-.qr-content {
-    text-align: center;
-}
-
-.qr-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.qr-code {
-    margin-bottom: 20px;
-    width: 100%; /* Asegura que el código QR ocupe todo el ancho disponible */
-    height: auto;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: space-around;
-}
-
-.print-button,
-.close-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.print-button {
-    background-color: #5cb85c;
-    color: white;
-}
-
-.close-button {
-    background-color: #d9534f;
-    color: white;
-}
-
-/* Estilos para el modal */
-.qr-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.75);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.qr-modal {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    max-width: 50%; /* Tamaño reducido del modal */
-    max-height: 50%; /* Tamaño reducido del modal */
-    overflow: auto;
-}
-
-.qr-content {
-    text-align: center;
-}
-
-.qr-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.qr-code {
-    margin-bottom: 20px;
-    width: 100%; /* Asegura que el código QR ocupe todo el ancho disponible */
-    height: auto;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: space-around;
-}
-
-.print-button,
-.close-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.print-button {
-    background-color: #5cb85c;
-    color: white;
-}
-
-.close-button {
-    background-color: #d9534f;
-    color: white;
-}
-
-/* Estilos para imprimir */
-@media print {
-    .qr-modal-overlay {
-        background-color: transparent !important;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        display: flex !important;
-        justify-content: center !important; /* Centra el contenido horizontalmente */
-        align-items: center !important; /* Centra el contenido verticalmente */
-    }
-
-    .qr-modal {
-        position: absolute !important;
-        top: 50% !important; /* Centra verticalmente */
-        left: 50% !important; /* Centra horizontalmente */
-        transform: translate(-50%, -50%) !important; /* Ajusta la posición para centrar */
-        width: auto !important; /* Ancho automático */
-        height: auto !important; /* Altura automática */
-        max-width: 100mm !important; /* Ancho máximo para el QR */
-        max-height: 100mm !important; /* Altura máxima para el QR */
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        overflow: visible !important;
-    }
-
-    .qr-content {
-        text-align: center !important; /* Alinea el contenido a la izquierda */
-    }
-
-    .qr-title {
-        display: none !important;
-    }
-
-    .modal-buttons {
-        display: none !important;
-    }
-
-    body * {
-        visibility: hidden !important;
-    }
-
-    .qr-modal,
-    .qr-modal * {
-        visibility: visible !important;
-    }
-
-    .qr-code {
-        width: auto !important; /* Ancho automático */
-        height: auto !important; /* Altura automática */
-        max-width: 100mm !important; /* Ancho máximo para el QR */
-        max-height: 100mm !important; /* Altura máxima para el QR */
-        margin: 0 !important; /* Elimina márgenes */
-    }
+.buscar .page-link.active {
+    background-color: #0056b3; /* Color azul oscuro para el botón activo */
 }

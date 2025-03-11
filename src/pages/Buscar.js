@@ -89,7 +89,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
 
     return (
         <div className="buscar">
-            <h1>Buscar Artículos</h1>
+            <h1>Buscar Herramienta</h1>
             <div className="button-container">
                 <input
                     type="text"
@@ -99,58 +99,64 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                     onKeyDown={handleSearchInput}
                     className="search-input"
                 />
-                <button onClick={handleSearch} className="search-button">Buscar</button>
-                {isLoggedIn && (
-                    <Link to="/agregar">
-                        <button className="add-button">Agregar</button>
-                    </Link>
-                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '200px', marginLeft: '10px' }}>
+                    <button onClick={handleSearch} className="search-button">Buscar</button>
+                    {isLoggedIn && (
+                        <Link to="/agregar">
+                            <button className="add-button">Agregar</button>
+                        </Link>
+                    )}
+                </div>
             </div>
             {mostrarTabla && (
-                <table className="articulos-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Herramienta</th>
-                            <th>Marca</th>
-                            <th>Modelo</th>
-                            <th>Propietario</th>
-                            <th>Nit</th>
-                            <th>Fecha de Ingreso</th>
-                            <th>Fecha de Mantenimiento</th>
-                            <th>Técnico</th>
-                            <th>Ver QR</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentHerramientas.length > 0 ? (
-                            currentHerramientas.map((herramienta) => (
-                                <tr key={herramienta.id_articulo}>
-                                    <td data-label="ID">
-                                        <Link to={`/herramienta/${herramienta.id_articulo}`}>
-                                            {herramienta.id_articulo}
-                                        </Link>
-                                    </td>
-                                    <td data-label="Descripción">{herramienta.herramienta}</td>
-                                    <td data-label="Marca">{herramienta.marca}</td>
-                                    <td data-label="Modelo">{herramienta.modelo}</td>
-                                    <td data-label="Propietario">{herramienta.propietario}</td>
-                                    <td data-label="Nit">{herramienta.nit}</td>
-                                    <td data-label="Fecha de Ingreso">{formatDate(herramienta.fecha_entrada)}</td>
-                                    <td data-label="Fecha de Mantenimiento">{formatDate(herramienta.fecha_mantenimiento)}</td>
-                                    <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
-                                    <td data-label="Ver QR">
-                                        <button onClick={() => openQrModal(herramienta.id_articulo)}>Ver QR</button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
+                <div className="table-container">
+                    <table className="articulos-table">
+                        <thead>
                             <tr>
-                                <td colSpan="10">No se encontraron resultados.</td>
+                                <th>ID</th>
+                                <th>Herramienta</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Propietario</th>
+                                <th>Nit</th>
+                                <th>Fecha de Ingreso</th>
+                                <th>Fecha de Mantenimiento</th>
+                                <th>Técnico</th>
+                                <th>Ver QR</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {currentHerramientas.length > 0 ? (
+                                currentHerramientas.map((herramienta) => (
+                                    <tr key={herramienta.id_articulo}>
+                                        <td data-label="ID">
+                                            <Link to={`/herramienta/${herramienta.id_articulo}`}>
+                                                {herramienta.id_articulo}
+                                            </Link>
+                                        </td>
+                                        <td data-label="Descripción">{herramienta.herramienta}</td>
+                                        <td data-label="Marca">{herramienta.marca}</td>
+                                        <td data-label="Modelo">{herramienta.modelo}</td>
+                                        <td data-label="Propietario">{herramienta.propietario}</td>
+                                        <td data-label="Nit">{herramienta.nit}</td>
+                                        <td data-label="Fecha de Ingreso">{formatDate(herramienta.fecha_entrada)}</td>
+                                        <td data-label="Fecha de Mantenimiento">{formatDate(herramienta.fecha_mantenimiento)}</td>
+                                        <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
+                                        <td data-label="Ver QR">
+                                            <button className="ver-qr-button" onClick={() => openQrModal(herramienta.id_articulo)} style={{ color: 'white' }}>
+                                                Ver QR
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="10">No se encontraron resultados.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             )}
             {mostrarTabla && herramientasFiltradas.length > herramientasPerPage && (
                 <div className="pagination-container">
@@ -204,5 +210,4 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
         </div>
     );
 };
-
 export default Buscar;

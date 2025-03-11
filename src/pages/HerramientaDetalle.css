@@ -1,101 +1,328 @@
-/* Contenedor principal */
-.box {
-    width: 90%; /* Ancho del contenedor en porcentaje */
-    max-width: 500px; /* Ancho máximo */
-    padding: 20px; /* Espaciado interno */
-    margin: 50px auto; /* Margen superior predeterminado (pantallas grandes) */
-    background: #f0f0f0; /* Fondo gris claro para el contenedor */
-    text-align: center; /* Centra el texto dentro del contenedor */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave alrededor del contenedor */
-}
-
-/* Estilo para los campos de entrada */
-.box input[type='text'],
-.box input[type='date'] {
-    border: 2px solid #3498db !important; /* Borde azul claro */
-    padding: 10px; /* Espaciado interno en los campos */
-    width: calc(100% - 40px); /* Ancho dinámico con margen incluido */
-    outline: none !important; /* Sin contorno al enfocar */
-    color: black !important; /* Color del texto negro para mejor legibilidad */
-    border-radius: 8px !important; /* Bordes redondeados en los campos */
-}
-
-/* Cambiar el borde al enfocar */
-.box input[type='text']:focus,
-.box input[type='date']:focus {
-    border-color: #2ecc71 !important; /* Cambiar borde a verde al enfocar */
-}
-
-/* Estilo para el botón de envío */
-.box button {
-    border: none;
-    background-color: #2ecc71;
-    color: white;
-    padding: 14px 40px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.box button:hover {
-    background-color: #27ae60;
-}
-
-.box p {
-    color: black; /* Cambiar color del mensaje a negro */ 
-}
-
-/* Media Queries para Responsividad */
-
-/* Pantallas pequeñas (móviles) */
-@media (max-width: 600px) {
-    .box {
-        margin-top: 20px !important; /* Reducir margen superior en pantallas pequeñas */
-        padding: 15px; /* Menos espaciado interno en pantallas pequeñas */
-        width: calc(100% - 30px); /* Asegura que no se desborde horizontalmente en móviles */
-        max-width: none; /* Sin ancho máximo para pantallas pequeñas */
-        transition: margin-top 0.3s ease-in-out; /* Transición suave para cambios dinámicos del margen superior */
-    }
-
-    .box input[type='text'],
-    .box input[type='date'],
-    .box button {
-        width: calc(100% - 30px); /* Ajustar ancho a un porcentaje más alto en móviles, asegurando que no se desborde */
-        padding: 10px; /* Ajustar padding para mayor comodidad en móviles */
-    }
-}
-
-.mantenimiento-box {
-    background-color: #f0f0f0;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
+/* General container for the detail page */
+.herramienta-detalle-container {
+    font-family: Arial, sans-serif;
+    padding: 15px;
+    background-color: #f4f4f4;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 15px;
+    font-size: 0.9em; /* Slightly reduced base font size for responsiveness */
 }
 
-/* Estilos para la paginación */
-.pagination-container {
-    margin-top: 20px; /* Espacio superior para separar la tabla de la paginación */
+/* Styles for the header actions (Back to Search, Edit) */
+.header-actions {
+    display: flex;
+    justify-content: space-between; /* Align items to the start and end */
+    align-items: center; /* Vertically aligns items in the center */
+    margin-bottom: 15px;
 }
 
+/* Style for "Volver a la Búsqueda" as a plain link */
+.header-actions a.volver-busqueda-button {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Removes the underline */
+}
+
+.header-actions a.volver-busqueda-button:hover {
+    text-decoration: underline; /* Underline on hover for better UX */
+}
+
+/* Styles for the Edit Herramienta button, adjusted for size and responsiveness */
+.header-actions button.editar-herramienta-button {
+    background-color: #007bff; /* Make buttons the same color as pagination */
+    color: white;
+    padding: 8px 12px; /* Slightly smaller padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em; /* Smaller font size for responsiveness */
+    transition: background-color 0.3s ease;
+}
+
+.header-actions button.editar-herramienta-button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Styles for the tool detail section */
+.herramienta-detalle {
+    margin-bottom: 15px;
+}
+
+.herramienta-detalle p {
+    margin: 5px 0;
+    position: relative; /* To position the pseudo-element */
+}
+
+/* Remove asterisks */
+.herramienta-detalle p::before {
+    content: none; /* Removes the asterisk */
+}
+
+/* Styles for the tool form (when editing) */
+.herramienta-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.herramienta-form label {
+    font-weight: bold;
+    color: #444;
+}
+
+.herramienta-form input {
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Reduced spacing in the edit form */
+.herramienta-form label {
+    margin-bottom: 3px;
+}
+
+.herramienta-form input {
+    margin-bottom: 8px;
+}
+
+
+/* Style adjustments for input fields in the tool form */
+.herramienta-form input[type="text"],
+.herramienta-form input[type="date"] {
+    width: 100%; /* Make input fields take the full width of their parent container */
+    padding: 6px; /* Reduced padding */
+    margin: 4px 0; /* Reduced margin */
+    border: 1px solid #ccc; /* Sets a subtle border for the input */
+    border-radius: 4px; /* Rounds the corners of the input */
+    box-sizing: border-box; /* Ensures padding doesn't affect the overall width of the input */
+}
+
+/* Styles for buttons in the tool form */
+.herramienta-form .button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+
+.herramienta-form .button-container button {
+    background-color: #007bff; /* Make buttons the same color as pagination */
+    color: white;
+    padding: 8px 12px; /* Slightly smaller padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px; /* Space between buttons */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.herramienta-form .button-container button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Styles for the maintenance section */
+.mantenimientos-container {
+    background-color: white;
+    padding: 10px; /* Reduced padding */
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.mantenimiento-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* Reduced margin */
+}
+
+.mantenimiento-header h3 {
+    margin: 0;
+    font-size: 1.2em; /* Reduced font size */
+    color: #333;
+}
+
+/* Style adjustments for the "Add Maintenance" button, adjusted for size and responsiveness */
+.agregar-mantenimiento-button {
+    background-color: #007bff; /* Make buttons the same color as pagination */
+    color: white;
+    padding: 6px 10px; /* Smaller padding */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em; /* Smaller font size for responsiveness */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.agregar-mantenimiento-button:hover {
+    background-color: #0056b3;
+}
+
+
+.mantenimiento-cuadro {
+    background-color: #f9f9f9;
+    padding: 8px; /* Reduced padding */
+    margin-bottom: 8px; /* Reduced margin */
+    border-radius: 5px;
+    border: 1px solid #eee;
+    list-style: none; /* Removes bullet points from the list */
+}
+
+.mantenimiento-info-container p {
+    margin: 4px 0; /* Reduced margin */
+    color: #555;
+}
+
+/* Styles for maintenance forms */
+.mantenimiento-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Reduced gap */
+    margin-top: 8px; /* Reduced margin */
+}
+
+.mantenimiento-form label {
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 2px; /* Reduced margin */
+}
+
+.mantenimiento-form input {
+    padding: 5px; /* Reduced padding */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.mantenimiento-form .button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 8px; /* Reduced margin */
+}
+
+.mantenimiento-form .button-container button {
+    background-color: #007bff; /* Make buttons the same color as pagination */
+    color: white;
+    padding: 6px 10px; /* Smaller padding */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 4px; /* Reduced margin */
+    transition: background-color 0.3s ease;
+}
+
+.mantenimiento-form .button-container button:hover {
+    background-color: #0056b3;
+}
+
+
+/* General styles for buttons */
+.button-container {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px; /* Reduced margin */
+}
+
+.button-container button {
+    background-color: #007bff; /* Make buttons the same color as pagination */
+    color: white;
+    padding: 8px 12px; /* Slightly smaller padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 8px; /* Reduced margin */
+    transition: background-color 0.3s ease;
+}
+
+.button-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Style adjustments for pagination */
 .pagination {
     display: flex;
-    justify-content: center; /* Centrar los botones de paginación */
+    justify-content: center;
+    margin-top: 15px; /* Reduced margin */
 }
 
-.pagination .page-link {
-    padding: 8px 16px; /* Ajusta el espaciado interno para que coincida con Buscar.css */
-    background-color: #f0f0f0; /* Color de fondo gris claro */
-    border: 1px solid #ddd; /* Borde gris claro */
-    border-radius: 5px; /* Bordes redondeados */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+.pagination button {
+    background-color: #f0f0f0; /* Light grey background */
+    color: #333; /* Dark text color */
+    border: 1px solid #ddd; /* Subtle border */
+    padding: 6px 10px; /* Smaller padding */
+    margin: 0 4px; /* Reduced margin */
+    cursor: pointer;
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    font-size: 0.8em; /* Smaller font size */
 }
 
-.pagination .page-link.active {
-    background-color: #007bff; /* Color de fondo azul para el botón activo */
-    color: white; /* Color del texto en blanco */
+.pagination button:hover {
+    background-color: #e0e0e0; /* Slightly darker grey on hover */
 }
 
-.pagination .page-link:hover {
-    background-color: #0056b3; /* Color más oscuro al pasar el mouse sobre el botón (azul más oscuro) */
+.pagination button.active {
+    background-color: #007bff; /* A shade of blue indicating the active page */
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination button.active:hover {
+    background-color: #0056b3; /* Darker shade of blue on hover for active button */
+}
+
+/* Styles for the modal */
+.ReactModal__Content {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 80%;
+    outline: none;
+    text-align: center; /* Center content */
+}
+
+.ReactModal__Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Modal content specific styles */
+.modal-content h2 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Styles for the confirmation modal button */
+.modal-content button {
+    background-color: #007bff; /* Same blue as other buttons */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
 }

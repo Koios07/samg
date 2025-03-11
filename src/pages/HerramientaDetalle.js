@@ -39,7 +39,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
     useEffect(() => {
         console.log('Se montó el componente HerramientaDetalle.js');
         obtenerDatos();
-    }, [id_articulo]);
+    }, [id_articulo, isLoggedIn]);
 
     const obtenerDatos = async () => {
         console.log('Obteniendo datos...');
@@ -118,11 +118,9 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
             const userName = localStorage.getItem('userName');
             console.log("ID de usuario recuperado de localStorage:", userId);
             console.log("Nombre de usuario recuperado de localStorage:", userName);
-
             // Crear una copia del formulario con el nombre del usuario
             const formDataToSend = { ...formData, nombre_trabajador: userName };
             console.log("Datos a enviar:", formDataToSend);
-
             const response = await fetch(`http://localhost:3001/herramientas/${id_articulo}`, {
                 method: 'PUT',
                 headers: {
@@ -257,225 +255,346 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
 
         try {
             const userId = localStorage.getItem('userId'); // Obtener el ID del usuario de localStorage
-            const userName = localStorage.getItem('userName'); // Obtener el nombre del usuario de localStorage
-            console.log("ID de usuario recuperado de localStorage (mantenimiento):", userId);
 
-            const responseMantenimiento = await fetch(`http://localhost:3001/mantenimientos/${mantenimientoAEditar.id_mantenimiento}`, {
+            const response = await fetch(`http://localhost:3001/mantenimientos/${mantenimientoAEditar.id_mantenimiento}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'user-id': userId // Agrega el header con el ID del usuario
                 },
                 body: JSON.stringify({
                     fecha_mantenimiento: nuevoMantenimiento.fecha_mantenimiento,
                     descripcion_dano: nuevoMantenimiento.descripcion_dano,
                     descripcion_mantenimiento: nuevoMantenimiento.descripcion_mantenimiento,
+                    id_herramienta: id_articulo,
                     nit_propietario: formData.nit,
                     id_usuario: userId,
-                    nombre_tecnico: userName
-                })
+                }),
             });
 
-            if (responseMantenimiento.ok) {
-                //const mantenimientosActualizados = mantenimientos.map(mantenimiento =>
-                //  mantenimiento.id_mantenimiento === mantenimientoAEditar.id_mantenimiento
-                //    ? { ...mantenimientoAEditar, ...nuevoMantenimiento }
-                //  : mantenimiento
-                // );
+            if (response.ok) {
+                const actualizado = await response.json();
+                console.log("Mantenimiento actualizado:", actualizado);
 
-                //setMantenimientos(mantenimientosActualizados);
-                await fetchMantenimientos(); // Refresca los mantenimientos
+                // Actualizar el estado local con los datos actualizados
+                setMantenimientos(mantenimientos.map(m => m.id_mantenimiento === mantenimientoAEditar.id_mantenimiento ? actualizado : m));
+
                 setMensajeModal('Mantenimiento actualizado correctamente.');
             } else {
-                console.error('Error al actualizar el mantenimiento:', responseMantenimiento.statusText);
-                setMensajeModal('Error al actualizar mantenimiento. Por favor, revise los datos.');
+                console.error("Error al actualizar el mantenimiento:", response.statusText);
+                setMensajeModal('Error al actualizar el mantenimiento.');
             }
 
             setMostrarModalConfirmacion(true);
             handleOcultarFormulario();
         } catch (error) {
             console.error('Error al actualizar el mantenimiento:', error);
-            setMensajeModal('Error al actualizar mantenimiento. Por favor, revise los datos.');
+            setMensajeModal('Error al actualizar el mantenimiento.');
             setMostrarModalConfirmacion(true);
         }
     };
 
-    const handleCerrarModal = () => {
-        setMostrarModalConfirmacion(false);
-    };
-
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-
-    const handleMostrarFormulario = () => {
+    const handleEliminarMantenimiento = async (id_mantenimiento) => {
         if (!isLoggedIn) {
-            console.log('No está logueado. No puede agregar un mantenimiento.');
-            alert('Por favor, inicie sesión para agregar un mantenimiento.');
+            console.log('No está logueado. No puede eliminar un mantenimiento.');
+            alert('Por favor, inicie sesión para eliminar un mantenimiento.');
             return;
         }
 
+        try {
+            const userId = localStorage.getItem('userId'); // Obtener el ID del usuario de localStorage
+            console.log("ID del usuario:", userId);
+
+            const response = await fetch(`http://localhost:3001/mantenimientos/${id_mantenimiento}`, {
+                method: 'DELETE',
+                headers: {
+                    'user-id': userId
+                }
+            });
+
+            if (response.ok) {
+                console.log("Mantenimiento eliminado exitosamente");
+                setMantenimientos(mantenimientos.filter(m => m.id_mantenimiento !== id_mantenimiento));
+                setMensajeModal('Mantenimiento eliminado correctamente.');
+            } else {
+                console.error("Error al eliminar el mantenimiento:", response.statusText);
+                setMensajeModal('Error al eliminar el mantenimiento.');
+            }
+
+            setMostrarModalConfirmacion(true);
+        } catch (error) {
+            console.error('Error al eliminar el mantenimiento:', error);
+            setMensajeModal('Error al eliminar el mantenimiento.');
+            setMostrarModalConfirmacion(true);
+        }
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        });
+    };
+
+    const handleEditarClick = () => {
+        if (!isLoggedIn) {
+            console.log('No está logueado. No puede editar la herramienta.');
+            alert('Por favor, inicie sesión para editar la herramienta.');
+            return;
+        }
+        setIsEditing(true);
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+        setFormData({
+            herramienta: herramienta?.herramienta || '',
+            marca: herramienta?.marca || '',
+            modelo: herramienta?.modelo || '',
+            propietario: herramienta?.propietario || '',
+            fecha_entrada: herramienta?.fecha_entrada ? formatDate(herramienta.fecha_entrada) : '',
+            nit: herramienta?.nit || '',
+            nombre_trabajador: herramienta?.nombre_trabajador || ''
+        });
+    };
+
+    const handleMostrarFormulario = () => {
         setMostrarFormularioMantenimiento(true);
     };
 
     const handleOcultarFormulario = () => {
         setMostrarFormularioMantenimiento(false);
-        setNuevoMantenimiento({
-            fecha_entrada: '',
-            descripcion_dano: '',
-            fecha_mantenimiento: '',
-            descripcion_mantenimiento: '',
-        });
         setMantenimientoAEditar(null);
     };
 
-    // Lógica para la paginación
+    // Filtrar mantenimientos según el estado de inicio de sesión
+    const filteredMantenimientos = isLoggedIn
+        ? mantenimientos
+        : mantenimientos.length > 0 ? [mantenimientos[0]] : [];
+
+    // Paginación
     const indexOfLastMantenimiento = currentPage * mantenimientosPerPage;
     const indexOfFirstMantenimiento = indexOfLastMantenimiento - mantenimientosPerPage;
-    const currentMantenimientos = mantenimientos.slice(indexOfFirstMantenimiento, indexOfLastMantenimiento);
+    const currentMantenimientos = filteredMantenimientos.slice(indexOfFirstMantenimiento, indexOfLastMantenimiento);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    return (
-        <div className="box">
-            <h2>Detalle de Herramienta</h2>
-            <Link to="/buscar">Volver a la búsqueda</Link>
+    const customStyles = {
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1000
+        }
+    };
 
-            <div>
-                <p>Herramienta: {isEditing ? (
-                    <input type="text" name="herramienta" value={formData.herramienta} onChange={handleChange} />
-                ) : herramienta?.herramienta}</p>
-                <p>Marca: {isEditing ? (
-                    <input type="text" name="marca" value={formData.marca} onChange={handleChange} />
-                ) : herramienta?.marca}</p>
-                <p>Modelo: {isEditing ? (
-                    <input type="text" name="modelo" value={formData.modelo} onChange={handleChange} />
-                ) : herramienta?.modelo}</p>
-                <p>Propietario: {isEditing ? (
-                    <input type="text" name="propietario" value={formData.propietario} onChange={handleChange} />
-                ) : herramienta?.propietario}</p>
-                <p>NIT: {isEditing ? (
-                    <input type="text" name="nit" value={formData.nit} onChange={handleChange} />
-                ) : herramienta?.nit}</p>
-                <p>Fecha de Entrada: {isEditing ? (
-                    <input
-                        type="date"
-                        name="fecha_entrada"
-                        value={formData.fecha_entrada}
-                        onChange={handleChange}
-                    />
-                ) : formData.fecha_entrada}</p>
+    return (
+        <div className="herramienta-detalle-container">
+            <h2>
+                Detalle de la Herramienta
+            </h2>
+            <div className="header-actions">
+                <Link to="/buscar" className="volver-busqueda-button">
+                    Volver a la Búsqueda
+                </Link>
                 {isLoggedIn && (
-                    <div>
-                        {!isEditing ? (
-                            <button onClick={() => setIsEditing(true)}>Editar</button>
-                        ) : (
-                            <>
-                                <button onClick={handleSave}>Guardar</button>
-                                <button onClick={() => setIsEditing(false)}>Cancelar</button>
-                            </>
-                        )}
-                    </div>
+                    <button className="editar-herramienta-button" onClick={handleEditarClick}>
+                        Editar Herramienta
+                    </button>
                 )}
             </div>
 
-            {/* Lista de Mantenimientos Paginada */}
-            <h3>Mantenimientos:</h3>
-            {currentMantenimientos.length > 0 ? (
-                <ul className="mantenimientos-list">
-                    {currentMantenimientos.map(mantenimiento => (
-                        <li key={mantenimiento.id_mantenimiento}>
-                            <p>Fecha Mantenimiento: {formatDate(mantenimiento.fecha_mantenimiento)}</p>
-                            <p>Descripción Daño: {mantenimiento.descripcion_dano}</p>
-                            <p>Descripción Mantenimiento: {mantenimiento.descripcion_mantenimiento}</p>
-                            {isLoggedIn && (
-                                <button onClick={() => handleEditarMantenimiento(mantenimiento)}>Editar Mantenimiento</button>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No hay mantenimientos registrados para esta herramienta.</p>
-            )}
-            {isLoggedIn && (
-                <div>
-                    {!mostrarFormularioMantenimiento ? (
-                        <button onClick={handleMostrarFormulario}>Agregar Mantenimiento</button>
-                    ) : (
-                        <div>
-                            <h4>Agregar/Editar Mantenimiento</h4>
-                            <label>Fecha Mantenimiento:</label>
-                            <input
-                                type="date"
-                                name="fecha_mantenimiento"
-                                value={nuevoMantenimiento.fecha_mantenimiento || ''}
-                                onChange={handleNuevoMantenimientoChange}
-                            />
-                            <label>Descripción Daño:</label>
-                            <input
-                                type="text"
-                                name="descripcion_dano"
-                                value={nuevoMantenimiento.descripcion_dano || ''}
-                                onChange={handleNuevoMantenimientoChange}
-                            />
-                            <label>Descripción Mantenimiento:</label>
-                            <input
-                                type="text"
-                                name="descripcion_mantenimiento"
-                                value={nuevoMantenimiento.descripcion_mantenimiento || ''}
-                                onChange={handleNuevoMantenimientoChange}
-                            />
-                            {mantenimientoAEditar ? (
-                                <button onClick={handleActualizarMantenimiento}>Actualizar Mantenimiento</button>
-                            ) : (
-                                <button onClick={handleAgregarMantenimiento}>Agregar Mantenimiento</button>
-                            )}
-                            <button onClick={handleOcultarFormulario}>Cancelar</button>
-                        </div>
-                    )}
-                </div>
-            )}
-            {/* Paginación */}
-            <div className="pagination-container">
-                <div className="pagination">
-                    {Array.from({ length: Math.ceil(mantenimientos.length / mantenimientosPerPage) }, (_, i) => (
-                        <button key={i} onClick={() => paginate(i + 1)} className={`page-link ${currentPage === i + 1 ? 'active' : ''}`}>
-                            {i + 1}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            {herramienta ? (
+                <div className="herramienta-detalle">
+                    {isEditing ? (
+                        <div className="herramienta-form">
+                            <label>Herramienta:</label>
+                            <input type="text" name="herramienta" value={formData.herramienta} onChange={handleChange} /><br />
 
-            <Modal
-                isOpen={mostrarModalConfirmacion}
-                onRequestClose={handleCerrarModal}
-                style={{
-                    overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-                content: {
-                    top: '50%',
-                    left: '50%',
-                    right: 'auto',
-                    bottom: 'auto',
-                    marginRight: '-50%',
-                    transform: 'translate(-50%, -50%)',
-                    padding: '20px',
-                    borderRadius: '8px',
-                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'
-                }
-            }}
-            contentLabel="Mensaje de confirmación"
-        >
-            <h2>Mensaje</h2>
-            <p>{mensajeModal}</p>
-            <button onClick={handleCerrarModal}>Cerrar</button>
-        </Modal>
+                            <label>Marca:</label>
+                            <input type="text" name="marca" value={formData.marca} onChange={handleChange} /><br />
+
+                            <label>Modelo:</label>
+                            <input type="text" name="modelo" value={formData.modelo} onChange={handleChange} /><br />
+
+                            <label>Propietario:</label>
+                            <input type="text" name="propietario" value={formData.propietario} onChange={handleChange} /><br />
+
+                            <label>Fecha de Entrada:</label>
+                            <input type="date" name="fecha_entrada" value={formData.fecha_entrada} onChange={handleChange} /><br />
+
+                            <label>NIT:</label>
+                            <input type="text" name="nit" value={formData.nit} onChange={handleChange} /><br />
+
+                            <div className="button-container">
+                                <button onClick={handleSave}>Guardar</button>
+                                <button onClick={handleCancel}>Cancelar</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <p><strong>Herramienta:</strong> {herramienta.herramienta}</p>
+                            <p><strong>Marca:</strong> {herramienta.marca}</p>
+                            <p><strong>Modelo:</strong> {herramienta.modelo}</p>
+                            <p><strong>Propietario:</strong> {herramienta.propietario}</p>
+                            <p><strong>Fecha de Entrada:</strong> {formatDate(herramienta.fecha_entrada)}</p>
+                            <p><strong>NIT:</strong> {herramienta.nit}</p>
+                        </>
+                    )}
+
+                    <div className="mantenimientos-container">
+                        <div className="mantenimiento-header">
+                            <h3>Mantenimientos</h3>
+                            {isLoggedIn && (
+                                <button className="agregar-mantenimiento-button" onClick={handleMostrarFormulario}>
+                                    Agregar
+                                </button>
+                            )}
+                        </div>
+
+                        {mostrarFormularioMantenimiento && !mantenimientoAEditar && (
+                            <div className="mantenimiento-form">
+                                <label>Fecha de Mantenimiento:</label>
+                                <input
+                                    type="date"
+                                    name="fecha_mantenimiento"
+                                    value={nuevoMantenimiento.fecha_mantenimiento}
+                                    onChange={handleNuevoMantenimientoChange}
+                                /><br />
+
+                                <label>Descripción del Daño:</label>
+                                <input
+                                    type="text"
+                                    name="descripcion_dano"
+                                    value={nuevoMantenimiento.descripcion_dano}
+                                    onChange={handleNuevoMantenimientoChange}
+                                /><br />
+
+                                <label>Descripción del Mantenimiento:</label>
+                                <input
+                                    type="text"
+                                    name="descripcion_mantenimiento"
+                                    value={nuevoMantenimiento.descripcion_mantenimiento}
+                                    onChange={handleNuevoMantenimientoChange}
+                                /><br />
+
+                                <div className="button-container">
+                                    <button onClick={handleAgregarMantenimiento}>
+                                        Agregar Mantenimiento
+                                    </button>
+                                    <button onClick={handleOcultarFormulario}>Cancelar</button>
+                                </div>
+                            </div>
+                        )}
+
+                        <ul className="no-bullets">
+                            {currentMantenimientos.map(mantenimiento => (
+                                <li key={mantenimiento.id_mantenimiento} className="mantenimiento-cuadro">
+                                    <div className="mantenimiento-info-container">
+                                        {mantenimientoAEditar && mantenimientoAEditar.id_mantenimiento === mantenimiento.id_mantenimiento ? (
+                                            <div className="mantenimiento-form">
+                                                <label>Fecha de Mantenimiento:</label>
+                                                <input
+                                                    type="date"
+                                                    name="fecha_mantenimiento"
+                                                    value={nuevoMantenimiento.fecha_mantenimiento}
+                                                    onChange={handleNuevoMantenimientoChange}
+                                                /><br />
+
+                                                <label>Descripción del Daño:</label>
+                                                <input
+                                                    type="text"
+                                                    name="descripcion_dano"
+                                                    value={nuevoMantenimiento.descripcion_dano}
+                                                    onChange={handleNuevoMantenimientoChange}
+                                                /><br />
+
+                                                <label>Descripción del Mantenimiento:</label>
+                                                <input
+                                                    type="text"
+                                                    name="descripcion_mantenimiento"
+                                                    value={nuevoMantenimiento.descripcion_mantenimiento}
+                                                    onChange={handleNuevoMantenimientoChange}
+                                                /><br />
+
+                                                <div className="button-container">
+                                                    <button onClick={handleActualizarMantenimiento}>
+                                                        Actualizar Mantenimiento
+                                                    </button>
+                                                    <button onClick={handleOcultarFormulario}>Cancelar</button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <p><strong>Fecha de Mantenimiento:</strong> {formatDate(mantenimiento.fecha_mantenimiento)}</p>
+                                                <p><strong>Descripción del Daño:</strong> {mantenimiento.descripcion_dano}</p>
+                                                <p><strong>Descripción del Mantenimiento:</strong> {mantenimiento.descripcion_mantenimiento}</p>
+                                                {isLoggedIn && (
+                                                    <div className="button-container">
+                                                        <button onClick={() => handleEditarMantenimiento(mantenimiento)}>Editar</button>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+
+                        {/* Paginación */}
+                        {isLoggedIn && mantenimientos.length > mantenimientosPerPage && (
+                            <div className="pagination">
+                                {Array.from({ length: Math.ceil(mantenimientos.length / mantenimientosPerPage) }).map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => {
+                                            setCurrentPage(index + 1);
+                                            paginate(index + 1);
+                                        }}
+                                        className={currentPage === index + 1 ? 'active' : ''}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <p>Cargando herramienta...</p>
+            )}
+
+<Modal
+    isOpen={mostrarModalConfirmacion}
+    onRequestClose={() => setMostrarModalConfirmacion(false)}
+    style={customStyles}
+    contentLabel="Confirmación"
+>
+    <div className="modal-content">
+        <h2>Confirmación</h2>
+        <p>{mensajeModal}</p>
+        <button onClick={() => setMostrarModalConfirmacion(false)}>Cerrar</button>
     </div>
+</Modal>
+        </div>
     );
+};
+
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1000
+    }
 };
 
 export default HerramientaDetalle;

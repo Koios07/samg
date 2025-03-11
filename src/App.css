@@ -1,40 +1,44 @@
+/* ajuste de espacio en blanco footer*/
+.App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Agrega esto para evitar espacios en blanco */
+}
+
 /* src/App.css */
 
 .App {
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.content-wrapper {
+    flex: 1;
+    padding-bottom: 50px;
+    overflow-x: auto; /* Permite desplazamiento horizontal */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Estilos para el footer */
+.footer {
+    background-color: #007BFF; /* Cambia el color de fondo a azul */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Media Queries para Responsividad */
+@media (max-width: 600px) {
+    .content-wrapper {
+        padding-bottom: 20px;
+    }
 }

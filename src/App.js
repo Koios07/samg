@@ -13,6 +13,7 @@ import HerramientaDetalle from './pages/HerramientaDetalle';
 import Configuracion from './pages/Configuracion';
 import CambiarContrasena from './components/CambiarContraseña';
 import CrearUsuario from './components/CrearUsuario';
+import Footer from './components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -221,6 +222,7 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
                     </div>
                 </div>
             )}
+            <Footer /> {/* Renderiza el componente Footer */}
         </div>
     );
 }
