@@ -404,7 +404,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 </Link>
                 {isLoggedIn && (
                     <button className="editar-herramienta-button" onClick={handleEditarClick}>
-                        Editar Herramienta
+                        Editar
                     </button>
                 )}
             </div>
@@ -569,18 +569,18 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 <p>Cargando herramienta...</p>
             )}
 
-<Modal
-    isOpen={mostrarModalConfirmacion}
-    onRequestClose={() => setMostrarModalConfirmacion(false)}
-    style={customStyles}
-    contentLabel="Confirmación"
->
-    <div className="modal-content">
-        <h2>Confirmación</h2>
-        <p>{mensajeModal}</p>
-        <button onClick={() => setMostrarModalConfirmacion(false)}>Cerrar</button>
-    </div>
-</Modal>
+            <Modal
+                isOpen={mostrarModalConfirmacion}
+                onRequestClose={() => setMostrarModalConfirmacion(false)}
+                style={customStyles}
+                contentLabel="Confirmación"
+            >
+                <div className="modal-content">
+                    <h2>Confirmación</h2>
+                    <p>{mensajeModal}</p>
+                    <button onClick={() => setMostrarModalConfirmacion(false)}>Cerrar</button>
+                </div>
+            </Modal>
         </div>
     );
 };
