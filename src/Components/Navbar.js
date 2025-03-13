@@ -1,14 +1,16 @@
-// src/components/Navbar.js
 import React from 'react';
-import { Navbar, Nav, Button } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaCog } from 'react-icons/fa'; // Icono de configuración
-import './Navbar.css';
+import './Navbar.css'; // Importa el archivo CSS
+import logo from '../assets/images/logo.png'; // Importa la imagen del logo
 
 const NavigationBar = ({ isLoggedIn, onLogout }) => {
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand as={Link} to="/">SAMG</Navbar.Brand>
+    <Navbar className="navbar" expand="lg">
+      <Navbar.Brand as={Link} to="/">
+        <img src={logo} alt="SAMG Logo" />
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ms-auto">
@@ -18,18 +20,18 @@ const NavigationBar = ({ isLoggedIn, onLogout }) => {
           <Nav.Link as={Link} to="/buscar">Buscar</Nav.Link>
           {isLoggedIn ? (
             <>
-              <Button variant="outline-primary" onClick={onLogout}>
-                Logout
-              </Button>
-              {/* El enlace a configuración */}
-              <Link to="/configuracion" style={{ marginLeft: '10px' }}>
-                <FaCog size={20} /> {/* Icono de tuerca */}
+              <Link to="#" className="logout-button" onClick={onLogout}>
+                <button>Logout</button>
               </Link>
+              <Link to="/configuracion" className="config-icon-container">
+                <FaCog size={18} />
+              </Link>
+
             </>
           ) : (
-            <Button variant="outline-primary" as={Link} to="/login">
-              Login
-            </Button>
+            <Link to="/login" className="login-button">
+              <button>Login</button>
+            </Link>
           )}
         </Nav>
       </Navbar.Collapse>

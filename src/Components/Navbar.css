@@ -1,0 +1,111 @@
+/* Estilos generales para el componente Navbar */
+.navbar {
+    font-family: Arial, sans-serif;
+    padding: 0.5rem;
+    background-color: #007bff; /* Fondo azul oscuro */
+    border-bottom: 1px solid #0056b3; /* Borde inferior */
+}
+
+.navbar-brand {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white; /* Letras blancas */
+}
+
+.navbar-brand img {
+    width: 150px; /* Ancho de la imagen */
+    height: auto; /* Alto automático */
+}
+
+/* Estilos para los enlaces del navbar */
+.navbar .nav-link {
+    color: white !important; /* Letras blancas */
+    font-size: 1em;
+}
+
+.navbar .nav-link:hover {
+    color: #ccc !important; /* Color al hacer hover */
+}
+
+/* Estilos para el icono de configuración */
+.config-icon {
+    color: white; /* Color del icono */
+    font-size: 1em;
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -2px; /* Ajusta la posición vertical */
+}
+
+.config-icon:hover {
+    color: #ccc; /* Color al hacer hover */
+}
+
+/* Estilos para los botones de login y logout */
+.logout-button {
+    background-color: white;
+    color: #007bff;
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: none;
+}
+
+.logout-button:hover {
+    background-color: #ccc;
+    color: #007bff;
+    border-color: #0056b3;
+}
+
+.logout-button button {
+    background-color: transparent;
+    color: #007bff;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.login-button {
+    background-color: white;
+    color: #007bff;
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: none;
+}
+
+.login-button:hover {
+    background-color: #ccc;
+    color: #007bff;
+    border-color: #0056b3;
+}
+
+.login-button button {
+    background-color: transparent;
+    color: #007bff;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+/* Estilos para el contenedor del icono de configuración */
+.config-icon-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    margin-left: 10px;
+}
+
+.config-icon-container svg {
+    color: white; /* Color del icono */
+    font-size: 1em;
+}
+
+.config-icon-container:hover svg {
+    color: #ccc; /* Color al hacer hover */
+}

@@ -1,0 +1,32 @@
+/* Estilos para el contenedor del componente CargarPlantilla */
+.cargar-plantilla-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinea los elementos a la izquierda */
+    margin-top: 20px;
+}
+
+/* Estilos para el input de archivo */
+.cargar-plantilla-input {
+    padding: 6px;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+/* Estilos para el botón de cargar plantilla */
+.cargar-plantilla-button {
+    background-color: #34C759; /* Verde claro */
+    color: white;
+    padding: 6px 12px; /* Reduce el tamaño del botón */
+    border: 1px solid black; /* Borde negro */
+    border-radius: 2px; /* Reduce la curvatura de las esquinas */
+    cursor: pointer;
+    font-size: 0.9em; /* Reduce el tamaño de la fuente */
+    transition: background-color 0.3s ease;
+    box-shadow: none; /* Elimina la sombra */
+    margin-top: 10px; /* Espacio entre el input y el botón */
+}
+
+.cargar-plantilla-button:hover {
+    background-color: #2E865F; /* Verde más oscuro al hacer hover */
+}

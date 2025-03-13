@@ -125,51 +125,53 @@ const GestionarUsuario = () => {
     };
 
     return (
-        <div>
+        <div  className="gestionar-usuarios-container">
             <h2>Gestionar Usuarios</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {cargando ? (
                 <p>Cargando usuarios...</p>
             ) : (
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Usuario</th>
-                            <th>Activo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {usuarios.map(usuario => (
-                            <tr key={usuario.id}>
-                                <td>{usuario.nombre}</td>
-                                <td>{usuario.username}</td>
-                                <td>
-                                    <Switch
-                                        checked={usuario.tipo_usuario === 2}
-                                        onChange={() => handleActivarDesactivar(usuario.id, usuario.tipo_usuario)}
-                                        onColor="#007bff"
-                                        onHandleColor="#fff"
-                                        offColor="#6c757d"
-                                        offHandleColor="#fff"
-                                        handleDiameter={20}
-                                        uncheckedIcon={false}
-                                        checkedIcon={false}
-                                        height={28}
-                                        width={48}
-                                    />
-                                </td>
-                                <td>
-                                    <button className="btn btn-primary" onClick={() => handleCambiarContraseña(usuario.id)}>
-                                        Cambiar Contraseña
-                                    </button>
-                                </td>
+                <div className="table-responsive">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Usuario</th>
+                                <th>Activo</th>
+                                <th>Acciones</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {usuarios.map(usuario => (
+                                <tr key={usuario.id}>
+                                    <td>{usuario.nombre}</td>
+                                    <td>{usuario.username}</td>
+                                    <td>
+                                        <Switch
+                                            checked={usuario.tipo_usuario === 2}
+                                            onChange={() => handleActivarDesactivar(usuario.id, usuario.tipo_usuario)}
+                                            onColor="#007bff"
+                                            onHandleColor="#fff"
+                                            offColor="#6c757d"
+                                            offHandleColor="#fff"
+                                            handleDiameter={20}
+                                            uncheckedIcon={false}
+                                            checkedIcon={false}
+                                            height={28}
+                                            width={48}
+                                        />
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-primary" onClick={() => handleCambiarContraseña(usuario.id)}>
+                                            Cambiar Contraseña
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

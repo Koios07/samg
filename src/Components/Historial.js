@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
+import './Historial.css';
 
 const Historial = () => {
     const [nit, setNit] = useState('');
@@ -58,19 +59,21 @@ const Historial = () => {
     };
 
     return (
-        <div>
+        <div className="historial-container">
             <h2>Descargar Historial por NIT</h2>
-            <div>
-                <label htmlFor="nit">NIT:</label>
-                <input
-                    type="text"
-                    id="nit"
-                    value={nit}
-                    onChange={handleNitChange}
-                />
-                <button onClick={handleDescargarClick}>
-                    Descargar Historial
-                </button>
+            <div className="historial-form">
+                <div className="historial-campos">
+                    <label htmlFor="nit">NIT:</label>
+                    <input
+                        type="text"
+                        id="nit"
+                        value={nit}
+                        onChange={handleNitChange}
+                    />
+                    <button className="historial-button" onClick={handleDescargarClick}>
+                        Descargar Historial
+                    </button>
+                </div>
             </div>
         </div>
     );

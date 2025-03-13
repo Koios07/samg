@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './CrearUsuario.css';
 
 const CrearUsuario = ({ onClose }) => {
     const [nombre, setNombre] = useState('');
@@ -11,7 +12,6 @@ const CrearUsuario = ({ onClose }) => {
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        // Obtener el userId del localStorage
         const storedUserId = localStorage.getItem('userId');
         if (storedUserId) {
             setUserId(storedUserId);
@@ -56,7 +56,6 @@ const CrearUsuario = ({ onClose }) => {
         };
 
         try {
-            // Enviar el userId en el header
             console.log('CrearUsuario - Enviando solicitud a http://localhost:3001/registro');
 
             const response = await fetch('http://localhost:3001/registro', {
@@ -113,10 +112,10 @@ const CrearUsuario = ({ onClose }) => {
     };
 
     return (
-        <div>
+        <div className="crear-usuario-container">
             <h2>Crear usuario</h2>
-            {mensajeError && <p style={{ color: 'red' }}>{mensajeError}</p>}
-            {mensajeExito && <p style={{ color: 'green' }}>{mensajeExito}</p>}
+            {mensajeError && <p className="error-message">{mensajeError}</p>}
+            {mensajeExito && <p className="success-message">{mensajeExito}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="nombre">Nombre:</label>
@@ -156,9 +155,11 @@ const CrearUsuario = ({ onClose }) => {
                         required
                     />
                 </div>
-                <button type="submit">Crear usuario</button>
-                <button type="button" onClick={handleGoBack}>Atrás</button>
             </form>
+              <div className="crear-usuario-buttons">
+                    <button type="submit" className="crearUsuarioButton">Crear</button>
+                    <button type="button" onClick={handleGoBack} className="atrasButton">Atrás</button>
+                </div>
         </div>
     );
 };

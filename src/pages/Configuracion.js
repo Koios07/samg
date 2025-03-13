@@ -4,7 +4,8 @@ import CambiarContrasena from '../components/CambiarContraseña';
 import GestionarUsuario from '../components/GestionarUsuario';
 import DescargarPlantilla from '../components/DescargarPlantilla';
 import CargarPlantilla from '../components/CargarPlantilla';
-import Historial from '../components/Historial'; // Importa el componente Historial
+import Historial from '../components/Historial'; 
+import './Configuracion.css';
 
 const Configuracion = ({ userId, userType }) => {
     const [activeComponent, setActiveComponent] = useState(null);

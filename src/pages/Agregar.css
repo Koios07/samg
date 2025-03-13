@@ -1,0 +1,61 @@
+/* General styles for the agregar component */
+.agregar {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 0.9em;
+}
+
+.agregar h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Styles for the form */
+.agregar-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Styles for each form group */
+.agregar-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.agregar-form label {
+    color: #444;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.agregar-form input[type="text"],
+.agregar-form input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    color: #555;
+}
+
+/* Style for the submit button */
+.agregar-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.agregar-button:hover {
+    background-color: #0056b3;
+}

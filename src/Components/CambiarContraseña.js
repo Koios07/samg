@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import './CambiarContraseña.css'; // Importa el archivo CSS
 
 function CambiarContrasena({ userId: initialUserId, onClose }) {
     const [oldPassword, setOldPassword] = useState('');
@@ -110,9 +111,9 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
     };
 
     return (
-        <div>
+        <div className="cambiar-contrasena-container">
             <h2>Cambiar Contraseña</h2>
-            <form onSubmit={handleSubmit}>
+            <form id="cambiar-contrasena-form" onSubmit={handleSubmit}>
                 <div>
                     <label>Contraseña Actual:</label>
                     <input
@@ -140,12 +141,13 @@ function CambiarContrasena({ userId: initialUserId, onClose }) {
                         required
                     />
                 </div>
-                <button type="submit">Cambiar Contraseña</button>
-                <button type="button" onClick={handleGoBack}>Atrás</button>
-                {message && <p>{message}</p>}
-                {success && <p style={{ color: 'green' }}></p>}
             </form>
-
+            <div className="cambiar-contrasena-buttons">
+                <button type="submit" form="cambiar-contrasena-form" className="cambiar-contrasena-button">Cambiar Contraseña</button>
+                <button type="button" className="atras-button" onClick={handleGoBack}>Atrás</button>
+            </div>
+            {message && <p>{message}</p>}
+            {success && <p style={{ color: 'green' }}></p>}
             <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Cambio de Contraseña</Modal.Title>

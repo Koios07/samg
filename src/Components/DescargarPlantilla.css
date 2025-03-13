@@ -1,0 +1,23 @@
+/* Estilos para el contenedor del componente DescargarPlantilla */
+.descargar-plantilla-container {
+    display: flex;
+    justify-content: flex-start; /* Coloca el botón a la izquierda */
+    margin-top: 20px;
+}
+
+/* Estilos para el botón de descargar plantilla */
+.descargar-plantilla-button {
+    background-color: #34C759; /* Verde claro */
+    color: white;
+    padding: 6px 12px; /* Reduce el tamaño del botón */
+    border: 1px solid black; /* Borde negro */
+    border-radius: 2px; /* Reduce la curvatura de las esquinas */
+    cursor: pointer;
+    font-size: 0.9em; /* Reduce el tamaño de la fuente */
+    transition: background-color 0.3s ease;
+    box-shadow: none; /* Elimina la sombra */
+}
+
+.descargar-plantilla-button:hover {
+    background-color: #2E865F; /* Verde más oscuro al hacer hover */
+}

@@ -1,6 +1,7 @@
 // DescargarPlantilla.js
 import React from 'react';
 import * as XLSX from 'xlsx';
+import './DescargarPlantilla.css';
 
 const DescargarPlantilla = () => {
     const handleDescargarPlantilla = () => {
@@ -40,8 +41,8 @@ const DescargarPlantilla = () => {
     };
 
     return (
-        <div>
-            <button onClick={handleDescargarPlantilla}>Descargar Plantilla</button>
+        <div className="descargar-plantilla-container">
+            <button className="descargar-plantilla-button" onClick={handleDescargarPlantilla}>Descargar Plantilla</button>
         </div>
     );
 };

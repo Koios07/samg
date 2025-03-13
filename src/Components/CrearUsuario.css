@@ -1,0 +1,90 @@
+/* Estilos generales del contenedor */
+.crear-usuario-container {
+    font-family: Arial, sans-serif;
+    padding: 15px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 15px;
+    font-size: 0.9em;
+}
+
+/* Estilos para el título */
+.crear-usuario-container h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+/* Estilos para el error y success messages */
+.crear-usuario-container .error-message {
+    color: red;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.crear-usuario-container .success-message {
+    color: green;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Estilos para el formulario */
+.crear-usuario-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Estilos para cada form group */
+.crear-usuario-container form div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilos para las etiquetas */
+.crear-usuario-container form label {
+    color: #444;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+/* Estilos para los campos de texto y contraseñas */
+.crear-usuario-container form input[type="text"],
+.crear-usuario-container form input[type="password"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #555;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Estilos para el contenedor de botones */
+.crear-usuario-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+/* Estilos para los botones */
+.crearUsuarioButton,
+.atrasButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: inline-block;
+}
+
+.crearUsuarioButton:hover,
+.atrasButton:hover {
+    background-color: #0056b3;
+}

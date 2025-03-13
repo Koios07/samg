@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
+import './CargarPlantilla.css';
 
 const CargarPlantilla = () => {
     const [archivo, setArchivo] = useState(null);
@@ -90,9 +91,9 @@ const CargarPlantilla = () => {
     };
 
     return (
-        <div>
-            <input type="file" accept=".xlsx, .xls" onChange={handleArchivoCambiado} />
-            <button onClick={handleCargarPlantilla}>Cargar Plantilla</button>
+        <div className="cargar-plantilla-container">
+            <input type="file" accept=".xlsx, .xls" className="cargar-plantilla-input" onChange={handleArchivoCambiado} />
+            <button className="cargar-plantilla-button" onClick={handleCargarPlantilla}>Cargar</button>
         </div>
     );
 };

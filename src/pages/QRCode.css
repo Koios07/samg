@@ -1,3 +1,26 @@
+/* Estilos generales para la página de QR */
+.qr-container {
+    text-align: center;
+}
+
+/* Estilos para el modal */
+.ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ReactModal__Content {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    margin-right: '-50%';
+    transform: translate(-50%, -50%);
+    padding: 0; /* Eliminar el padding */
+    border-radius: 0; /* Eliminar el border-radius */
+    box-shadow: none; /* Eliminar la sombra */
+}
+
+/* Estilos para los botones del modal */
 .modal-buttons {
     display: flex;
     justify-content: space-between;
@@ -21,6 +44,54 @@
     color: white;
 }
 
-.qr-container {
-    text-align: center;
+/* Estilos para impresión */
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    .ReactModal__Content,
+    .ReactModal__Content *,
+    .qr-code-container,
+    .qr-code {
+        visibility: visible !important;
+    }
+
+    .ReactModal__Content {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 210mm !important; /* Ancho de A4 */
+        height: 297mm !important; /* Alto de A4 */
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .qr-code-container {
+        width: 190mm !important; /* Tamaño del contenedor */
+        height: 190mm !important; /* Tamaño del contenedor */
+        max-width: 190mm !important;
+        max-height: 190mm !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .qr-code {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
+
+    .modal-buttons,
+    h2 {
+        display: none !important;
+    }
 }

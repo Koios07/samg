@@ -1,0 +1,90 @@
+/* Estilos generales para el componente Historial */
+.historial-container {
+    font-family: Arial, sans-serif;
+    padding: 15px;
+    margin: 15px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 0.9em;
+}
+
+.historial-container h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+/* Estilos para el contenedor del formulario */
+.historial-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilos para el contenedor de los campos */
+.historial-campos {
+    display: flex;
+    flex-direction: column; /* Apila los campos verticalmente en pantallas pequeñas */
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Media query para pantallas grandes */
+@media (min-width: 768px) {
+    .historial-campos {
+        flex-direction: row; /* Coloca los campos horizontalmente en pantallas grandes */
+        align-items: center; /* Alinea los campos verticalmente */
+        gap: 20px; /* Espacio entre los campos */
+    }
+
+    .historial-campos label {
+        margin-right: 10px; /* Espacio entre la etiqueta y el campo */
+        font-weight: bold;
+    }
+
+    .historial-campos input[type="text"] {
+        width: 200px; /* Ancho fijo para el campo de texto */
+    }
+
+    .historial-button {
+        margin-left: 10px; /* Espacio entre el campo y el botón */
+    }
+}
+
+/* Estilos para las etiquetas */
+.historial-campos label {
+    margin-bottom: 10px; /* Espacio entre la etiqueta y el campo en pantallas pequeñas */
+    font-weight: bold;
+}
+
+/* Estilos para los campos de texto */
+.historial-campos input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #555;
+    width: 100%; /* Ocupa todo el ancho disponible en pantallas pequeñas */
+    box-sizing: border-box;
+    margin-bottom: 10px; /* Espacio entre el campo y el botón en pantallas pequeñas */
+}
+
+/* Estilos para el botón de descargar */
+.historial-button {
+    background-color: #34C759; /* Verde claro */
+    color: white;
+    padding: 8px 12px;
+    border: 1px solid black; /* Borde negro */
+    border-radius: 2px; /* Reduce la curvatura de las esquinas */
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    box-shadow: none; /* Elimina la sombra */
+    width: 100%; /* Ocupa todo el ancho disponible en pantallas pequeñas */
+}
+
+.historial-button:hover {
+    background-color: #2E865F; /* Verde más oscuro al hacer hover */
+}
