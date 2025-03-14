@@ -30,7 +30,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node src/server/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -61,8 +61,7 @@
     "web-vitals": "^4.2.4"
   },
   "engines": {
-  "node": "20.x",
-  "npm": "9.x"
-}
-
+    "node": "20.x",
+    "npm": "9.x"
+  }
 }
