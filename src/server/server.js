@@ -3,9 +3,13 @@ const mysql = require('mysql');
 const cors = require('cors');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://testgmas.free.nf',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Configuración de la base de datos

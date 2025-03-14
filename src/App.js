@@ -24,7 +24,7 @@ function App() {
     const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
     const [modalMessage, setModalMessage] = useState(''); // Mensaje del modal
     const [cargando, setCargando] = useState(true); // Estado de carga
-    const [fetchHerramientas, setFetchHerramientas] = useState(() => () => {});
+    const [fetchHerramientas, setFetchHerramientas] = useState(() => () => { });
 
     useEffect(() => {
         const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -48,7 +48,9 @@ function App() {
 
     const obtenerHerramientas = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:3001/herramientas');
+            const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+            const response = await fetch(`${backendURL}/herramientas`);
+
             if (!response.ok) throw new Error('Error en la respuesta de la red');
             const data = await response.json();
             setHerramientas(data);

@@ -8,7 +8,6 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
@@ -31,13 +30,13 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "bash render-build.sh",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
-},
+    "start": "node server.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -62,7 +61,7 @@
     "web-vitals": "^4.2.4"
   },
   "engines": {
-  "node": "22.x",
-  "npm": "11.x"
-}
+    "node": "22.x",
+    "npm": "11.x"
+  }
 }
