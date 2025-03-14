@@ -8,13 +8,12 @@ import Buscar from './pages/Buscar';
 import Login from './pages/Login';
 import Agregar from './pages/Agregar';
 import PrivateRoute from './components/PrivateRoute';
-import QRCodePage from './pages/QRCode';
 import HerramientaDetalle from './pages/HerramientaDetalle';
 import Configuracion from './pages/Configuracion';
 import CambiarContrasena from './components/CambiarContraseña';
 import CrearUsuario from './components/CrearUsuario';
 import Footer from './components/Footer';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -176,7 +175,6 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
                         />
 
                         {/* Otras rutas */}
-                        <Route path="/qr/:id_articulo" element={<QRCodePage herramientas={herramientas} />} />
                         <Route
                             path="/herramienta/:id_articulo"
                             element={<HerramientaDetalle

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Buscar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,25 +15,16 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
     const [qrCodeUrl, setQrCodeUrl] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [herramientasPerPage] = useState(10);
+    const qrRef = useRef(null);
 
     useEffect(() => {
         if (isLoggedIn) {
-            obtenerHerramientas();
+            setHerramientasFiltradas(initialHerramientas || []);
             setMostrarTabla(true);
         } else {
             setMostrarTabla(false);
         }
-    }, [isLoggedIn]);
-
-    const obtenerHerramientas = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/herramientas');
-            const data = await response.json();
-            setHerramientasFiltradas(data);
-        } catch (error) {
-            console.error('Error al obtener herramientas:', error);
-        }
-    };
+    }, [isLoggedIn, initialHerramientas]);
 
     const handleSearch = async (e) => {
         if (e && e.key === 'Enter') {
@@ -169,45 +160,17 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                     </div>
                 </div>
             )}
-            <Modal
-                isOpen={isQrModalOpen}
-                onRequestClose={closeQrModal}
-                className="qr-modal"
-                overlayClassName="qr-modal-overlay"
-                style={{
-                    overlay: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.75)'
-                    },
-                    content: {
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        border: '1px solid #ccc',
-                        background: '#fff',
-                        overflow: 'auto',
-                        WebkitOverflowScrolling: 'touch',
-                        borderRadius: '4px',
-                        outline: 'none',
-                        padding: '20px',
-                        maxWidth: '50%',
-                        maxHeight: '50%',
-                        width: 'auto',
-                        height: 'auto'
-                    }
-                }}
-                contentLabel="Código QR"
-            >
-                <div className="qr-content">
-                    <h2 className="qr-title">Código QR</h2>
+            <Modal isOpen={isQrModalOpen} onRequestClose={closeQrModal} className="qr-modal" overlayClassName="qr-modal-overlay">
+                <div className="qr-content" ref={qrRef}>
                     <QRCodeSVG value={qrCodeUrl} size={256} className="qr-code" />
-                    <div className="modal-buttons">
-                        <button onClick={imprimirQrCode} className="print-button">Imprimir</button>
-                        <button onClick={closeQrModal} className="close-button">Cerrar</button>
-                    </div>
+                </div>
+                <div className="modal-buttons">
+                    <button onClick={imprimirQrCode} className="print-button">Imprimir</button>
+                    <button onClick={closeQrModal} className="close-button">Cerrar</button>
                 </div>
             </Modal>
         </div>
     );
 };
+
 export default Buscar;

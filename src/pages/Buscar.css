@@ -1,42 +1,62 @@
-/* src/pages/Buscar.css */
-
+/* Estilos generales */
 .buscar {
     padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
 }
 
+.buscar h1 {
+    color: #007bff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Estilos para el contenedor de botones */
 .buscar .button-container {
     display: flex;
-    justify-content: space-between; /* Distribuye los elementos en el contenedor */
-    align-items: center; /* Alinea verticalmente los elementos */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
+/* Estilos para el input de búsqueda */
 .buscar .search-input {
-    width: 600px; /* Alarga el texto de búsqueda hasta la palabra "Técnico" */
+    width: 600px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 16px; /* Tamaño de la fuente */
+    font-size: 16px;
+    color: #555;
 }
 
+.buscar .search-input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Estilos para el contenedor de botones adicionales */
 .buscar .button-container div {
     display: flex;
     justify-content: space-between;
-    width: 200px; /* Ajusta el ancho según sea necesario */
-    margin-left: 10px; /* Espacio entre el input y los botones */
+    width: 200px;
+    margin-left: 10px;
 }
 
+/* Estilos para los botones */
 .buscar .button-container div button,
 .buscar .ver-qr-button {
-    padding: 10px 20px; /* Ajusta el padding para que los botones tengan el mismo tamaño */
-    font-size: 16px; /* Tamaño de la fuente */
-    min-width: 80px; /* Ajusta el ancho mínimo */
-    margin: 0 5px; /* Espacio entre los botones */
+    padding: 10px 20px;
+    font-size: 16px;
+    min-width: 80px;
+    margin: 0 5px;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease-in-out;
 }
 
 .buscar .button-container div button:hover,
@@ -45,20 +65,18 @@
 }
 
 .buscar .ver-qr-button {
-    background-color: #007bff; /* Color azul */
-    color: white; /* Texto blanco */
-    padding: 8px 16px;
-    min-width: 80px;
-    font-size: 14px;
+    background-color: #007bff;
+    color: white;
 }
 
 .buscar .ver-qr-button:hover {
-    background-color: #0056b3; /* Color azul oscuro en hover */
+    background-color: #0056b3;
 }
 
+/* Estilos para la tabla */
 .buscar .table-container {
-    width: 100%; /* Asegúrate de que el contenedor tenga el ancho máximo */
-    overflow-x: auto; /* Permite desplazamiento horizontal */
+    width: 100%;
+    overflow-x: auto;
 }
 
 .buscar .articulos-table {
@@ -66,7 +84,7 @@
     margin-top: 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Asegúrate de que la tabla tenga el ancho máximo */
+    width: 100%;
 }
 
 .buscar .articulos-table th,
@@ -102,28 +120,122 @@
     text-decoration: underline;
 }
 
+/* Estilos para la paginación */
+.buscar .pagination-container {
+    margin-top: 20px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.buscar .pagination {
+    display: inline-block;
+}
+
+.buscar .page-link {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+    cursor: pointer;
+}
+
+.buscar .page-link.active {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.buscar .page-link:hover:not(.active) {
+    background-color: #ddd;
+}
+
+/* Estilos para el modal */
+.qr-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.qr-modal {
+    position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    text-align: center; /* Centra el contenido del modal */
+}
+
+.qr-content {
+    margin-bottom: 20px; /* Espacio entre el código QR y los botones */
+}
+
+.qr-modal .modal-buttons {
+    display: flex;
+    justify-content: center; /* Centra los botones horizontalmente */
+    gap: 20px; /* Espacio entre los botones */
+}
+
+.qr-modal .modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    transition: background-color 0.3s ease;
+    min-width: 100px; /* Ancho mínimo para los botones */
+}
+
+.qr-modal .print-button {
+    background-color: #28a745;
+}
+
+.qr-modal .close-button {
+    background-color: #dc3545;
+}
+
+.qr-modal .print-button:hover {
+    background-color: #218838;
+}
+
+.qr-modal .close-button:hover {
+    background-color: #c82333;
+}
+
 /* Media Queries para Responsividad */
 @media (max-width: 600px) {
     .buscar .button-container {
-        flex-direction: column; /* Cambia a columna en dispositivos móviles */
-        align-items: center; /* Centra los elementos */
+        flex-direction: column;
+        align-items: center;
     }
 
     .buscar .search-input {
-        width: 100%; /* Ocupa todo el ancho en dispositivos móviles */
-        margin-bottom: 10px; /* Espacio entre el input y los botones */
+        width: 100%;
+        margin-bottom: 10px;
     }
 
     .buscar .button-container div {
-        width: 100%; /* Ajusta el ancho para dispositivos móviles */
+        width: 100%;
         justify-content: space-between;
     }
 
     .buscar .button-container div button {
-        padding: 6px 12px; /* Reduce el padding */
-        font-size: 12px; /* Reduce el tamaño de la fuente */
-        min-width: 60px; /* Reduce el ancho mínimo */
-        margin: 0 5px; /* Espacio entre los botones */
+        padding: 6px 12px;
+        font-size: 12px;
+        min-width: 60px;
+        margin: 0 5px;
     }
 }
 
@@ -143,48 +255,68 @@
 
 /* Ajustes para el título */
 .buscar h1 {
-    margin-top: 10px; /* Espacio mínimo superior */
+    margin-top: 10px;
 }
 
 /* Ajustes para el pie de página */
 .main-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Asegúrate de que el contenedor tenga al menos la altura de la ventana */
+    min-height: 100vh;
 }
 
 .buscar {
-    flex-grow: 1; /* Ocupa el espacio disponible */
+    flex-grow: 1;
 }
 
 .footer {
-    margin-top: auto; /* Mueve el pie de página hacia abajo */
+    margin-top: auto;
     padding: 10px;
     background-color: #f0f0f0;
     text-align: center;
 }
 
-/* Centrar la paginación */
-.buscar .pagination-container {
-    margin-top: 20px;
-    margin-bottom: 50px; /* Espacio entre la paginación y el pie de página */
-}
+/* Estilos para impresión */
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
 
-.buscar .pagination {
-    display: flex;
-    justify-content: center; /* Centra los botones de paginación */
-    gap: 5px; /* Espacio entre los botones */
-}
+    .qr-modal,
+    .qr-modal * {
+        visibility: visible !important;
+        position: fixed !important;
+        /* Ajustes para márgenes */
+        top: 1cm !important;
+        left: 1cm !important;
+        right: 1cm !important;
+        bottom: 1cm !important;
+        width: auto !important;
+        height: auto !important;
+        max-width: calc(100% - 2cm) !important;
+        max-height: calc(100% - 2cm) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
 
-.buscar .page-link {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #007bff; /* Color azul */
-    color: white; /* Texto blanco */
-}
+    .qr-modal .modal-buttons {
+        display: none !important;
+    }
 
-.buscar .page-link.active {
-    background-color: #0056b3; /* Color azul oscuro para el botón activo */
+    .qr-code {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 0mm !important;
+    }
 }
