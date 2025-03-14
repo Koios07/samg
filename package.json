@@ -2,7 +2,7 @@
   "name": "samg",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://testgmas.free.nf/",
+  "homepage": "http://testgmas.free.nf",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
@@ -61,7 +61,8 @@
     "web-vitals": "^4.2.4"
   },
   "engines": {
-    "node": "22.x",
-    "npm": "11.x"
-  }
+  "node": "20.x",
+  "npm": "9.x"
+}
+
 }
