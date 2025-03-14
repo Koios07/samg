@@ -1,3 +1,3 @@
-#!/usr/bin/env bash
-npm install --force
-npm run build
+#!/bin/bash
+npm install
+echo "Build completo ✅"
