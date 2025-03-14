@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { HashRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import NavigationBar from './components/Navbar';
+import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Contactanos from './pages/Contactanos';
@@ -48,7 +48,7 @@ function App() {
 
     const obtenerHerramientas = useCallback(async () => {
         try {
-            const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+            const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';    
             const response = await fetch(`${backendURL}/herramientas`);
 
             if (!response.ok) throw new Error('Error en la respuesta de la red');
@@ -122,7 +122,7 @@ function AppContent({ isLoggedIn, onLogout, userType, nombre, herramientas, user
     return (
         <div className="App">
             {/* Barra de navegación */}
-            <NavigationBar isLoggedIn={isLoggedIn} onLogout={onLogout} userType={userType} nombre={nombre} />
+            <Navbar isLoggedIn={isLoggedIn} onLogout={onLogout} userType={userType} nombre={nombre} />
             <div className="container">
                 {!cargando && herramientas.length > 0 && (
                     <Routes>
