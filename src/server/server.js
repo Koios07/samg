@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
@@ -12,31 +13,21 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Configuración de la base de datos
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'samg_db'
-});
-
-db.connect((err) => {
-    if (err) {
-        console.error('Error al conectar a la base de datos:', err);
-    } else {
-        console.log('Conectado a la base de datos MySQL');
-    }
+// Configuración de la base de datos con mysql.createPool
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 // Ruta para el registro de usuarios
 app.post('/registro', async (req, res) => {
     const { username, password, tipo_usuario, nombre } = req.body;
 
-    console.log('Intento de registro:', { username, tipo_usuario, nombre });
-
-    // Verificar si el nombre de usuario ya existe
     const checkUsernameQuery = 'SELECT * FROM usuario WHERE username = ?';
-    db.query(checkUsernameQuery, [username], async (err, result) => {
+    pool.query(checkUsernameQuery, [username], (err, result) => {
         if (err) {
             console.error('Error al verificar el nombre de usuario:', err);
             return res.status(500).json({ message: 'Error al verificar el nombre de usuario.' });
@@ -46,17 +37,20 @@ app.post('/registro', async (req, res) => {
             return res.status(400).json({ message: 'El nombre de usuario ya está en uso.' });
         }
 
-        // Insertar el nuevo usuario en la base de datos
         const insertUserQuery = 'INSERT INTO usuario (username, password, tipo_usuario, nombre) VALUES (?, ?, ?, ?)';
-        db.query(insertUserQuery, [username, password, tipo_usuario, nombre], (err, result) => {
+        pool.query(insertUserQuery, [username, password, tipo_usuario, nombre], (err, result) => {
             if (err) {
-                console.error('Error al registrar el usuario:', err);
-                return res.status(500).json({ message: 'Error al registrar el usuario.' });
+                console.error('Error al insertar usuario:', err);
+                return res.status(500).json({ message: 'Error al registrar usuario.' });
             }
 
-            res.status(201).json({ message: 'Usuario registrado exitosamente.' });
+            res.status(201).json({ message: 'Usuario registrado con éxito' });
         });
     });
+});
+
+app.listen(port, () => {
+    console.log(`Servidor corriendo en http://localhost:${port}`);
 });
 
 // Ruta para el inicio de sesión
@@ -85,9 +79,9 @@ app.post('/login', (req, res) => {
         //Comparar la contraseña ingresada con la contraseña de la base de datos
         if (password === user.password) {
             // Enviar la información del usuario
-            res.json({ 
-                userId: user.id, 
-                nombre: user.nombre, 
+            res.json({
+                userId: user.id,
+                nombre: user.nombre,
                 userType: user.tipo_usuario
             });
         } else {
@@ -224,8 +218,8 @@ app.get('/herramientas/:id', (req, res) => {
     });
 });
 
- // Ruta para actualizar un artículo existente
- app.put('/herramientas/:id', (req, res) => {
+// Ruta para actualizar un artículo existente
+app.put('/herramientas/:id', (req, res) => {
     // AQUI INICIA LA MODIFICACION
     const articuloId = req.params.id;
     const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit } = req.body;
@@ -448,7 +442,7 @@ app.post('/importar-herramientas', (req, res) => {
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Servidor corriendo en el puerto ${port}`);
-  });
+});
 
 // Ruta para obtener los mantenimientos de una herramienta
 app.get('/mantenimientos/:id', (req, res) => {
@@ -465,8 +459,8 @@ app.get('/mantenimientos/:id', (req, res) => {
     });
 });
 
- // Ruta para agregar un nuevo mantenimiento
- app.post('/mantenimientos', (req, res) => {
+// Ruta para agregar un nuevo mantenimiento
+app.post('/mantenimientos', (req, res) => {
     // AQUI INICIA LA MODIFICACION
     const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico } = req.body;
     console.log("Datos recibidos en POST /mantenimientos:", req.body);  // Log para verificar los datos recibidos
@@ -482,8 +476,8 @@ app.get('/mantenimientos/:id', (req, res) => {
     });
 });
 
- // Ruta para editar un mantenimiento existente
- app.put('/mantenimientos/:id_mantenimiento', (req, res) => {
+// Ruta para editar un mantenimiento existente
+app.put('/mantenimientos/:id_mantenimiento', (req, res) => {
     // AQUI INICIA LA MODIFICACION
     const mantenimientoId = req.params.id_mantenimiento;
     const { fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico } = req.body;
