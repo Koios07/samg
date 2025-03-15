@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { HashRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from './components/Navbar.jsx';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Contactanos from './pages/Contactanos';
