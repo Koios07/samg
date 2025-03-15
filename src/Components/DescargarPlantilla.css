@@ -7,7 +7,7 @@
 
 /* Estilos para el botón de descargar plantilla */
 .descargar-plantilla-button {
-    background-color: #34C759; /* Verde claro */
+    background-color: #007bff; /* Verde claro */
     color: white;
     padding: 6px 12px; /* Reduce el tamaño del botón */
     border: 1px solid black; /* Borde negro */
@@ -19,5 +19,5 @@
 }
 
 .descargar-plantilla-button:hover {
-    background-color: #2E865F; /* Verde más oscuro al hacer hover */
+    background-color: #0056b3; /* Verde más oscuro al hacer hover */
 }

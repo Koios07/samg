@@ -73,7 +73,7 @@
 
 /* Estilos para el botón de descargar */
 .historial-button {
-    background-color: #34C759; /* Verde claro */
+    background-color: #007bff; /* Verde claro */
     color: white;
     padding: 8px 12px;
     border: 1px solid black; /* Borde negro */
@@ -86,5 +86,5 @@
 }
 
 .historial-button:hover {
-    background-color: #2E865F; /* Verde más oscuro al hacer hover */
+    background-color: #0056b3; /* Verde más oscuro al hacer hover */
 }
