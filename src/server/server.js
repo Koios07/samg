@@ -4,7 +4,7 @@ const mysql = require('mysql');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3001; 
+const port = process.env.PORT || 3001;
 
 app.use(cors({
     origin: 'http://testgmas.free.nf',
@@ -49,9 +49,15 @@ app.post('/registro', async (req, res) => {
     });
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
+}).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.log('El puerto ya está en uso. Cerrando servidor...');
+        process.exit(1);
+    }
 });
+
 
 // Ruta para el inicio de sesión
 app.post('/login', (req, res) => {
