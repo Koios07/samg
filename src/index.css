@@ -1,29 +1,42 @@
+/* Estilos globales */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0; /* Fondo gris tenue */
+}
+
+/* Estilos para impresión */
 @media print {
-    body * {
-      visibility: hidden !important;
-    }
-  
-    .qr-code-container,
-    .qr-code-container * {
-      visibility: visible !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-  
-    .qr-code {
-      max-width: 90vh !important;
-      max-height: 90vh !important;
-      width: auto !important;
-      height: auto !important;
-      object-fit: contain !important;
-    }
+  body * {
+    visibility: hidden !important;
   }
-  
+
+  .qr-code-container,
+  .qr-code-container * {
+    visibility: visible !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .qr-code {
+    max-width: 90vh !important;
+    max-height: 90vh !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+}
