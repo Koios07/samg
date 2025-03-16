@@ -21,16 +21,15 @@ const Footer = () => {
                     <div className="col-md-4">
                         <h4>Ubicaciones</h4>
                         <ul>
-                            <li><FontAwesomeIcon icon={faMapMarkerAlt} /> Dirección 1: Calle Principal #123, Ciudad</li>
-                            <li><FontAwesomeIcon icon={faMapMarkerAlt} /> Dirección 2: Calle Secundaria #456, Ciudad</li>
+                            <li><FontAwesomeIcon icon={faMapMarkerAlt} /> Carrera 33 No. 112-31 Barrio Caldas  Floridablanca</li>
                         </ul>
                     </div>
                     <div className="col-md-4">
                         <h4>Contacto</h4>
                         <ul>
-                            <li><FontAwesomeIcon icon={faPhone} /> Teléfono: +57 1234567890</li>
-                            <li><FontAwesomeIcon icon={faWhatsapp} /> WhatsApp: +57 9876543210</li>
-                            <li><FontAwesomeIcon icon={faEnvelope} /> Correo electrónico: info@example.com</li>
+                            <li><FontAwesomeIcon icon={faPhone} /> 301 239 7269</li>
+                            <li><FontAwesomeIcon icon={faWhatsapp} /> 319 394 7386</li>
+                            <li><FontAwesomeIcon icon={faEnvelope} /> samgmantenimiento@gmail.com</li>
                         </ul>
                     </div>
                     <div className="col-md-4">
@@ -43,7 +42,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="copyright">
-                    <p style={{ textAlign: 'center' }}>&copy; 2025 Example. Todos los derechos reservados.</p>
+                    <p style={{ textAlign: 'center' }}>&copy; 2025 SAMG Mantenimientos. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>

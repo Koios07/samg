@@ -14,7 +14,7 @@ import Configuracion from './pages/Configuracion';
 import CambiarContrasena from './components/CambiarContraseña';
 import CrearUsuario from './components/CrearUsuario';
 import Footer from './components/Footer';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
