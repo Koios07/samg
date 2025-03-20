@@ -93,7 +93,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
             <div className="button-container">
                 <input
                     type="text"
-                    placeholder="Ingrese el NIT o el término de búsqueda..."
+                    placeholder="Ingrese el NIT..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleSearchInput}
@@ -131,7 +131,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                                     <tr key={herramienta.id_articulo}>
                                         <td data-label="ID">
                                             <Link to={`/herramienta/${herramienta.id_articulo}`}>
-                                                {herramienta.id_articulo}
+                                                SM{herramienta.id_articulo}
                                             </Link>
                                         </td>
                                         <td data-label="Descripción">{herramienta.herramienta}</td>

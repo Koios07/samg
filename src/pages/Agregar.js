@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import './Agregar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import './Buscar.css';
 
 const Agregar = () => {
     const [herramienta, setHerramienta] = useState('');
@@ -68,94 +66,120 @@ const Agregar = () => {
         }
     };
 
+    const handleGoBack = () => {
+        navigate('/buscar');
+    };
+
     return (
-        <div className="agregar">
-            <h1>Agregar Herramienta</h1>
-            <form onSubmit={handleSubmit} className="agregar-form">
-                <div className="form-group">
-                    <label htmlFor="herramienta">Herramienta:</label>
-                    <input
-                        type="text"
-                        id="herramienta"
-                        value={herramienta}
-                        onChange={(e) => setHerramienta(e.target.value)}
-                        required
-                    />
+        <div className="container mt-4">
+            <div className="card">
+                <div className="card-body">
+                    <h2 className="text-center">Agregar Herramienta</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="herramienta" className="form-label">Herramienta:</label>
+                            <input
+                                type="text"
+                                id="herramienta"
+                                value={herramienta}
+                                onChange={(e) => setHerramienta(e.target.value)}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="marca" className="form-label">Marca:</label>
+                            <input
+                                type="text"
+                                id="marca"
+                                value={marca}
+                                onChange={(e) => setMarca(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="modelo" className="form-label">Modelo:</label>
+                            <input
+                                type="text"
+                                id="modelo"
+                                value={modelo}
+                                onChange={(e) => setModelo(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="propietario" className="form-label">Propietario:</label>
+                            <input
+                                type="text"
+                                id="propietario"
+                                value={propietario}
+                                onChange={(e) => setPropietario(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="fecha_entrada" className="form-label">
+                                Fecha de Entrada <span style={{ color: 'red' }}>*</span>
+                            </label>
+                            <input
+                                type="date"
+                                id="fecha_entrada"
+                                value={fecha_entrada}
+                                onChange={(e) => setFechaEntrada(e.target.value)}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="nit" className="form-label">Nit:</label>
+                            <input
+                                type="text"
+                                id="nit"
+                                value={nit}
+                                onChange={(e) => setNit(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="descripcion_dano" className="form-label">Descripción del Daño:</label>
+                            <input
+                                type="text"
+                                id="descripcion_dano"
+                                value={descripcion_dano}
+                                onChange={(e) => setDescripcionDano(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="fecha_mantenimiento" className="form-label">
+                                Fecha de Mantenimiento <span style={{ color: 'red' }}>*</span>
+                            </label>
+                            <input
+                                type="date"
+                                id="fecha_mantenimiento"
+                                value={fecha_mantenimiento}
+                                onChange={(e) => setFechaMantenimiento(e.target.value)}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="descripcion_mantenimiento" className="form-label">Descripción del Mantenimiento:</label>
+                            <input
+                                type="text"
+                                id="descripcion_mantenimiento"
+                                value={descripcion_mantenimiento}
+                                onChange={(e) => setDescripcionMantenimiento(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="d-flex justify-content-center gap-3 mt-4">
+                            <button type="submit" className="btn btn-primary">Agregar</button>
+                            <button type="button" onClick={handleGoBack} className="btn btn-primary">Atrás</button>
+                        </div>
+                    </form>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="marca">Marca:</label>
-                    <input
-                        type="text"
-                        id="marca"
-                        value={marca}
-                        onChange={(e) => setMarca(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="modelo">Modelo:</label>
-                    <input
-                        type="text"
-                        id="modelo"
-                        value={modelo}
-                        onChange={(e) => setModelo(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="propietario">Propietario:</label>
-                    <input
-                        type="text"
-                        id="propietario"
-                        value={propietario}
-                        onChange={(e) => setPropietario(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="fecha_entrada">Fecha de Entrada:</label>
-                    <input
-                        type="date"
-                        id="fecha_entrada"
-                        value={fecha_entrada}
-                        onChange={(e) => setFechaEntrada(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="nit">Nit:</label>
-                    <input
-                        type="text"
-                        id="nit"
-                        value={nit}
-                        onChange={(e) => setNit(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="descripcion_dano">Descripción del Daño:</label>
-                    <input
-                        type="text"
-                        id="descripcion_dano"
-                        value={descripcion_dano}
-                        onChange={(e) => setDescripcionDano(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="fecha_mantenimiento">Fecha de Mantenimiento:</label>
-                    <input
-                        type="date"
-                        id="fecha_mantenimiento"
-                        value={fecha_mantenimiento}
-                        onChange={(e) => setFechaMantenimiento(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="descripcion_mantenimiento">Descripción del Mantenimiento:</label>
-                    <input
-                        type="text"
-                        id="descripcion_mantenimiento"
-                        value={descripcion_mantenimiento}
-                        onChange={(e) => setDescripcionMantenimiento(e.target.value)}
-                    />
-                </div>
-                <button type="submit" className="agregar-button">Agregar</button>
-            </form>
+            </div>
         </div>
     );
 }

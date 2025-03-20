@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './CrearUsuario.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const CrearUsuario = ({ onClose }) => {
     const [nombre, setNombre] = useState('');
@@ -42,7 +42,7 @@ const CrearUsuario = ({ onClose }) => {
         }
 
         const confirmCreation = window.confirm(
-            `¿Crear usuario con nombre: ${nombreLimpio}, usuario: ${usuarioLimpio} y contraseña: ${contraseñaLimpia}?`
+            `¿Crear usuario con nombre: ${nombreLimpio}, usuario: ${usuarioLimpio}?`
         );
         if (!confirmCreation) {
             return;
@@ -112,54 +112,62 @@ const CrearUsuario = ({ onClose }) => {
     };
 
     return (
-        <div className="crear-usuario-container">
-            <h2>Crear usuario</h2>
-            {mensajeError && <p className="error-message">{mensajeError}</p>}
-            {mensajeExito && <p className="success-message">{mensajeExito}</p>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="nombre">Nombre:</label>
-                    <input
-                        type="text"
-                        id="nombre"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                    />
+        <div className="container mt-4">
+            <div className="card">
+                <div className="card-body">
+                    <h2 className="text-center">Crear usuario</h2>
+                    {mensajeError && <p className="text-danger text-center">{mensajeError}</p>}
+                    {mensajeExito && <p className="text-success text-center">{mensajeExito}</p>}
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="nombre" className="form-label">Nombre:</label>
+                            <input
+                                type="text"
+                                id="nombre"
+                                value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="usuario" className="form-label">Usuario:</label>
+                            <input
+                                type="text"
+                                id="usuario"
+                                value={usuario}
+                                onChange={(e) => setUsuario(e.target.value)}
+                                className="form-control"
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="contraseña" className="form-label">Contraseña:</label>
+                            <input
+                                type="password"
+                                id="contraseña"
+                                value={contraseña}
+                                onChange={(e) => setContraseña(e.target.value)}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="verificarContraseña" className="form-label">Verificar contraseña:</label>
+                            <input
+                                type="password"
+                                id="verificarContraseña"
+                                value={verificarContraseña}
+                                onChange={(e) => setVerificarContraseña(e.target.value)}
+                                className="form-control"
+                                required
+                            />
+                        </div>
+                        <div className="d-flex justify-content-center gap-3 mt-4">
+                            <button type="submit" className="btn btn-primary">Crear</button>
+                            <button type="button" onClick={handleGoBack} className="btn btn-primary">Atrás</button>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <label htmlFor="usuario">Usuario:</label>
-                    <input
-                        type="text"
-                        id="usuario"
-                        value={usuario}
-                        onChange={(e) => setUsuario(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="contraseña">Contraseña:</label>
-                    <input
-                        type="password"
-                        id="contraseña"
-                        value={contraseña}
-                        onChange={(e) => setContraseña(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="verificarContraseña">Verificar contraseña:</label>
-                    <input
-                        type="password"
-                        id="verificarContraseña"
-                        value={verificarContraseña}
-                        onChange={(e) => setVerificarContraseña(e.target.value)}
-                        required
-                    />
-                </div>
-            </form>
-              <div className="crear-usuario-buttons">
-                    <button type="submit" className="crearUsuarioButton">Crear</button>
-                    <button type="button" onClick={handleGoBack} className="atrasButton">Atrás</button>
-                </div>
+            </div>
         </div>
     );
 };

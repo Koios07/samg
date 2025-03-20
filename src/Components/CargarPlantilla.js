@@ -19,10 +19,10 @@ const CargarPlantilla = () => {
         const reader = new FileReader();
         reader.onload = async (e) => {
             const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'yyyy-mm-dd' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
 
             // Verificar encabezados
             const expectedHeaders = [
@@ -40,8 +40,23 @@ const CargarPlantilla = () => {
 
             const herramientas = dataRows.map(row => {
                 // Formatear fechas usando moment.js
-                const fechaEntrada = row[4] ? moment(row[4], ['D/M/YY', 'D/M/YYYY', 'YYYY-MM-DD']).format('YYYY-MM-DD') : null;
-                const fechaMantenimiento = row[8] ? moment(row[8], ['D/M/YY', 'D/M/YYYY', 'YYYY-MM-DD']).format('YYYY-MM-DD') : null;
+                let fechaEntrada = null;
+                if (row[4]) {
+                    try {
+                        fechaEntrada = moment(row[4], ['DD/MM/YYYY', 'D/M/YYYY', 'YYYY-MM-DD'], true).format('YYYY-MM-DD');
+                    } catch (error) {
+                        console.error(`Error al parsear la fecha de entrada: ${row[4]}`, error);
+                    }
+                }
+
+                let fechaMantenimiento = null;
+                if (row[8]) {
+                    try {
+                        fechaMantenimiento = moment(row[8], ['DD/MM/YYYY', 'D/M/YYYY', 'YYYY-MM-DD'], true).format('YYYY-MM-DD');
+                    } catch (error) {
+                        console.error(`Error al parsear la fecha de mantenimiento: ${row[8]}`, error);
+                    }
+                }
 
                 return {
                     herramienta: row[0] || null,
