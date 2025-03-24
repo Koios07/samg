@@ -9,6 +9,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
 
     const { id_articulo } = useParams();
     const navigate = useNavigate();
+    const [urlValue, setUrlValue] = useState('');
     const [tipoModal, setTipoModal] = useState('Confirmación'); // Estado para cambiar el título del modal
     const [herramienta, setHerramienta] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -19,7 +20,9 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
         propietario: '',
         fecha_entrada: '',
         nit: '',
-        nombre_trabajador: ''
+        nombre_trabajador: '',
+        garantia: '',
+        url: ''
     });
     const [mantenimientos, setMantenimientos] = useState([]);
     const [nuevoMantenimiento, setNuevoMantenimiento] = useState({
@@ -27,6 +30,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
         descripcion_dano: '',
         fecha_mantenimiento: '',
         descripcion_mantenimiento: '',
+        referencia:'',
     });
     const [mantenimientoAEditar, setMantenimientoAEditar] = useState(null);
     const [mostrarFormularioMantenimiento, setMostrarFormularioMantenimiento] = useState(false);
@@ -64,7 +68,9 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 propietario: data?.propietario || '',
                 fecha_entrada: data?.fecha_entrada ? formatDate(data.fecha_entrada) : '',
                 nit: data?.nit || '',
-                nombre_trabajador: data?.nombre_trabajador || ''
+                nombre_trabajador: data?.nombre_trabajador || '',
+                garantia: data?.garantia || '', 
+                url: data?.url || ''            
             });
         } catch (error) {
             console.error('Error fetching herramienta:', error);
@@ -112,7 +118,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
 
             if (!formData.herramienta || !formData.marca || !formData.modelo || !formData.propietario ||
                 !formData.nit || !formData.fecha_entrada.trim() || !fechaEntradaValida) {
-                setTipoModal('Error'); 
+                setTipoModal('Error');
                 setMensajeModal('Todos los campos son obligatorios, incluyendo una fecha de entrada válida.');
                 setMostrarModalConfirmacion(true);
                 return;
@@ -152,7 +158,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 });
 
                 onUpdateHerramienta(updatedHerramienta);
-                
+
                 setTipoModal('Confirmación');
                 setMensajeModal('Cambios guardados correctamente.');
                 setMostrarModalConfirmacion(true);
@@ -174,30 +180,30 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
             alert('Por favor, inicie sesión para agregar un mantenimiento.');
             return;
         }
-    
+
         // Validación de fecha de mantenimiento
         const fechaMantenimientoValida = nuevoMantenimiento.fecha_mantenimiento &&
-                                          !isNaN(new Date(nuevoMantenimiento.fecha_mantenimiento).getTime());
-    
+            !isNaN(new Date(nuevoMantenimiento.fecha_mantenimiento).getTime());
+
         if (!fechaMantenimientoValida) {
             setTipoModal('Error'); // Cambia el título del modal a "Error"
             setMensajeModal('Por favor, ingrese una fecha de mantenimiento válida.');
             setMostrarModalConfirmacion(true);
             return;
         }
-    
+
         try {
             const userId = localStorage.getItem('userId'); // Obtener el ID del usuario de localStorage
             const userName = localStorage.getItem('userName'); // Obtener el nombre del usuario de localStorage
             console.log("ID de usuario recuperado de localStorage (mantenimiento):", userId);
-    
+
             if (!userId || !userName) {
                 console.error("ID de usuario o nombre de usuario no encontrado en localStorage");
                 setMensajeModal('Error al agregar mantenimiento. Por favor, inicie sesión nuevamente.');
                 setMostrarModalConfirmacion(true);
                 return;
             }
-    
+
             const responseMantenimiento = await fetch(`http://localhost:3001/mantenimientos`, {
                 method: 'POST',
                 headers: {
@@ -209,26 +215,28 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                     fecha_mantenimiento: nuevoMantenimiento.fecha_mantenimiento,
                     descripcion_dano: nuevoMantenimiento.descripcion_dano,
                     descripcion_mantenimiento: nuevoMantenimiento.descripcion_mantenimiento,
+                    referencia: nuevoMantenimiento.referencia,
                     nit_propietario: formData.nit,
                     id_usuario: userId,
                     nombre_tecnico: userName
                 })
             });
-    
+
             if (responseMantenimiento.ok) {
                 setNuevoMantenimiento({
                     fecha_entrada: '',
                     descripcion_dano: '',
                     fecha_mantenimiento: '',
                     descripcion_mantenimiento: '',
+                    referencia: '',
                 });
-    
+
                 // Actualizar la fecha de entrada en el formulario principal
                 setFormData(prevState => ({
                     ...prevState,
                     fecha_entrada: nuevoMantenimiento.fecha_mantenimiento,
                 }));
-                
+
                 setTipoModal('Confirmación');
                 setMensajeModal('Mantenimiento agregado correctamente.');
                 await fetchMantenimientos(); // Refresca los mantenimientos
@@ -236,7 +244,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 console.error('Error al agregar el mantenimiento:', responseMantenimiento.statusText);
                 setMensajeModal('Error al agregar mantenimiento. Por favor, revise los datos.');
             }
-    
+
             setMostrarModalConfirmacion(true);
             handleOcultarFormulario();
         } catch (error) {
@@ -245,95 +253,98 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
             setMostrarModalConfirmacion(true);
         }
     };
-    
-        const handleEditarMantenimiento = (mantenimiento) => {
-            if (!isLoggedIn) {
-                console.log('No está logueado. No puede editar un mantenimiento.');
-                alert('Por favor, inicie sesión para editar un mantenimiento.');
-                return;
-            }
-        
-            setMantenimientoAEditar(mantenimiento);
-            setNuevoMantenimiento({
-                fecha_mantenimiento: mantenimiento.fecha_mantenimiento,
-                descripcion_dano: mantenimiento.descripcion_dano,
-                descripcion_mantenimiento: mantenimiento.descripcion_mantenimiento,
-            });
-            setMostrarFormularioMantenimiento(true);
-        };
-        
 
-        const handleActualizarMantenimiento = async () => {
-            if (!isLoggedIn) {
-                console.log('No está logueado. No puede actualizar un mantenimiento.');
-                alert('Por favor, inicie sesión para actualizar un mantenimiento.');
-                return;
-            }
-        
-            // Validar que todos los campos estén llenos
-            if (
-                !nuevoMantenimiento.fecha_mantenimiento ||
-                !nuevoMantenimiento.descripcion_dano ||
-                !nuevoMantenimiento.descripcion_mantenimiento
-            ) {
-                setTipoModal('Error');
-                setMensajeModal('Todos los campos son obligatorios.');
+    const handleEditarMantenimiento = (mantenimiento) => {
+        if (!isLoggedIn) {
+            console.log('No está logueado. No puede editar un mantenimiento.');
+            alert('Por favor, inicie sesión para editar un mantenimiento.');
+            return;
+        }
+
+        setMantenimientoAEditar(mantenimiento);
+        setNuevoMantenimiento({
+            fecha_mantenimiento: mantenimiento.fecha_mantenimiento,
+            descripcion_dano: mantenimiento.descripcion_dano,
+            descripcion_mantenimiento: mantenimiento.descripcion_mantenimiento,
+            referencia:mantenimiento.referencia,
+        });
+        setMostrarFormularioMantenimiento(true);
+    };
+
+
+    const handleActualizarMantenimiento = async () => {
+        if (!isLoggedIn) {
+            console.log('No está logueado. No puede actualizar un mantenimiento.');
+            alert('Por favor, inicie sesión para actualizar un mantenimiento.');
+            return;
+        }
+
+        // Validar que todos los campos estén llenos
+        if (
+            !nuevoMantenimiento.fecha_mantenimiento ||
+            !nuevoMantenimiento.descripcion_dano ||
+            !nuevoMantenimiento.descripcion_mantenimiento 
+            
+        ) {
+            setTipoModal('Error');
+            setMensajeModal('Todos los campos son obligatorios.');
+            setMostrarModalConfirmacion(true);
+            return;
+        }
+
+        // Validar que la fecha esté en formato numérico (YYYY-MM-DD)
+        const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
+        if (!regexFecha.test(nuevoMantenimiento.fecha_mantenimiento)) {
+            setTipoModal('Error');
+            setMensajeModal('La fecha de mantenimiento debe estar establecida.');
+            setMostrarModalConfirmacion(true);
+            return;
+        }
+
+        try {
+            const userId = localStorage.getItem('userId'); // Obtener el ID del usuario de localStorage
+
+            const response = await fetch(`http://localhost:3001/mantenimientos/${mantenimientoAEditar.id_mantenimiento}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': userId
+                },
+                body: JSON.stringify({
+                    fecha_mantenimiento: nuevoMantenimiento.fecha_mantenimiento,
+                    descripcion_dano: nuevoMantenimiento.descripcion_dano,
+                    descripcion_mantenimiento: nuevoMantenimiento.descripcion_mantenimiento,
+                    referencia: nuevoMantenimiento.referencia,
+                    nit_propietario: formData.nit,
+                    id_usuario: userId,
+                    
+                }),
+            });
+
+            if (response.ok) {
+                const actualizado = await response.json();
+                console.log("Mantenimiento actualizado:", actualizado);
+
+                // Refrescar la lista de mantenimientos para que se visualice de inmediato
+                await fetchMantenimientos();
+                setTipoModal('Confirmación');
+                setMensajeModal('Mantenimiento actualizado correctamente.');
                 setMostrarModalConfirmacion(true);
-                return;
-            }
-        
-            // Validar que la fecha esté en formato numérico (YYYY-MM-DD)
-            const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
-            if (!regexFecha.test(nuevoMantenimiento.fecha_mantenimiento)) {
+                handleOcultarFormulario();
+            } else {
+                console.error("Error al actualizar el mantenimiento:", response.statusText);
                 setTipoModal('Error');
-                setMensajeModal('La fecha de mantenimiento debe estar establecida.');
-                setMostrarModalConfirmacion(true);
-                return;
-            }
-        
-            try {
-                const userId = localStorage.getItem('userId'); // Obtener el ID del usuario de localStorage
-        
-                const response = await fetch(`http://localhost:3001/mantenimientos/${mantenimientoAEditar.id_mantenimiento}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'user-id': userId
-                    },
-                    body: JSON.stringify({
-                        fecha_mantenimiento: nuevoMantenimiento.fecha_mantenimiento,
-                        descripcion_dano: nuevoMantenimiento.descripcion_dano,
-                        descripcion_mantenimiento: nuevoMantenimiento.descripcion_mantenimiento,
-                        id_herramienta: id_articulo,
-                        nit_propietario: formData.nit,
-                        id_usuario: userId,
-                    }),
-                });
-        
-                if (response.ok) {
-                    const actualizado = await response.json();
-                    console.log("Mantenimiento actualizado:", actualizado);
-        
-                    // Refrescar la lista de mantenimientos para que se visualice de inmediato
-                    await fetchMantenimientos();
-                    setTipoModal('Confirmación');
-                    setMensajeModal('Mantenimiento actualizado correctamente.');
-                    setMostrarModalConfirmacion(true);
-                    handleOcultarFormulario();
-                } else {
-                    console.error("Error al actualizar el mantenimiento:", response.statusText);
-                    setTipoModal('Error');
-                    setMensajeModal('Error al actualizar el mantenimiento. Por favor, revise los datos.');
-                    setMostrarModalConfirmacion(true);
-                }
-            } catch (error) {
-                console.error('Error al actualizar el mantenimiento:', error);
-                setTipoModal('Error');
-                setMensajeModal('Error al actualizar el mantenimiento. Por favor, intente de nuevo.');
+                setMensajeModal('Error al actualizar el mantenimiento. Por favor, revise los datos.');
                 setMostrarModalConfirmacion(true);
             }
-        };
-               
+        } catch (error) {
+            console.error('Error al actualizar el mantenimiento:', error);
+            setTipoModal('Error');
+            setMensajeModal('Error al actualizar el mantenimiento. Por favor, intente de nuevo.');
+            setMostrarModalConfirmacion(true);
+        }
+    };
+
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -373,6 +384,12 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
     const handleOcultarFormulario = () => {
         setMostrarFormularioMantenimiento(false);
         setMantenimientoAEditar(null);
+        setNuevoMantenimiento({ // Restablece los valores iniciales
+            fecha_mantenimiento: '',
+            descripcion_dano: '',
+            descripcion_mantenimiento: '',
+            referencia: ''
+        });
     };
 
     // Filtrar mantenimientos según el estado de inicio de sesión
@@ -437,6 +454,12 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                             <label>NIT:</label>
                             <input type="text" name="nit" value={formData.nit} onChange={handleChange} /><br />
 
+                            <label>Garantia</label>
+                            <input type="text" id="garantia" name="garantia" value={formData.garantia} onChange={handleChange} />
+
+                            <label>URL</label>
+                            <input type="text" id="url" name="url" value={formData.url} onChange={handleChange} />
+
                             <div className="button-container">
                                 <button onClick={handleSave}>Guardar</button>
                                 <button onClick={handleCancel}>Cancelar</button>
@@ -450,6 +473,8 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                             <p><strong>Propietario:</strong> {herramienta.propietario}</p>
                             <p><strong>Fecha de Entrada:</strong> {formatDate(herramienta.fecha_entrada)}</p>
                             <p><strong>NIT:</strong> {herramienta.nit}</p>
+                            <p><strong>Garantia:</strong> {herramienta.garantia}</p>
+                            <p><strong>URL:</strong> {herramienta.url}</p>
                         </>
                     )}
 
@@ -486,6 +511,14 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                                     type="text"
                                     name="descripcion_mantenimiento"
                                     value={nuevoMantenimiento.descripcion_mantenimiento}
+                                    onChange={handleNuevoMantenimientoChange}
+                                /><br />
+
+                                <label>Referencia:</label>
+                                <input
+                                    type="text"
+                                    name="referencia"
+                                    value={nuevoMantenimiento.referencia}
                                     onChange={handleNuevoMantenimientoChange}
                                 /><br />
 
@@ -528,6 +561,14 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                                                     onChange={handleNuevoMantenimientoChange}
                                                 /><br />
 
+                                                <label>Referencia:</label>
+                                                <input
+                                                    type="text"
+                                                    name="referencia"
+                                                    value={nuevoMantenimiento.referencia}
+                                                    onChange={handleNuevoMantenimientoChange}
+                                                /><br />
+
                                                 <div className="button-container">
                                                     <button onClick={handleActualizarMantenimiento}>
                                                         Actualizar Mantenimiento
@@ -540,6 +581,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                                                 <p><strong>Fecha de Mantenimiento:</strong> {formatDate(mantenimiento.fecha_mantenimiento)}</p>
                                                 <p><strong>Descripción del Daño:</strong> {mantenimiento.descripcion_dano}</p>
                                                 <p><strong>Descripción del Mantenimiento:</strong> {mantenimiento.descripcion_mantenimiento}</p>
+                                                <p><strong>Referencia:</strong> {mantenimiento.referencia}</p>
                                                 {isLoggedIn && (
                                                     <div className="button-container">
                                                         <button onClick={() => handleEditarMantenimiento(mantenimiento)}>Editar</button>
@@ -580,7 +622,6 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 onRequestClose={() => setMostrarModalConfirmacion(false)}
                 style={customStyles}
                 contentLabel="Confirmación"
-                contentLabel={tipoModal} // Cambia dinámicamente el título
             >
                 <div className="modal-content">
                     <h2>{tipoModal}</h2> {/* Aquí cambia entre "Error" y "Confirmación" */}

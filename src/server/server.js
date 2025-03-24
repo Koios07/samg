@@ -149,8 +149,10 @@ app.get('/herramientas', (req, res) => {
 
 // Ruta para agregar un nuevo artículo y su historial de mantenimiento
 app.post('/herramientas', (req, res) => {
-    const { herramienta, marca, modelo, propietario, fecha_entrada, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento } = req.body;
-    console.log('Agregando un nuevo articulo y su historial de mantenimiento');
+    const { herramienta, marca, modelo, propietario, fecha_entrada, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento, garantia, url } = req.body;
+
+    console.log('Agregando un nuevo artículo y su historial de mantenimiento');
+
     // Verificar que se proporcionen los datos del historial de mantenimiento
     if (!descripcion_dano || !fecha_mantenimiento || !descripcion_mantenimiento) {
         return res.status(400).json({ message: 'Todos los campos del historial de mantenimiento son obligatorios.' });
@@ -178,8 +180,11 @@ app.post('/herramientas', (req, res) => {
         const nombreUsuario = resultNombre[0].nombre;
 
         // Insertar la herramienta en la tabla herramientas
-        const queryHerramienta = 'INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        db.query(queryHerramienta, [herramienta, marca, modelo, propietario, fecha_entrada, nombreUsuario, nit], (err, resultHerramienta) => {
+        const queryHerramienta = `
+            INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, garantia, url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        db.query(queryHerramienta, [herramienta, marca, modelo, propietario, fecha_entrada, nombreUsuario, nit, garantia, url], (err, resultHerramienta) => {
             if (err) {
                 console.error('Error al agregar el artículo:', err);
                 return res.status(500).json({ message: 'Error al agregar el artículo.' });
@@ -188,8 +193,11 @@ app.post('/herramientas', (req, res) => {
             const id_articulo = resultHerramienta.insertId;
 
             // Insertar el historial de mantenimiento en la tabla historial_mantenimiento
-            const queryHistorial = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
-            db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombreUsuario, nit], (err, resultHistorial) => {
+            const queryHistorial = `
+                INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombreUsuario, nit], (err) => {
                 if (err) {
                     console.error('Error al agregar el historial de mantenimiento:', err);
                     return res.status(500).json({ message: 'Error al agregar el historial de mantenimiento.' });
@@ -200,6 +208,7 @@ app.post('/herramientas', (req, res) => {
         });
     });
 });
+
 
 // Ruta para obtener un artículo por su ID
 app.get('/herramientas/:id', (req, res) => {
@@ -220,44 +229,49 @@ app.get('/herramientas/:id', (req, res) => {
     });
 });
 
- // Ruta para actualizar un artículo existente
- app.put('/herramientas/:id', (req, res) => {
-    // AQUI INICIA LA MODIFICACION
+app.put('/herramientas/:id', (req, res) => {
     const articuloId = req.params.id;
-    const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit } = req.body;
+    const { herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, garantia, url } = req.body;
 
     console.log("Datos recibidos en PUT /herramientas/:id:", req.body);
-    console.log("Nombre del trabajador recibido:", nombre_trabajador);  // Console log para verificar el valor de nombre_trabajador
+    console.log("Nombre del trabajador recibido:", nombre_trabajador);
 
     // Actualizar la tabla herramientas
-    const query = 'UPDATE herramientas SET herramienta = ?, marca = ?, modelo = ?, propietario = ?, fecha_entrada = ?, nombre_trabajador = ?, nit = ? WHERE id_articulo = ?';
-    db.query(query, [herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, articuloId], (err, result) => {
+    const query = `
+        UPDATE herramientas
+        SET herramienta = ?,
+            marca = ?,
+            modelo = ?,
+            propietario = ?,
+            fecha_entrada = ?,
+            nombre_trabajador = ?,
+            nit = ?,
+            garantia = ?,
+            url = ?
+        WHERE id_articulo = ?
+    `;
+
+    db.query(query, [herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, garantia, url, articuloId], (err, result) => {
         if (err) {
             console.error('Error al actualizar el artículo:', err);
             return res.status(500).json({ message: 'Error al actualizar el artículo.' });
         }
 
-        // Actualizar el nit_propietario en la tabla historial_mantenimiento
-        const updateHistorialQuery = 'UPDATE historial_mantenimiento SET nit_propietario = ? WHERE id_herramienta = ?';
-        db.query(updateHistorialQuery, [nit, articuloId], (err, result) => {
-            if (err) {
-                console.error('Error al actualizar el nit_propietario en historial_mantenimiento:', err);
-                return res.status(500).json({ message: 'Error al actualizar el historial de mantenimiento.' });
-            }
-
-            res.json({ message: 'Artículo actualizado exitosamente.' });
-        });
+        // Artículo actualizado exitosamente
+        res.json({ message: 'Artículo actualizado exitosamente.' });
     });
 });
 
 
+
+
+
 app.post('/mantenimientos', (req, res) => {
-    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico } = req.body;
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico, referencia } = req.body;
     console.log("Datos recibidos en POST /mantenimientos:", req.body);
-    console.log("Nombre del técnico recibido:", nombre_tecnico);  // Console log para verificar el valor de nombre_tecnico
 
-    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico], (err, result) => {
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico, referencia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico, referencia], (err, result) => {
         if (err) {
             console.error('Error al agregar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
@@ -268,12 +282,14 @@ app.post('/mantenimientos', (req, res) => {
 });
 
 
+
 app.post('/mantenimientos', (req, res) => {
-    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico } = req.body;
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico } = req.body;
     console.log("Datos recibidos en POST /mantenimientos:", req.body);  // Log para verificar los datos recibidos
+    const referenciaValue = referencia !== undefined ? referencia : null;
 
-    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico], (err, result) => {
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referenciaValue, nit_propietario, nombre_tecnico], (err, result) => {
         if (err) {
             console.error('Error al agregar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
@@ -285,10 +301,10 @@ app.post('/mantenimientos', (req, res) => {
 
 
 app.post('/mantenimientos', (req, res) => {
-    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico } = req.body;
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico } = req.body;
 
-    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico], (err, result) => {
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico], (err, result) => {
         if (err) {
             console.error('Error al agregar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
@@ -300,10 +316,10 @@ app.post('/mantenimientos', (req, res) => {
 
 
 app.post('/mantenimientos', (req, res) => {
-    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico } = req.body;
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico } = req.body;
 
-    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico], (err, result) => {
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento,referencia, nit_propietario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico], (err, result) => {
         if (err) {
             console.error('Error al agregar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
@@ -464,11 +480,11 @@ app.get('/mantenimientos/:id', (req, res) => {
  // Ruta para agregar un nuevo mantenimiento
  app.post('/mantenimientos', (req, res) => {
     // AQUI INICIA LA MODIFICACION
-    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico } = req.body;
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, id_usuario, nombre_tecnico } = req.body;
     console.log("Datos recibidos en POST /mantenimientos:", req.body);  // Log para verificar los datos recibidos
 
-    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico], (err, result) => {
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, id_usuario, nombre_tecnico) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, id_usuario, nombre_tecnico], (err, result) => {
         if (err) {
             console.error('Error al agregar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
@@ -482,12 +498,12 @@ app.get('/mantenimientos/:id', (req, res) => {
  app.put('/mantenimientos/:id_mantenimiento', (req, res) => {
     // AQUI INICIA LA MODIFICACION
     const mantenimientoId = req.params.id_mantenimiento;
-    const { fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico } = req.body;
+    const { fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, id_usuario, nombre_tecnico } = req.body;
 
     console.log("Datos recibidos en PUT /mantenimientos/:id_mantenimiento:", req.body);
 
-    const query = 'UPDATE historial_mantenimiento SET fecha_mantenimiento = ?, descripcion_dano = ?, descripcion_mantenimiento = ?, nit_propietario = ?, id_usuario = ?, nombre_tecnico = ? WHERE id_mantenimiento = ?';
-    db.query(query, [fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, id_usuario, nombre_tecnico, mantenimientoId], (err, result) => {
+    const query = 'UPDATE historial_mantenimiento SET fecha_mantenimiento = ?, descripcion_dano = ?, descripcion_mantenimiento = ?, referencia=?, nit_propietario = ?, id_usuario = ?, nombre_tecnico = ? WHERE id_mantenimiento = ?';
+    db.query(query, [fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, id_usuario, nombre_tecnico, mantenimientoId], (err, result) => {
         if (err) {
             console.error('Error al editar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al editar el mantenimiento.' });
@@ -499,12 +515,12 @@ app.get('/mantenimientos/:id', (req, res) => {
 
 // Ruta para agregar un nuevo mantenimiento
 app.post('/mantenimientos', (req, res) => {
-    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nit_propietario, nombre_tecnico } = req.body;
+    const { id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nit_propietario, nombre_tecnico, id_usuario } = req.body;
     console.log("Datos recibidos en POST /mantenimientos:", req.body);
     console.log("Nombre del técnico recibido:", nombre_tecnico);  // Console log para verificar el valo
 
-    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario], (err, result) => {
+    const query = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nombre_tecnico, nit_propietario, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento,referencia, nombre_tecnico, nit_propietario, id_usuario], (err, result) => {
         if (err) {
             console.error('Error al agregar el mantenimiento:', err);
             return res.status(500).json({ message: 'Error al agregar el mantenimiento.' });
