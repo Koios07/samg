@@ -27,7 +27,7 @@ const CargarPlantilla = () => {
             // Verificar encabezados
             const expectedHeaders = [
                 "Herramienta", "Marca", "Modelo", "Propietario", "Fecha de Ingreso",
-                "Nit", "Tecnico", "Descripcion_dano", "fecha_mantenimiento", "descripcion_mantenimiento"
+                "Nit", "Tecnico", "Descripcion_dano", "fecha_mantenimiento", "descripcion_mantenimiento", "referencia", "garantia"
             ];
             const actualHeaders = jsonData[0];
 
@@ -68,7 +68,9 @@ const CargarPlantilla = () => {
                     tecnico: row[6] || null,
                     descripcion_dano: row[7] || null,
                     fecha_mantenimiento: fechaMantenimiento,
-                    descripcion_mantenimiento: row[9] || null
+                    descripcion_mantenimiento: row[9] || null,
+                    referencia: row[10] || null,
+                    garantia: row[11] || null
                 };
             });
 

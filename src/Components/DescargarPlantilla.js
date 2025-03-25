@@ -15,7 +15,9 @@ const DescargarPlantilla = () => {
             "Tecnico",
             "Descripcion_dano",
             "fecha_mantenimiento",
-            "descripcion_mantenimiento"
+            "descripcion_mantenimiento",
+            "referencia",
+            "garantia"
         ];
 
         // Agregar una fila de ejemplo con el formato de fecha deseado

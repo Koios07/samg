@@ -30,7 +30,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
         descripcion_dano: '',
         fecha_mantenimiento: '',
         descripcion_mantenimiento: '',
-        referencia:'',
+        referencia: '',
     });
     const [mantenimientoAEditar, setMantenimientoAEditar] = useState(null);
     const [mostrarFormularioMantenimiento, setMostrarFormularioMantenimiento] = useState(false);
@@ -69,8 +69,8 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                 fecha_entrada: data?.fecha_entrada ? formatDate(data.fecha_entrada) : '',
                 nit: data?.nit || '',
                 nombre_trabajador: data?.nombre_trabajador || '',
-                garantia: data?.garantia || '', 
-                url: data?.url || ''            
+                garantia: data?.garantia || '',
+                url: data?.url || ''
             });
         } catch (error) {
             console.error('Error fetching herramienta:', error);
@@ -266,7 +266,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
             fecha_mantenimiento: mantenimiento.fecha_mantenimiento,
             descripcion_dano: mantenimiento.descripcion_dano,
             descripcion_mantenimiento: mantenimiento.descripcion_mantenimiento,
-            referencia:mantenimiento.referencia,
+            referencia: mantenimiento.referencia,
         });
         setMostrarFormularioMantenimiento(true);
     };
@@ -283,8 +283,8 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
         if (
             !nuevoMantenimiento.fecha_mantenimiento ||
             !nuevoMantenimiento.descripcion_dano ||
-            !nuevoMantenimiento.descripcion_mantenimiento 
-            
+            !nuevoMantenimiento.descripcion_mantenimiento
+
         ) {
             setTipoModal('Error');
             setMensajeModal('Todos los campos son obligatorios.');
@@ -317,7 +317,7 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                     referencia: nuevoMantenimiento.referencia,
                     nit_propietario: formData.nit,
                     id_usuario: userId,
-                    
+
                 }),
             });
 
@@ -373,7 +373,9 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
             propietario: herramienta?.propietario || '',
             fecha_entrada: herramienta?.fecha_entrada ? formatDate(herramienta.fecha_entrada) : '',
             nit: herramienta?.nit || '',
-            nombre_trabajador: herramienta?.nombre_trabajador || ''
+            nombre_trabajador: herramienta?.nombre_trabajador || '',
+            garantia: herramienta?.garantia || '',
+            url: herramienta?.url || '',
         });
     };
 
@@ -474,7 +476,14 @@ const HerramientaDetalle = ({ onUpdateHerramienta, isLoggedIn, userType }) => {
                             <p><strong>Fecha de Entrada:</strong> {formatDate(herramienta.fecha_entrada)}</p>
                             <p><strong>NIT:</strong> {herramienta.nit}</p>
                             <p><strong>Garantia:</strong> {herramienta.garantia}</p>
-                            <p><strong>URL:</strong> {herramienta.url}</p>
+                            {herramienta.url ? (
+                                <div>
+                                    <strong>URL:</strong>
+                                    <a href={herramienta.url} target="_blank" rel="noopener noreferrer">
+                                         Visualizar imagen
+                                    </a>
+                                </div>
+                            ) : null}
                         </>
                     )}
 

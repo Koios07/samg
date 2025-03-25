@@ -39,6 +39,8 @@ const Historial = () => {
                 fecha_mantenimiento: item.fecha_mantenimiento ? moment(item.fecha_mantenimiento).format('DD/MM/YYYY') : '',
                 descripcion_dano: item.descripcion_dano,
                 descripcion_mantenimiento: item.descripcion_mantenimiento,
+                referencia: item.referencia,
+                garantia: item.garantia,
                 nombre_tecnico: item.nombre_tecnico
             }));
 

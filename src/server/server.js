@@ -568,10 +568,10 @@ app.post('/herramientas/masivo', (req, res) => {
             let errores = [];
 
             herramientas.forEach((herramienta) => {
-                const { herramienta: nombreHerramienta, marca, modelo, propietario, fecha_entrada, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento } = herramienta;
+                const { herramienta: nombreHerramienta, marca, modelo, propietario, fecha_entrada, nit, descripcion_dano, fecha_mantenimiento, descripcion_mantenimiento, referencia, garantia } = herramienta;
 
-                const queryHerramienta = 'INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit) VALUES (?, ?, ?, ?, ?, ?, ?)';
-                db.query(queryHerramienta, [nombreHerramienta, marca, modelo, propietario, fecha_entrada, nombreUsuario, nit], (err, resultHerramienta) => {
+                const queryHerramienta = 'INSERT INTO herramientas (herramienta, marca, modelo, propietario, fecha_entrada, nombre_trabajador, nit, garantia) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+                db.query(queryHerramienta, [nombreHerramienta, marca, modelo, propietario, fecha_entrada, nombreUsuario, nit, garantia], (err, resultHerramienta) => {
                     if (err) {
                         console.error('Error al agregar el artículo:', err);
                         errores.push({ herramienta: nombreHerramienta, error: err.message });
@@ -580,8 +580,8 @@ app.post('/herramientas/masivo', (req, res) => {
 
                     const id_articulo = resultHerramienta.insertId;
 
-                    const queryHistorial = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?)';
-                    db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, nombreUsuario, nit], (err, resultHistorial) => {
+                    const queryHistorial = 'INSERT INTO historial_mantenimiento (id_herramienta, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento, referencia, nombre_tecnico, nit_propietario) VALUES (?, ?, ?, ?, ?, ?, ?)';
+                    db.query(queryHistorial, [id_articulo, fecha_mantenimiento, descripcion_dano, descripcion_mantenimiento,referencia, nombreUsuario, nit], (err, resultHistorial) => {
                         if (err) {
                             console.error('Error al agregar el historial de mantenimiento:', err);
                             errores.push({ herramienta: nombreHerramienta, error: err.message });
@@ -636,6 +636,8 @@ app.get('/historial', (req, res) => {
             hm.fecha_mantenimiento, 
             hm.descripcion_dano, 
             hm.descripcion_mantenimiento, 
+            hm.referencia,
+            h.garantia,
             hm.nombre_tecnico
         FROM 
             herramientas h

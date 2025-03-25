@@ -122,6 +122,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                                 <th>Fecha de Ingreso</th>
                                 <th>Fecha de Mantenimiento</th>
                                 <th>Técnico</th>
+                                <th>Garantía</th>
                                 <th>Ver QR</th>
                             </tr>
                         </thead>
@@ -142,6 +143,7 @@ const Buscar = ({ herramientas: initialHerramientas, isLoggedIn, userType = "" }
                                         <td data-label="Fecha de Ingreso">{formatDate(herramienta.fecha_entrada)}</td>
                                         <td data-label="Fecha de Mantenimiento">{formatDate(herramienta.fecha_mantenimiento)}</td>
                                         <td data-label="Técnico">{herramienta.nombre_trabajador}</td>
+                                        <td data-label="Garantía">{herramienta.garantia} </td>
                                         <td data-label="Ver QR">
                                             <button className="ver-qr-button" onClick={() => openQrModal(herramienta.id_articulo)} style={{ color: 'white' }}>
                                                 Ver QR
