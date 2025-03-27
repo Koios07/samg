@@ -29,7 +29,7 @@
 
 /* Styles for the Edit Herramienta button, adjusted for size and responsiveness */
 .header-actions button.editar-herramienta-button {
-    background-color: #007bff; /* Make buttons the same color as pagination */
+    background-color: #008b94; /* Make buttons the same color as pagination */
     color: white;
     padding: 8px 12px; /* Slightly smaller padding */
     border: none;
@@ -107,7 +107,7 @@
 }
 
 .herramienta-form .button-container button {
-    background-color: #007bff; /* Make buttons the same color as pagination */
+    background-color: #008b94; /* Make buttons the same color as pagination */
     color: white;
     padding: 8px 12px; /* Slightly smaller padding */
     border: none;
@@ -145,7 +145,7 @@
 
 /* Style adjustments for the "Add Maintenance" button, adjusted for size and responsiveness */
 .agregar-mantenimiento-button {
-    background-color: #007bff; /* Make buttons the same color as pagination */
+    background-color: #008b94; /* Make buttons the same color as pagination */
     color: white;
     padding: 6px 10px; /* Smaller padding */
     border: none;
@@ -201,7 +201,7 @@
 }
 
 .mantenimiento-form .button-container button {
-    background-color: #007bff; /* Make buttons the same color as pagination */
+    background-color: #008b94; /* Make buttons the same color as pagination */
     color: white;
     padding: 6px 10px; /* Smaller padding */
     border: none;
@@ -212,7 +212,7 @@
 }
 
 .mantenimiento-form .button-container button:hover {
-    background-color: #0056b3;
+    background-color: #008b94;
 }
 
 
@@ -224,7 +224,7 @@
 }
 
 .button-container button {
-    background-color: #007bff; /* Make buttons the same color as pagination */
+    background-color: #008b94; /* Make buttons the same color as pagination */
     color: white;
     padding: 8px 12px; /* Slightly smaller padding */
     border: none;
@@ -262,7 +262,7 @@
 }
 
 .pagination button.active {
-    background-color: #007bff; /* A shade of blue indicating the active page */
+    background-color: #008b94; /* A shade of blue indicating the active page */
     color: white;
     border-color: #007bff;
 }
@@ -314,7 +314,7 @@
 
 /* Styles for the confirmation modal button */
 .modal-content button {
-    background-color: #007bff; /* Same blue as other buttons */
+    background-color: #008b94; /* Same blue as other buttons */
     color: white;
     padding: 8px 12px;
     border: none;

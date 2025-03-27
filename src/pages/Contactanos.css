@@ -1,3 +1,4 @@
+/* Estilos generales para el componente Contactanos */
 .contactanos-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -16,14 +17,16 @@
     margin-bottom: 20px;
 }
 
+/* Estilos para el contenedor del mapa */
 .map-container {
     margin-bottom: 20px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos para la información de contacto */
 .contact-info {
     margin-top: 20px;
 }
@@ -41,7 +44,7 @@
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .contact-item strong {
@@ -50,6 +53,16 @@
     margin-bottom: 5px;
 }
 
+/* Estilos específicos para los números de teléfono */
+.contact-item p {
+    margin: 5px 0; /* Reduce el espacio entre los párrafos */
+}
+
+.contact-item p + p {
+    margin-top: 2px; /* Reduce el espacio entre los dos números de teléfono */
+}
+
+/* Media queries para responsividad */
 @media (max-width: 768px) {
     .contact-item {
         width: calc(50% - 20px);

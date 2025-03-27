@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../components/CrearUsuario.css';
 
 const CrearUsuario = ({ onClose }) => {
     const [nombre, setNombre] = useState('');
@@ -112,7 +113,7 @@ const CrearUsuario = ({ onClose }) => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 crear-usuario-container"> {/* Clase contenedora agregada aquí */}
             <div className="card">
                 <div className="card-body">
                     <h2 className="text-center">Crear usuario</h2>
@@ -162,8 +163,8 @@ const CrearUsuario = ({ onClose }) => {
                             />
                         </div>
                         <div className="d-flex justify-content-center gap-3 mt-4">
-                            <button type="submit" className="btn btn-primary">Crear</button>
-                            <button type="button" onClick={handleGoBack} className="btn btn-primary">Atrás</button>
+                            <button type="submit" className="btn btn-crear">Crear</button>
+                            <button type="button" onClick={handleGoBack} className="btn btn-atras">Atrás</button>
                         </div>
                     </form>
                 </div>

@@ -66,7 +66,7 @@
 
 /* Estilos para los botones */
 .cambiar-contrasena-button {
-    background-color: #007bff;
+    background-color: #008b94; /* Verde claro */
     color: white;
     padding: 10px 20px;
     border: none;
@@ -77,11 +77,11 @@
 }
 
 .cambiar-contrasena-button:hover {
-    background-color: #0056b3;
+    background-color: #006c73; /* Verde más oscuro al hacer hover */
 }
 
 .atras-button {
-    background-color: #007bff;
+    background-color: #6c757d; /* Gris */
     color: white;
     padding: 10px 20px;
     border: none;
@@ -92,7 +92,7 @@
 }
 
 .atras-button:hover {
-    background-color: #0056b3;
+    background-color: #5a6268; /* Gris más oscuro al hacer hover */
 }
 
 /* Estilos para los mensajes */

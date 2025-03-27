@@ -45,7 +45,7 @@
 
 /* Style for the submit button */
 .agregar-button {
-    background-color: #007bff;
+    background-color: #008b94;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -59,3 +59,34 @@
 .agregar-button:hover {
     background-color: #0056b3;
 }
+
+.agregar-button {
+    background-color: #008b94;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.agregar-button:hover {
+    background-color: #006c73;
+}
+
+.atras-button {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.atras-button:hover {
+    background-color: #5a6268;
+}
+

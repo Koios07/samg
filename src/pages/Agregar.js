@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import './Agregar.css'
 
 const Agregar = () => {
     const [herramienta, setHerramienta] = useState('');
@@ -174,8 +175,8 @@ const Agregar = () => {
                             />
                         </div>
                         <div className="d-flex justify-content-center gap-3 mt-4">
-                            <button type="submit" className="btn btn-primary">Agregar</button>
-                            <button type="button" onClick={handleGoBack} className="btn btn-primary">Atrás</button>
+                            <button type="submit" className="agregar-button">Agregar</button>
+                            <button type="button" onClick={handleGoBack} className="atras-button">Atrás</button>
                         </div>
                     </form>
                 </div>

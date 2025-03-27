@@ -33,21 +33,21 @@
 
 /* Estilos para los botones */
 .configuracion-button {
-    background-color: #007bff;
+    background-color: #008b94; /* Verde claro */
     color: white;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 20px; /* Espaciado interno */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
     cursor: pointer;
-    font-size: 1em;
+    font-size: 1em; /* Tamaño de la fuente */
     transition: background-color 0.3s ease;
-    width: 100%;
+    width: 100%; /* Ocupa todo el ancho disponible */
     text-align: center;
     box-sizing: border-box; /* Asegurar que el padding no afecte el ancho total */
 }
 
 .configuracion-button:hover {
-    background-color: #0056b3;
+    background-color: #006c73; /* Verde más oscuro al hacer hover */
 }
 
 /* Ajustes de estilo para formularios y componentes activos (si los hay) */
@@ -72,7 +72,7 @@
 @media (max-width: 768px) {
     .botones-container {
         flex-direction: column; /* Apilar los botones verticalmente */
-        align-items: stretch; /*Estirar los elementos para ocupar todo el ancho */
+        align-items: stretch; /* Estirar los elementos para ocupar todo el ancho */
     }
 
     .configuracion-button {

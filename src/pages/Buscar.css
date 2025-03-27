@@ -31,7 +31,7 @@
     font-size: 16px; /* Tamaño de la fuente */
     min-width: 80px; /* Ajusta el ancho mínimo */
     margin: 0 5px; /* Espacio entre los botones */
-    background-color: #007bff;
+    background-color: #008b94;
     color: white;
     border: none;
     border-radius: 5px;
@@ -45,7 +45,7 @@
 }
 
 .buscar .ver-qr-button {
-    background-color: #007bff; /* Color azul */
+    background-color: #008b94; 
     color: white; /* Texto blanco */
     padding: 8px 16px;
     min-width: 80px;
@@ -77,7 +77,7 @@
 }
 
 .buscar .articulos-table th {
-    background-color: #007bff;
+    background-color: #008b94;
     color: white;
 }
 
@@ -94,7 +94,7 @@
 }
 
 .buscar .articulos-table td a {
-    color: #007bff;
+    color: #008b94;
     text-decoration: none;
 }
 
@@ -181,7 +181,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    background-color: #007bff; /* Color azul */
+    background-color: #008b94; /* Color azul */
     color: white; /* Texto blanco */
 }
 

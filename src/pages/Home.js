@@ -7,7 +7,7 @@ import dewalt from '../assets/images/dewalt.png';
 import milwakee from '../assets/images/milwakee.png';
 import hilti from '../assets/images/hilti.png';
 import metabo from '../assets/images/metabo.png';
-import ryobi from '../assets/images/ryobi.png';
+import skill from '../assets/images/skill.png';
 import stanley from '../assets/images/stanley.png';
 import byd from '../assets/images/byd.png';
 import festool from '../assets/images/festool.png';
@@ -86,7 +86,7 @@ function Home() {
         { name: 'Milwakee', logo: milwakee },
         { name: 'hilti', logo: hilti },
         { name: 'metabo', logo: metabo },
-        { name: 'ryobi', logo: ryobi },
+        { name: 'skil', logo: skill },
         { name: 'stanley', logo: stanley },
         { name: 'byd', logo: byd },
         { name: 'festool', logo: festool }

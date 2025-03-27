@@ -53,8 +53,9 @@ function Contactanos() {
                         <p>Cra. 33 # 112-31, Barrio Caldas, Floridablanca, Santander</p>
                     </div>
                     <div className="contact-item">
-                        <strong>Teléfono:</strong>
+                        <strong>Teléfonos:</strong>
                         <p>+57 301 239 7269</p>
+                        <p>+57 319 394 7386</p>
                     </div>
                     <div className="contact-item">
                         <strong>Email:</strong>
