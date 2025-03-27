@@ -1,0 +1,130 @@
+/* Estilos generales */
+.nosotros-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  /* Contenedor de imagen y texto */
+  .nosotros-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  /* Imagen del taller */
+  .nosotros-imagen img {
+    width: 300px; /* Reducir el tamaño de la imagen */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Texto "¿Quién es SAMG MANTENIMIENTO?" */
+  .nosotros-texto {
+    flex: 1;
+  }
+  
+  /* Título */
+  .nosotros-titulo {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  /* Descripción */
+  .nosotros-descripcion {
+    font-size: 1.1rem;
+    text-align: justify; /* Justificar el texto */
+  }
+  
+  /* Misión y Visión */
+  .mision-vision-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .mision, .vision {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mision h3, .vision h3 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .mision p, .vision p {
+    font-size: 1rem;
+    color: #555;
+    text-align: justify; /* Justificar el texto */
+  }
+  
+  /* Servicios */
+  .servicios-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .servicios-container h3 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 15px;
+  }
+  
+  .servicios-lista {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .servicios-lista li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .servicios-lista li img {
+    width: 30px;
+    margin-right: 10px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nosotros-content {
+      flex-direction: column;
+    }
+  
+    .nosotros-imagen img {
+      width: 100%; /* Imagen ocupa todo el ancho en móviles */
+    }
+  
+    .nosotros-titulo {
+      font-size: 2rem;
+    }
+  
+    .mision-vision-container {
+      flex-direction: column;
+    }
+  
+    .mision h3, .vision h3, .servicios-container h3 {
+      font-size: 1.5rem;
+    }
+  
+    .mision p, .vision p {
+      font-size: 0.95rem;
+    }
+  }
+  
