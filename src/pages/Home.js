@@ -1,4 +1,3 @@
-// Home.js
 import React, { useState, useEffect, useRef } from 'react';
 import './Home.css';
 import makita from '../assets/images/makita.png';
@@ -14,6 +13,7 @@ import festool from '../assets/images/festool.png';
 import slide1 from '../assets/images/slider1.jpg';
 import slide2 from '../assets/images/slider2.png';
 import slide3 from '../assets/images/slider3.jpg';
+import visitaServicios from '../assets/images/visita-nuestros-services.jpg'; // Importar imagen
 
 // Componente para el slider de imágenes
 function ImageSlider({ slides }) {
@@ -95,7 +95,6 @@ function Home() {
     const carouselRef = useRef(null);
     const [offset, setOffset] = useState(0);
     const itemWidth = 200; // Ancho de cada item del carrusel
-    const animationSpeed = 0.5; // Velocidad de la animación en segundos
 
     useEffect(() => {
         if (!carouselRef.current) return;
@@ -132,27 +131,6 @@ function Home() {
         return () => cancelAnimationFrame(animationFrameId);
     }, [brands]);
 
-    // Verificar si las imágenes existen
-    const verificarImagen = async (src) => {
-        const img = new Image();
-        img.src = src;
-        return new Promise(resolve => {
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-        });
-    };
-
-    useEffect(() => {
-        const verificar = async () => {
-            for (const slide of mainSlides) {
-                if (!(await verificarImagen(slide.src))) {
-                    console.error(`Imagen no encontrada: ${slide.src}`);
-                }
-            }
-        };
-        verificar();
-    }, [mainSlides]);
-
     return (
         <div className="home-container">
             {/* Sección 1: Slider Principal */}
@@ -160,10 +138,13 @@ function Home() {
 
             {/* Sección 2: Descripción de la Empresa */}
             <div className="company-description">
-                <h2>Sobre Nosotros</h2>
-                <p>
-                    Somos un centro de servicio especializado en la reparación y mantenimiento de herramientas eléctricas y manuales. Nuestro equipo de técnicos altamente capacitados garantiza un servicio de calidad y eficiencia.
-                </p>
+                <div className="description-content">
+                    <h2>Somos Expertos Makita</h2>
+                    <p>
+                        Como centro de servicio autorizado Makita, ofrecemos mantenimiento preventivo y correctivo para tus herramientas eléctricas. Nuestros técnicos están certificados para garantizar el máximo rendimiento y durabilidad de tus equipos.
+                    </p>
+                </div>
+                <img src={visitaServicios} alt="Visita Nuestros Servicios" className="makita-image" />
             </div>
 
             {/* Sección 3: Marcas Autorizadas */}
