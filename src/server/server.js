@@ -660,7 +660,3 @@ app.get('/historial', (req, res) => {
         res.json(result);
     });
 });
-
-
-
-
