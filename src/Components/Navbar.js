@@ -26,7 +26,6 @@ const NavigationBar = ({ isLoggedIn, onLogout }) => {
               <Link to="/configuracion" className="config-icon-container">
                 <FaCog size={18} />
               </Link>
-
             </>
           ) : (
             <Link to="/login" className="login-button">
